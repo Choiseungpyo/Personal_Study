@@ -20,12 +20,14 @@ void SaveDesiredValue(int* arr, int n, int desiredNum, int desiredIndex);
 void ChangeBigOrderArr(const int* originalArr, int* bigOrderArr, int n);
 void PrintMaxNums(const int* arr, int n);
 
-void Problem2_2();
-
+void Problem3_1();
+void CalculateAvg(const int studentGrade[][3], int rowScale, float studentAvg[]);
+void SetStudentGradeOrder(float studentAvg[], int studentAvgScale);
+void PutDesiredPos(int studentAvg[], int studentAvgScale, int desiredIndex, int desiredValue);
 
 int main()
 {
-	Problem2_1();
+	Problem3_1();
 	return 0;
 }
 
@@ -214,3 +216,87 @@ void SaveDesiredValue(int* arr, int n, int desiredNum, int desiredIndex) // 배열
 
 // 문제 2 : 2차원 배열의 각 원소에 1을 더하는 함수의 인자 모양은?
 // int AddArrPlusOne(int arr[][상수]) or int (*arr)[상수]
+
+
+
+//----------------------------------------------------------------------------
+
+// 13-2장
+void Problem3_1() // 학생 5명 : 1수학, 국어, 영어 -> 평균 순으로 정렬 후 출력 / 평균 이상 = 합격 
+{
+	int studentGrade[5][3] = { {0,0,0}, {1,2,3}, {1,1,1}, {3,4,5}, {0,0,1} };
+	float studentAvg[5] = {0};
+
+	//for (int row = 0; row < 5; row++)
+	//{
+	//	for (int col = 0; col < 3; col++)
+	//	{
+	//		switch (col)
+	//		{
+	//		case 0:
+	//			printf("국어 점수 입력 : ");
+	//			break;
+	//		case 1:
+	//			printf("수학 점수 입력 : ");
+	//			break;
+	//		case 2:
+	//			printf("영어 점수 입력 : ");
+	//			break;
+	//		}
+	//		scanf("%d", &studentGrade[row][col]);
+	//	}
+	//}
+
+	CalculateAvg(studentGrade, 5, studentAvg);
+	SetStudentGradeOrder(studentAvg, 5);
+
+	for (int i = 0; i < 5; i++)
+	{
+		printf("%d번째 학생의 평균 : %f\n", i, studentAvg[i]);
+	}
+}
+
+void CalculateAvg(const int studentGrade[][3], int rowScale, float studentAvg[])
+{
+	for (int row = 0; row < rowScale; row++)
+	{
+		for (int col = 0; col < 3; col++)
+		{
+			studentAvg[row] += studentGrade[row][col];
+		}
+		studentAvg[row] /= 3.0f;
+	}
+}
+
+void SetStudentGradeOrder(float studentAvg[], int studentAvgScale)
+{
+	int tmpArr[5] = { 0 };
+
+	for (int i = 0; i < studentAvgScale; i++)
+	{
+		for (int a = 0; a <= i; a++)
+		{
+			if (studentAvg[i] > tmpArr[a])
+			{
+				PutDesiredPos(studentAvg, 5, a, studentAvg[i]);
+				tmpArr[a] = studentAvg[i];
+				break;
+			}
+		}
+	}
+}
+
+void PutDesiredPos(int studentAvg[], int studentAvgScale, int desiredIndex, int desiredValue) // 원하는 자리에 놓는다.
+{
+	int tmpArr[5] = { 0 };
+
+	for (int i = desiredIndex+1; i < studentAvgScale; i++)
+	{
+		if (i == studentAvgScale)
+			break;
+		tmpArr[i] = studentAvg[i - 1];
+	}
+
+	for (int i = desiredIndex + 1; i < studentAvgScale; i++)
+		studentAvg[i] = tmpArr[i];
+}
