@@ -1,0 +1,11 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Ground : MonoBehaviour
+{
+    public Color ReturnColor()
+    {
+        return gameObject.GetComponent<MeshRenderer>().material.color;
+    }
+}

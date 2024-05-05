@@ -1,0 +1,138 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\songj\\Desktop\\PageFinder\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|c:\\users\\songj\\desktop\\pagefinder\\assets\\02.scripts\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|solutionrelative:assets\\02.scripts\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|C:\\Users\\songj\\Desktop\\PageFinder\\assets\\02.scripts\\weapon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|solutionrelative:assets\\02.scripts\\weapon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|C:\\Users\\songj\\Desktop\\PageFinder\\assets\\02.scripts\\ground.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|solutionrelative:assets\\02.scripts\\ground.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|C:\\Users\\songj\\Desktop\\PageFinder\\assets\\02.scripts\\ui2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|solutionrelative:assets\\02.scripts\\ui2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|C:\\Users\\songj\\Desktop\\PageFinder\\assets\\02.scripts\\palette.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|solutionrelative:assets\\02.scripts\\palette.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|C:\\Users\\songj\\Desktop\\PageFinder\\assets\\02.scripts\\paletteuimanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|solutionrelative:assets\\02.scripts\\paletteuimanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|C:\\Users\\songj\\Desktop\\PageFinder\\assets\\02.scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD6CC065-65AC-D36D-D780-880E321D6149}|Assembly-CSharp.csproj|solutionrelative:assets\\02.scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UI2.cs",
+              "DocumentMoniker": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\UI2.cs",
+              "RelativeDocumentMoniker": "Assets\\02.Scripts\\UI2.cs",
+              "ToolTip": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\UI2.cs",
+              "RelativeToolTip": "Assets\\02.Scripts\\UI2.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAwAAAA/AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T08:09:29.088Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Ground.cs",
+              "DocumentMoniker": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Ground.cs",
+              "RelativeDocumentMoniker": "Assets\\02.Scripts\\Ground.cs",
+              "ToolTip": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Ground.cs",
+              "RelativeToolTip": "Assets\\02.Scripts\\Ground.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAABGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T07:51:07.018Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Weapon.cs",
+              "DocumentMoniker": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Weapon.cs",
+              "RelativeDocumentMoniker": "Assets\\02.Scripts\\Weapon.cs",
+              "ToolTip": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Weapon.cs",
+              "RelativeToolTip": "Assets\\02.Scripts\\Weapon.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAYAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T07:37:36.633Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Palette.cs",
+              "DocumentMoniker": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Palette.cs",
+              "RelativeDocumentMoniker": "Assets\\02.Scripts\\Palette.cs",
+              "ToolTip": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Palette.cs",
+              "RelativeToolTip": "Assets\\02.Scripts\\Palette.cs",
+              "ViewState": "AQIAADgAAAAAAAAAAAAEwFUAAABlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T06:49:20.854Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PaletteUIManager.cs",
+              "DocumentMoniker": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\PaletteUIManager.cs",
+              "RelativeDocumentMoniker": "Assets\\02.Scripts\\PaletteUIManager.cs",
+              "ToolTip": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\PaletteUIManager.cs",
+              "RelativeToolTip": "Assets\\02.Scripts\\PaletteUIManager.cs",
+              "ViewState": "AQIAAGEAAAAAAAAAAAA/wI0AAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T06:49:19.162Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Enemy.cs",
+              "DocumentMoniker": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Enemy.cs",
+              "RelativeDocumentMoniker": "Assets\\02.Scripts\\Enemy.cs",
+              "ToolTip": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Enemy.cs",
+              "RelativeToolTip": "Assets\\02.Scripts\\Enemy.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAACCAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T06:46:13.384Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Player.cs",
+              "DocumentMoniker": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Player.cs",
+              "RelativeDocumentMoniker": "Assets\\02.Scripts\\Player.cs",
+              "ToolTip": "C:\\Users\\songj\\Desktop\\PageFinder\\Assets\\02.Scripts\\Player.cs",
+              "RelativeToolTip": "Assets\\02.Scripts\\Player.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAYwBkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T05:18:15.944Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
