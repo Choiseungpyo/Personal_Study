@@ -32,8 +32,8 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Debug.Log("»ç¿ëÇÒ »ö±ò : " + colorToUse);
-        Debug.Log("¶¥ »ö±ò : " + groundColor);
+        //Debug.Log("»ç¿ëÇÒ »ö±ò : " + colorToUse);
+        //Debug.Log("¶¥ »ö±ò : " + groundColor);
 
 
         float h = Input.GetAxisRaw("Horizontal");
