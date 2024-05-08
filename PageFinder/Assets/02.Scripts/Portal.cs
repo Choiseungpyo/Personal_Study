@@ -7,22 +7,17 @@ using UnityEngine.SceneManagement;
 
 public class Portal : MonoBehaviour
 {
-    public static Portal instance;
-    private void Awake()
-    {
-        instance = this;
-    }
-
-
     public void ChangeColor(Color color)
     {
         ParticleSystem.MainModule main = GetComponent<ParticleSystem>().main;
-        main.startColor = color; // <- or whatever color you want to assign
+        main.startColor = color; // <- or whatever color you want to assign    
+        StartCoroutine(MoveNextScene());
     }
+
 
     public IEnumerator MoveNextScene()
     {
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("NextScene");
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene("Scene1");
     }
 }

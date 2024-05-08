@@ -13,6 +13,7 @@ public class Weapon : MonoBehaviour
 
     public void ChangeColor(Color color)
     {
+        //Debug.Log("무기 색 변경");
         gameObject.GetComponent<MeshRenderer>().material.color = color;
     }
 }

@@ -11,7 +11,6 @@ public class Palette : MonoBehaviour
 
     List<Color> totalColors = new List<Color>() { Color.red, Color.blue, Color.green }; // 리스트 사용 이유 : 게임 시 계속 추가하거나 삭제될 수 있기에 
 
-    bool test = true;
 
     public static Palette instance;
     private void Awake()
@@ -24,38 +23,6 @@ public class Palette : MonoBehaviour
         ChangeColorOfObj();
     }
 
-    private void Update()
-    {
-        // 테스트용 input
-        if (!test)
-        {
-            if (Input.GetKey(KeyCode.Alpha0))
-                test = true;
-            return;
-        }
-            
-
-        if (Input.GetKey(KeyCode.Alpha1))
-        {
-            totalColors.Add(Color.yellow);
-            Debug.Log(totalColors.Count);
-            test = false;
-        }
-        else if (Input.GetKey(KeyCode.Alpha2))
-        {
-            totalColors.Add(Color.magenta);
-            Debug.Log(totalColors.Count);
-            test = false;
-        }      
-        else if (Input.GetKey(KeyCode.Alpha3))
-        {
-            totalColors.Add(Color.cyan);
-            Debug.Log(totalColors.Count);
-            test = false;
-        }
-            
-        
-    }
 
     public void ChangeCurrentColor(Color color)
     {
@@ -83,7 +50,7 @@ public class Palette : MonoBehaviour
 
     public void ChangeColorOfObj()
     {
-        Weapon.instance.ChangeColor(GameObject.Find("Player").GetComponent<Player>().ReturnColorToUse());
+        Weapon.instance.ChangeColor(currentColor);
     }
 
     public Color ReturnIconColorToUse(int colorIndex) // 위의 아이콘 색깔, 현재 아이콘 색깔, 아래 아이콘 색깔

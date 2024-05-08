@@ -18,7 +18,10 @@ public class PaletteUIManager : MonoBehaviour
 
     float clickTimeAboutColorIconBtn = 0;
     bool isClickColorIconBtn = false;
-
+    private void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
     private void Start()
     {
         SetColorIcon(false);
@@ -42,7 +45,7 @@ public class PaletteUIManager : MonoBehaviour
    public void ColorIconButtonDown()
     {
         isClickColorIconBtn = true;
-        Debug.Log("버튼 누름");
+        //Debug.Log("버튼 누름");
         SetColorIcon(true);
     }
 
@@ -54,9 +57,9 @@ public class PaletteUIManager : MonoBehaviour
             {
                 if (CheckMousePos(Input.mousePosition, i))
                 {
-                    Debug.Log("아이콘 선택");
-                    Debug.Log("변경할 색깔 : " + Palette.instance.ReturnIconColorToUse(i));
-                    Debug.Log("Button Up");
+                    //Debug.Log("아이콘 선택");
+                    //Debug.Log("변경할 색깔 : " + Palette.instance.ReturnIconColorToUse(i));
+                    //Debug.Log("Button Up");
                     Img_CurrentColorIcon.color = Palette.instance.ReturnIconColorToUse(i);
                     Palette.instance.ChangeCurrentColor(Img_CurrentColorIcon.color);
                     Palette.instance.ChangeColorOfObj();

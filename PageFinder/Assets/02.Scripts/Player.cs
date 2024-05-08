@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
@@ -19,16 +20,34 @@ public class Player : MonoBehaviour
     Rigidbody ri;
     Vector3 movement;
 
+    // 포탈 관련
+    bool isContactWithPortal = false;
 
-    // 환경 상호작용용 변수
-    Color groundColor = Color.clear;
-    Color colorToUse = Color.clear;
+    // 스크립트 관련
+    Portal portal;
+    Palette palette;
+
 
     private void Awake()
     {
+        // 스크립트 관련
+        portal = GameObject.Find("Portal").GetComponent<Portal>();
+        palette = GameObject.Find("Player").GetComponent<Palette>();
+
+        // 컴포넌트 관련
         ri = GetComponent<Rigidbody>(); 
         ani = GetComponent<Animator>();
+
+
+        transform.position = new Vector3(0, 0, 3);
+        DontDestroyOnLoad(this);
     }
+
+    private void Update()
+    {
+        Attack();
+    }
+
 
     private void FixedUpdate()
     {
@@ -40,11 +59,11 @@ public class Player : MonoBehaviour
         float v = Input.GetAxisRaw("Vertical");
         Run(h,v);
         Rotate();
-        Attack();
+        
         //Debug.Log(groundColor);
     }
 
-    private void Run(float h, float v)
+    void Run(float h, float v)
     {
         if (v == 0 && h == 0)
         {
@@ -129,9 +148,13 @@ public class Player : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.R))
         {
-            Debug.Log("마우스 좌클릭");
             ChangePlayerState(State.ATTACK);
             SetAniValue();
+
+            if (!isContactWithPortal)
+                return;
+
+            portal.ChangeColor(palette.ReturnCurrentColor());
         }
     }
 
@@ -149,27 +172,22 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider coll)
     {
-        if (coll.name.Contains("Ground"))
-        {
-            Debug.Log("현재 밟고 있는 땅 색깔 변경");
-            groundColor = coll.GetComponent<Ground>().ReturnColor();
-            GameObject.Find("UIManager").GetComponent<UI2>().ChangeBtnPressedColor();
-        }
-            
+        if (!coll.name.Equals("Portal"))
+            return;
+        Debug.Log("포탈과 충돌중");
+        ChangeIsContactWithPortal(true);
     }
 
-    public Color ReturnGroudColor()
+    private void OnTriggerExit(Collider coll)
     {
-        return groundColor;
+        if (!coll.name.Equals("Portal"))
+            return;
+
+        ChangeIsContactWithPortal(false);
     }
 
-    public Color ReturnColorToUse()
+    void ChangeIsContactWithPortal(bool value)
     {
-        return colorToUse;
-    }
-
-    public void ChangeColorToUse(Color color)
-    {
-        colorToUse = color;
+        isContactWithPortal = value;
     }
 }
