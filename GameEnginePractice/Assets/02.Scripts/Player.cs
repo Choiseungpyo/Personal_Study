@@ -9,19 +9,19 @@ public class Player : MonoBehaviour
     }State state;
 
     float moveSpeed = 5f;
-    float rotSpeed = 3;
+    float turnSpeed = 100;
 
     Vector3 movement;
 
     float h, v;
     bool isClickLeftShift = false;
 
-    // ÄÄÆ÷³ÍÆ® °ü·Ã
+    // ì»´í¬ë„ŒíŠ¸ ê´€ë ¨
     Rigidbody ri;
     
     Animator ani;
 
-    // ½ºÅ©¸³Æ® °ü·Ã
+    // ìŠ¤í¬ë¦½íŠ¸ ê´€ë ¨
     PlayerUIManager playerUIManager;
 
     private void Awake()
@@ -65,16 +65,10 @@ public class Player : MonoBehaviour
         if (h == 0 && v == 0)
             return;
 
-        var dir = Vector3.forward;
-
-       
-
         movement.Set(h, 0, v);
         movement = movement.normalized * moveSpeed * Time.deltaTime;
 
-        ri.MovePosition(transform.position + movement);
-        //ri.MovePosition(ri.position + transform.TransformDirection(dir) * (moveSpeed * Time.deltaTime));
-
+        transform.Translate(movement); // ì›”ë“œì¢Œí‘œ ëŒ€ì‹  ìê¸°ìì‹  ê¸°ì¤€ìœ¼ë¡œ ì´ë™
         SetMoveSpeed();
         SetStateAboutMove();
         SetAni();
@@ -82,12 +76,10 @@ public class Player : MonoBehaviour
 
     void Turn()
     {
-        if (h == 0 && v == 0)
+        if (h == 0)
             return;
         movement.Set(h, 0, 0);
-        Quaternion newRot = Quaternion.LookRotation(movement);
-
-        ri.rotation = Quaternion.Slerp(ri.rotation, newRot, rotSpeed * Time.deltaTime);
+        transform.Rotate(new Vector3(0, movement.x * Time.deltaTime * turnSpeed, 0)); // ìê¸° ìì‹ ê¸°ì¤€ íšŒì „
     }
 
 
@@ -103,18 +95,18 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            //Debug.Log("Left Shift ´©¸§");
+            //Debug.Log("Left Shift ëˆ„ë¦„");
             ChangeIsClickLeftShift(true);
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             ChangeIsClickLeftShift(false);
-            //Debug.Log("Left Shift ¼Õ°¡¶ô ¶À");
+            //Debug.Log("Left Shift ì†ê°€ë½ ë—Œ");
         } 
     }
 
     /// <summary>
-    /// ¾Ö´Ï¸ŞÀÌ¼Ç °ü·Ã ¼³Á¤À» ÇÑ´Ù. 
+    /// ì• ë‹ˆë©”ì´ì…˜ ê´€ë ¨ ì„¤ì •ì„ í•œë‹¤. 
     /// </summary>
     void SetAni()
     {
@@ -174,7 +166,7 @@ public class Player : MonoBehaviour
 
     void SetMoveSpeed()
     {
-        if (CheckIsClickLeftShift()) // Left Shift Å°¸¦ ´­·¶À» °æ¿ì
+        if (CheckIsClickLeftShift()) // Left Shift í‚¤ë¥¼ ëˆŒë €ì„ ê²½ìš°
             ChangeMoveSpeed(10.0f);
         else
             ChangeMoveSpeed(5.0f);
