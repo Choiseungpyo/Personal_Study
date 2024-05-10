@@ -26,13 +26,14 @@ public class Player : MonoBehaviour
     // 스크립트 관련
     Portal portal;
     Palette palette;
-
+    TokenManager tokenManager;
 
     private void Awake()
     {
         // 스크립트 관련
         portal = GameObject.Find("Portal").GetComponent<Portal>();
         palette = GameObject.Find("Player").GetComponent<Palette>();
+        tokenManager = GameObject.Find("TokenManager").GetComponent<TokenManager>();
 
         // 컴포넌트 관련
         ri = GetComponent<Rigidbody>(); 
@@ -172,22 +173,28 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider coll)
     {
-        if (!coll.name.Equals("Portal"))
-            return;
-        Debug.Log("포탈과 충돌중");
-        ChangeIsContactWithPortal(true);
+        if (coll.name.Equals("BlackHole"))
+        {
+            tokenManager.StorageCurrentToken();
+        }
+        else if (coll.name.Equals("Portal"))
+        {
+            ChangeIsContactWithPortal(true);
+        }  
     }
 
     private void OnTriggerExit(Collider coll)
     {
-        if (!coll.name.Equals("Portal"))
-            return;
 
-        ChangeIsContactWithPortal(false);
+        if (coll.name.Equals("Portal"))
+        {
+            ChangeIsContactWithPortal(false);
+        }
     }
 
     void ChangeIsContactWithPortal(bool value)
     {
         isContactWithPortal = value;
     }
+
 }

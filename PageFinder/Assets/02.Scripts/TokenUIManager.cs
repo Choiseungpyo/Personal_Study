@@ -23,8 +23,8 @@ public class TokenUIManager : MonoBehaviour
         SetCnt_Txt(0);
     }
 
-    public void SetCnt_Txt(int tokenCnt)
+    public void SetCnt_Txt(int currentTokenCnt)
     {
-        Cnt_Txt.text = tokenCnt.ToString();
+        Cnt_Txt.text = currentTokenCnt.ToString();
     }
 }

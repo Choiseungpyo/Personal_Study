@@ -16,7 +16,7 @@ public class Token : MonoBehaviour
             return;
 
         gameObject.SetActive(false);
-        tokenManager.AddTokenCnt();
+        tokenManager.AddCurrentTokenCnt();
 
     }
 }

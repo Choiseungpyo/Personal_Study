@@ -7,6 +7,11 @@ using UnityEngine.SceneManagement;
 
 public class Portal : MonoBehaviour
 {
+    private void Start()
+    {
+        SetActiveState(false);
+    }
+
     public void ChangeColor(Color color)
     {
         ParticleSystem.MainModule main = GetComponent<ParticleSystem>().main;
@@ -19,5 +24,10 @@ public class Portal : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         SceneManager.LoadScene("Scene1");
+    }
+
+    public void SetActiveState(bool value)
+    {
+        gameObject.SetActive(value);
     }
 }

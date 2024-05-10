@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,6 +41,8 @@ public class Player : MonoBehaviour
     private void Update()
     {
         Run();
+        //Debug.Log(state);
+        ChangeHitAniToIdleAni();
     }
 
     private void FixedUpdate()
@@ -55,6 +58,9 @@ public class Player : MonoBehaviour
 
     void Idle()
     {
+        if (state == State.HIT)
+            return;
+
         if (!(h == 0 && v == 0))
             return;
 
@@ -64,6 +70,9 @@ public class Player : MonoBehaviour
 
     void Move()
     {
+        if (state == State.HIT)
+            return;
+
         if (h == 0 && v == 0)
             return;
 
@@ -78,6 +87,8 @@ public class Player : MonoBehaviour
 
     void Turn()
     {
+        if (state == State.HIT)
+            return;
         if (h == 0)
             return;
         movement.Set(h, 0, 0);
@@ -88,6 +99,8 @@ public class Player : MonoBehaviour
 
     void Run()
     {
+        if (state == State.HIT)
+            return;
         if (playerUIManager.CheckIfRunGaugeIsFull())
         {
             ChangeIsClickLeftShift(false);
@@ -189,5 +202,46 @@ public class Player : MonoBehaviour
     {
         hp -= value;
         Debug.Log("플레이어 Hp : " + hp);
+    }
+
+    private void OnTriggerEnter(Collider coll)
+    {
+        if (!coll.CompareTag("Enemy"))
+            return;
+        Debug.Log("Enter");
+        ChangeState(State.HIT);
+        SetAni();
+        //StartCoroutine(ChangeHitAniToIdleAni());
+    }
+
+    bool CheckIfHitAniIsTerminated()
+    {
+        if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Hit"))
+            return false;
+        Debug.Log("Hit Ani 동작");
+        if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
+            return false;
+        Debug.Log("Hit Ani 종료");
+        return true;
+    }
+
+    //IEnumerator ChangeHitAniToIdleAni()
+    //{
+    //    yield return new WaitForSeconds(0.05f);
+    //    ChangeState(State.IDLE);
+    //    SetAni();
+    //}
+
+    void ChangeHitAniToIdleAni()
+    {
+        if (state != State.HIT)
+            return;
+
+        if (!CheckIfHitAniIsTerminated())
+            return;
+
+        ChangeState(State.IDLE);
+        SetAni();
+        Debug.Log("1111");
     }
 }
