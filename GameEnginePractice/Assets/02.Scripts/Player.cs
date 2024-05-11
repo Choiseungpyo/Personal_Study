@@ -208,7 +208,6 @@ public class Player : MonoBehaviour
     {
         if (!coll.CompareTag("Enemy"))
             return;
-        Debug.Log("Enter");
         ChangeState(State.HIT);
         SetAni();
         //StartCoroutine(ChangeHitAniToIdleAni());
@@ -218,10 +217,10 @@ public class Player : MonoBehaviour
     {
         if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Hit"))
             return false;
-        Debug.Log("Hit Ani 동작");
+        //Debug.Log("Hit Ani 동작");
         if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
             return false;
-        Debug.Log("Hit Ani 종료");
+        //Debug.Log("Hit Ani 종료");
         return true;
     }
 
@@ -242,6 +241,5 @@ public class Player : MonoBehaviour
 
         ChangeState(State.IDLE);
         SetAni();
-        Debug.Log("1111");
     }
 }

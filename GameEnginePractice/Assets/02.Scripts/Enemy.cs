@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 public class Enemy : MonoBehaviour
 {
@@ -16,16 +17,18 @@ public class Enemy : MonoBehaviour
         IDLE, CRAWL
     }State state;
 
-    int hp = 10;
+
     int crawlSpeed = 10;
     int crawlDist = 25;
-
+    int crawlCnt = 0; // 기어간 횟수
+    int goalCntToCrawl = 3;
     Vector3 crawlStartPos;
 
     
     // 스크립트 관련
     GameObject target;
     Player player;
+    EnemyManager enemyManager;
 
     // 컴포넌트 관련
     Animator ani;
@@ -34,6 +37,7 @@ public class Enemy : MonoBehaviour
         ani = GetComponent<Animator>();
         target = GameObject.FindGameObjectWithTag("Player");
         player = target.GetComponent<Player>();
+        enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
     }
 
     private void Start()
@@ -50,6 +54,7 @@ public class Enemy : MonoBehaviour
     {
         ChasePlayer();
         CheckCrawlDist();
+        CheckGoalCntToCrawl();
     }
 
     /// <summary>
@@ -91,7 +96,8 @@ public class Enemy : MonoBehaviour
             return;
         ChangeState(State.IDLE);
         SetAni();
-
+        AddCrawlCnt();
+        Debug.Log(crawlCnt);
         StartCoroutine(ReCrawl());
     }
 
@@ -122,5 +128,32 @@ public class Enemy : MonoBehaviour
 
         player.ChangeHp(1);
         Destroy(gameObject);
+        enemyManager.RemoveObj("enemy", gameObject);
+    }
+
+    void AddCrawlCnt()
+    {
+        ++crawlCnt;
+    }
+
+    void ResetCrawlCnt()
+    {
+        crawlCnt = 0;
+    }
+
+    void CheckGoalCntToCrawl()
+    {
+        if (crawlCnt < goalCntToCrawl)
+            return;
+        Debug.Log("적 삭제 예정");
+        ResetCrawlCnt();
+        StartCoroutine(RemoveEnemy());
+    }
+
+    IEnumerator RemoveEnemy()
+    {
+        yield return new WaitForSeconds(1f);
+        enemyManager.RemoveObj("enemy", gameObject);
+
     }
 }

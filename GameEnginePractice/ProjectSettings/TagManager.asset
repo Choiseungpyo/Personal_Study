@@ -6,6 +6,9 @@ TagManager:
   tags:
   - UIManager
   - Enemy
+  - EnemyManager
+  - Object
+  - Wall
   layers:
   - Default
   - TransparentFX
