@@ -7,7 +7,7 @@ public class Dead : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        GameObject.Find("Chainsaw").GetComponent<Chainsaw>().ChangeState(State.IDLE);
+        GameObject.Find("Chainsaw").GetComponent<Chainsaw>().ChangeState(ChainsawState.IDLE);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

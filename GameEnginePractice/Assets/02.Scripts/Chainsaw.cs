@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public enum State
+public enum ChainsawState
 {
     IDLE, FIND, CHASE, ATTACK, STUN, DEAD
 }
 
 public class Chainsaw : MonoBehaviour
 {
-    State state;
+    ChainsawState state;
 
     float   chaseSpeed = 5;             // 플레이어를 추격할 때 이동 속도
     int     playerDetectDist = 20;      // 플레이어 감지 범위
@@ -40,7 +40,7 @@ public class Chainsaw : MonoBehaviour
     private void Start()
     {
         SetFindStartPos();
-        ChangeState(State.FIND);
+        ChangeState(ChainsawState.FIND);
 
     }
     private void Update()
@@ -57,36 +57,36 @@ public class Chainsaw : MonoBehaviour
     {
         switch (state)
         {
-            case State.IDLE:
+            case ChainsawState.IDLE:
                 ani.SetBool("idle", true);
                 ani.SetBool("stun", false);
                 ani.SetBool("attack", false);
                 break;
-            case State.FIND:
+            case ChainsawState.FIND:
                 ani.SetBool("idle", false);
                 ani.SetBool("stun", false);
                 ani.SetBool("attack", false);
                 ani.SetTrigger("chainsawWalk");
                 ani.SetTrigger("chainsawStart");
                 break;
-            case State.CHASE:
+            case ChainsawState.CHASE:
                 ani.SetBool("idle", false);
                 ani.SetBool("stun", false);
                 ani.SetBool("attack", false);
                 ani.SetTrigger("chainsawRun");
                 break;
-            case State.ATTACK:
+            case ChainsawState.ATTACK:
                 ani.SetBool("idle", false);
                 ani.SetBool("stun", false);
                 ani.SetBool("attack", true);
                 break;
-            case State.STUN:
+            case ChainsawState.STUN:
                 ani.SetBool("idle", false);
                 ani.SetBool("stun", true);
                 ani.SetBool("attack", false);
                 ani.SetTrigger("dead");
                 break;
-            case State.DEAD:
+            case ChainsawState.DEAD:
                 ani.SetBool("idle", false);
                 ani.SetBool("stun", false);
                 ani.SetBool("attack", false);
@@ -94,7 +94,7 @@ public class Chainsaw : MonoBehaviour
         }
     }
 
-    public void ChangeState(State value)
+    public void ChangeState(ChainsawState value)
     {
         state = value;
         SetAni();
@@ -104,9 +104,9 @@ public class Chainsaw : MonoBehaviour
     {
         if (!CheckCanMove())
         {
-            if (CheckIfCurrentStateIsDesiredState(State.STUN) || CheckIfCurrentStateIsDesiredState(State.DEAD))
+            if (CheckIfCurrentStateIsDesiredState(ChainsawState.STUN) || CheckIfCurrentStateIsDesiredState(ChainsawState.DEAD))
                 return;
-            if (!CheckIfCurrentStateIsDesiredState(State.FIND))
+            if (!CheckIfCurrentStateIsDesiredState(ChainsawState.FIND))
                 return;
 
             // 벽에 부딪힌 경우
@@ -123,7 +123,7 @@ public class Chainsaw : MonoBehaviour
         
         //Debug.Log("Chase 시작");
         
-        ChangeState(State.CHASE);
+        ChangeState(ChainsawState.CHASE);
     }
 
     bool CheckDistanceFromPlayer()
@@ -133,7 +133,7 @@ public class Chainsaw : MonoBehaviour
         return true;
     }
 
-    bool CheckIfCurrentStateIsDesiredState(State value)
+    bool CheckIfCurrentStateIsDesiredState(ChainsawState value)
     {
         if (state != value)
             return false;
@@ -156,7 +156,7 @@ public class Chainsaw : MonoBehaviour
             return;
         }
             
-        if (!CheckIfCurrentStateIsDesiredState(State.CHASE))
+        if (!CheckIfCurrentStateIsDesiredState(ChainsawState.CHASE))
             return;
         LookAtPlayer();
 
@@ -178,11 +178,11 @@ public class Chainsaw : MonoBehaviour
     private void OnCollisionEnter(Collision coll)
     {
         if (coll.collider.CompareTag("Object"))
-            ChangeState(State.STUN);
+            ChangeState(ChainsawState.STUN);
         else if (coll.collider.CompareTag("Player"))
         {
             ChangeCanMove(false);
-            ChangeState(State.ATTACK);
+            ChangeState(ChainsawState.ATTACK);
         }
         else if (coll.collider.CompareTag("Wall"))
         {
@@ -196,7 +196,7 @@ public class Chainsaw : MonoBehaviour
         if (coll.collider.CompareTag("Player"))
         {
             ChangeCanMove(true);
-            ChangeState(State.CHASE);
+            ChangeState(ChainsawState.CHASE);
         }
         else if (coll.collider.CompareTag("Wall"))
         {

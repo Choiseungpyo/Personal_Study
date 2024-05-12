@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Player : MonoBehaviour
 {
    enum State {
@@ -19,17 +20,26 @@ public class Player : MonoBehaviour
     float h, v;
     bool isClickLeftShift = false;
 
+
+
+    // NPC 관련
+    bool isContactWithNPC = false;
+
     // 컴포넌트 관련
     Rigidbody ri;
-    
     Animator ani;
 
     // 스크립트 관련
     PlayerUIManager playerUIManager;
+    NPC npc;
+    [HideInInspector]
+    public Candy candy;
 
     private void Awake()
     {
         playerUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PlayerUIManager>();
+        npc = GameObject.FindGameObjectWithTag("NPC").GetComponent<NPC>();
+        candy = GetComponent<Candy>();
         ri = GetComponent<Rigidbody>();
         ani = GetComponent<Animator>();
 
@@ -41,8 +51,8 @@ public class Player : MonoBehaviour
     private void Update()
     {
         Run();
-        //Debug.Log(state);
         ChangeHitAniToIdleAni();
+        TalkNPC();
     }
 
     private void FixedUpdate()
@@ -206,11 +216,24 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider coll)
     {
-        if (!coll.CompareTag("Enemy"))
-            return;
-        ChangeState(State.HIT);
-        SetAni();
-        //StartCoroutine(ChangeHitAniToIdleAni());
+        if (coll.CompareTag("NPC"))
+        {
+            Debug.Log("Coll NPC");
+            ChangeIsContactWithNPC(true);
+        }
+        if (coll.CompareTag("Enemy"))
+        {
+            candy.ChangeCandy(candy.ReturnRandomCandy(), 1);
+            ChangeState(State.HIT);
+            SetAni();
+            //StartCoroutine(ChangeHitAniToIdleAni());
+        }
+    }
+
+    private void OnTriggerExit(Collider coll)
+    {
+        if (coll.CompareTag("NPC"))
+            ChangeIsContactWithNPC(false);
     }
 
     bool CheckIfHitAniIsTerminated()
@@ -241,5 +264,31 @@ public class Player : MonoBehaviour
 
         ChangeState(State.IDLE);
         SetAni();
+    }
+
+    void ChangeIsContactWithNPC(bool value)
+    {
+        isContactWithNPC = value;
+    }
+
+    bool CheckIfItIsContactWithNPC()
+    {
+        return isContactWithNPC ? true : false;
+    }
+
+    void TalkNPC()
+    {
+        if (!CheckIfItIsContactWithNPC())
+            return;
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            string candyType = npc.ReturnCandyType();
+            npc.ChangeState(NPCState.TALK);
+            candy.ChangeCandy(candyType, 1);
+            playerUIManager.ChangeCandyCntTxt(0,"hard");
+            playerUIManager.ChangeCandyCntTxt(1,"lollipop");
+            playerUIManager.ChangeCandyCntTxt(2,"muffin");
+        }
     }
 }
