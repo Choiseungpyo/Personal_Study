@@ -7,7 +7,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
    enum State {
-        IDLE, WALK, RUN, HIT
+        IDLE, WALK, RUN, HIT, TALK
     }State state;
 
     int hp = 10;
@@ -53,6 +53,13 @@ public class Player : MonoBehaviour
         Run();
         ChangeHitAniToIdleAni();
         TalkNPC();
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Debug.Log("t");
+            ChangeState(State.TALK);
+            SetAni();
+        }
+            
     }
 
     private void FixedUpdate()
@@ -68,7 +75,7 @@ public class Player : MonoBehaviour
 
     void Idle()
     {
-        if (state == State.HIT)
+        if (state == State.HIT || state == State.TALK)
             return;
 
         if (!(h == 0 && v == 0))
@@ -80,7 +87,7 @@ public class Player : MonoBehaviour
 
     void Move()
     {
-        if (state == State.HIT)
+        if (state == State.HIT || state == State.TALK)
             return;
 
         if (h == 0 && v == 0)
@@ -97,7 +104,7 @@ public class Player : MonoBehaviour
 
     void Turn()
     {
-        if (state == State.HIT)
+        if (state == State.HIT || state == State.TALK)
             return;
         if (h == 0)
             return;
@@ -109,7 +116,7 @@ public class Player : MonoBehaviour
 
     void Run()
     {
-        if (state == State.HIT)
+        if (state == State.HIT || state == State.TALK)
             return;
         if (playerUIManager.CheckIfRunGaugeIsFull())
         {
@@ -157,6 +164,12 @@ public class Player : MonoBehaviour
                 ani.SetBool("walk", false);
                 ani.SetBool("run", false);
                 ani.SetTrigger("hit");
+                break;
+            case State.TALK:
+                ani.SetBool("idle", false);
+                ani.SetBool("walk", false);
+                ani.SetBool("run", false);
+                ani.SetTrigger("talk");
                 break;
         }
     }
@@ -220,6 +233,9 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Coll NPC");
             ChangeIsContactWithNPC(true);
+            ChangeState(State.TALK);
+            SetAni();
+            // TALK 애니메이션 끝나고 IDLE 상태로 바꾸고 움직일 수 있게 만드는 코드 작성해야함. 
         }
         if (coll.CompareTag("Enemy"))
         {
@@ -246,13 +262,6 @@ public class Player : MonoBehaviour
         //Debug.Log("Hit Ani 종료");
         return true;
     }
-
-    //IEnumerator ChangeHitAniToIdleAni()
-    //{
-    //    yield return new WaitForSeconds(0.05f);
-    //    ChangeState(State.IDLE);
-    //    SetAni();
-    //}
 
     void ChangeHitAniToIdleAni()
     {
