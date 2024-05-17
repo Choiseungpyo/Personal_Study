@@ -19,12 +19,20 @@ public class ReinforceUIManager : MonoBehaviour
 
     bool didSelectReinforceBody = false;
 
-
+    // 스크립트 관련
     ExpUIManager expUIManager;
+    Exp exp;
+    Level level;
 
+    private void Awake()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        expUIManager = GameObject.Find("UIManager").GetComponent<ExpUIManager>();
+        exp = player.GetComponent<Exp>();
+        level = player.GetComponent<Level>();
+    }
     private void Start()
     {
-        expUIManager = GameObject.Find("UIManager").GetComponent<ExpUIManager>();
         SetUI();
         ChangeReinforceCanvasState(false);
     }
@@ -39,16 +47,23 @@ public class ReinforceUIManager : MonoBehaviour
         for (int i = 0; i < Content_Img.Length; i++)
         {
             Content_Img[i].sprite = content_Spr[icurrentReinforceBodys[i]]; 
-        }
-            
+        }  
     }
 
-    void ChangeTitleTxt()
+    /// <summary>
+    /// 기억 제목들을 변경한다.
+    /// </summary>
+    void ChangeTitleTxts()
     {
         for (int i = 0; i < Title_Txt.Length; i++)
             Title_Txt[i].text = ReturnTitleTxt(icurrentReinforceBodys[i]);
     }
 
+    /// <summary>
+    /// 기억 제목 텍스트를 리턴한다. 
+    /// </summary>
+    /// <param name="n">기억 요소</param>
+    /// <returns>기억 제목 문자열</returns>
     string ReturnTitleTxt(int n)
     {
         /*
@@ -79,12 +94,20 @@ public class ReinforceUIManager : MonoBehaviour
         }
     }
 
-    void ChangeContentTxt()
+    /// <summary>
+    /// 기억 내용 텍스트들을 변경한다. 
+    /// </summary>
+    void ChangeContentTxts()
     {
         for (int i = 0; i < Content_Txt.Length; i++)
             Content_Txt[i].text = ReturnContentTxt(icurrentReinforceBodys[i]);
     }
 
+    /// <summary>
+    /// 기억 내용 텍스트를 리턴한다. 
+    /// </summary>
+    /// <param name="n">기억 요소</param>
+    /// <returns>기억 내용 문자열</returns>
     string ReturnContentTxt(int n)
     {
         /*
@@ -130,6 +153,8 @@ public class ReinforceUIManager : MonoBehaviour
                 ReinforceSelectedBody(i);
                 ChangeReinforceCanvasState(false);
                 expUIManager.ResetExpBar();
+                exp.ResetExp();
+                level.IncreaseCurrentLevel(1); // 레벨 증가
                 break;
             }
         }
@@ -215,34 +240,52 @@ public class ReinforceUIManager : MonoBehaviour
         return randomNum;
     }
 
-
+    /// <summary>
+    /// UI를 설정한다. 
+    /// </summary>
     void SetUI()
     {
         ResetICurrentReinforceBodys();  // icurrentReinforceBodys 리셋
         SetICurrentReinforceBodys();    // icurrentReinforceBodys 값 설정
         //Debug.Log(icurrentReinforceBodys.Count);
         ChangeImgsContent(); // 이미지 변경
-        ChangeTitleTxt();    // 제목 텍스트 변경
-        ChangeContentTxt();  // 내용 텍스트 변경
+        ChangeTitleTxts();    // 제목 텍스트 변경
+        ChangeContentTxts();  // 내용 텍스트 변경
     }
 
-
+    /// <summary>
+    /// 증강 캔버스의 상태를 변경한다. 
+    /// </summary>
+    /// <param name="value">변경할 상태 값</param>
     public void ChangeReinforceCanvasState(bool value)
     {
         Reinforce_Canvas.gameObject.SetActive(value);
     }
 
-    public void ActivateReinforceUI()
+    /// <summary>
+    /// 증강 UI를 활성화한다. 
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator ActivateReinforceUI()
     {
+        yield return new WaitForSeconds(0.25f);
         ChangeReinforceCanvasState(true);
         SetUI();
     }
 
+    /// <summary>
+    /// 증강체를 선택했는지 확인하는 변수의 값을 변경한다. 
+    /// </summary>
+    /// <param name="value">변경할 값</param>
     public void ChangeDidSelectReinforceBody(bool value)
     {
         didSelectReinforceBody = value;
     }
 
+    /// <summary>
+    /// 증강체를 선택했는지 확인하는 변수의 값을 리턴한다. 
+    /// </summary>
+    /// <returns>증강체를 선택했는지 확인하는 변수의 값</returns>
     public bool ReturnDidSelectReinforceBody()
     {
         return didSelectReinforceBody;

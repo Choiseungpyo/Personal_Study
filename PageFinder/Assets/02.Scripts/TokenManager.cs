@@ -22,48 +22,64 @@ public class TokenManager : MonoBehaviour
     TokenUIManager tokenUIManager;
     private void Awake()
     {
-        tokenUIManager = GameObject.Find("UIManager").GetComponent<TokenUIManager>();
         DontDestroyOnLoad(this);
+        tokenUIManager = GameObject.Find("UIManager").GetComponent<TokenUIManager>();
     }
-
-
-    private void Update()
-    {
-        CheckCurrentTokenCnt();
-    }
-
+    
+    /// <summary>
+    /// 토큰을 생성한다.
+    /// </summary>
+    /// <param name="pos">토큰 생성 위치</param>
     public void MakeToken(Vector3 pos)
     {
         Instantiate(Token_Prefab, pos, Quaternion.identity, gameObject.transform);
     }
 
-    public void AddCurrentTokenCnt()
+    /// <summary>
+    /// 토큰 개수를 1 증가시킨다. 
+    /// </summary>
+    public void IncreaseCurrentTokenCnt()
     {
         ++currentTokenCnt;
         tokenUIManager.SetCnt_Txt(currentTokenCnt);
     }
 
+    /// <summary>
+    /// 현재 토큰 개수를 0으로 리셋시킨다.
+    /// </summary>
     void ResetCurrentTokenCnt()
     {
         currentTokenCnt = 0;
         tokenUIManager.SetCnt_Txt(currentTokenCnt);
     }
 
-    void CheckCurrentTokenCnt()
+    /// <summary>
+    /// 저장토큰이 목표 토큰에 도달했는지 체크한다. 
+    /// </summary>
+    void CheckStoragedTokenHasReachedTargetToken()
     {
         if (storagedTokenCnt < tokenCntAboutNextScene)
             return;
+
+        // 저장 토큰이 목표 토큰에 도달했을 경우 처리코드
         BlackHole_Obj.GetComponent<BlackHole>().SetActiveState(false); // 블랙홀 비활성화
         Portal_Obj.GetComponent<Portal>().SetActiveState(true);
-        ResetStoragedTokenCnt(); 
+        ResetStoragedTokenCnt();
     }
 
+    /// <summary>
+    /// 현재 토큰을 저장 토큰에 저장한다. 
+    /// </summary>
     public void StorageCurrentToken()
     {
         storagedTokenCnt += currentTokenCnt;
         ResetCurrentTokenCnt();
+        CheckStoragedTokenHasReachedTargetToken();
     }
 
+    /// <summary>
+    /// 저장 토큰을 0으로 리셋시킨다. 
+    /// </summary>
     void ResetStoragedTokenCnt()
     {
         storagedTokenCnt = 0;

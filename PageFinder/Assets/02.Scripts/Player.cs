@@ -11,6 +11,9 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
+    // 나중에 충돌, 움직임, 상태 전부 클래스 나누기
+
+
     public enum State { 
         IDLE, RUN, ATTACK
     }State state;
@@ -30,18 +33,17 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        DontDestroyOnLoad(this);
         // 스크립트 관련
         portal = GameObject.Find("Portal").GetComponent<Portal>();
-        palette = GameObject.Find("Player").GetComponent<Palette>();
+        palette = GameObject.FindWithTag("Player").GetComponent<Palette>();
         tokenManager = GameObject.Find("TokenManager").GetComponent<TokenManager>();
 
         // 컴포넌트 관련
         ri = GetComponent<Rigidbody>(); 
         ani = GetComponent<Animator>();
 
-
         transform.position = new Vector3(0, 0, 3);
-        DontDestroyOnLoad(this);
     }
 
     private void Update()
@@ -52,31 +54,27 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //Debug.Log("사용할 색깔 : " + colorToUse);
-        //Debug.Log("땅 색깔 : " + groundColor);
-
-
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         Run(h,v);
         Rotate();
-        
-        //Debug.Log(groundColor);
     }
 
     void Run(float h, float v)
     {
+        // 아무 움직임도 하지 않을 경우
         if (v == 0 && h == 0)
         {
-            if (CheckAttackAniIsPlaying())
-                return;
-
             ChangePlayerState(State.IDLE);
             SetAniValue();
             //Debug.Log("어떠한 키도 누르지 않음");
             return;
         }
 
+        if (CheckAttackAniIsPlaying())
+            return;
+
+        // 움직일 경우
 
         movement.Set(h, 0, v);
         movement = movement.normalized * speed * Time.deltaTime;
@@ -111,18 +109,31 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 플레이어의 몸을 회전시킨다. 
+    /// </summary>
     void Rotate()
     {
+        if (CheckAttackAniIsPlaying())
+            return;
+
         int Rotspeed = 5;
         Quaternion newRotation = Quaternion.LookRotation(movement);
         ri.rotation = Quaternion.Slerp(ri.rotation, newRotation, Rotspeed * Time.deltaTime);
     }
 
+    /// <summary>
+    /// 플레이어의 상태를 변경한다. 
+    /// </summary>
+    /// <param name="value">변경할 상태</param>
     void ChangePlayerState(State value)
     {
         state = value; 
     }
 
+    /// <summary>
+    /// 애니메이션 값을 변경한다. 
+    /// </summary>
     void SetAniValue()
     {
         switch(state)
@@ -130,24 +141,25 @@ public class Player : MonoBehaviour
             case State.IDLE:
                 ani.SetBool("isIdle", true);
                 ani.SetBool("isRun", false);
-                ani.SetBool("isAttack", false);
                 break;
             case State.RUN:
                 ani.SetBool("isIdle", false);
                 ani.SetBool("isRun", true);
-                ani.SetBool("isAttack", false);
                 break;
             case State.ATTACK:
                 ani.SetBool("isIdle", false);
                 ani.SetBool("isRun", false);
-                ani.SetBool("isAttack", true);
+                ani.SetTrigger("attack");
                 break;
         }
     }
 
+    /// <summary>
+    /// 공격을 관리한다. 
+    /// </summary>
     void Attack()
     {
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             ChangePlayerState(State.ATTACK);
             SetAniValue();
@@ -159,11 +171,19 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 현재 상태를 리턴한다. 
+    /// </summary>
+    /// <returns></returns>
     public State ReturnState()
     {
         return state;
     }
 
+    /// <summary>
+    /// 공격 애니메이션이 동작중인지 체크한다. 
+    /// </summary>
+    /// <returns></returns>
     public bool CheckAttackAniIsPlaying()
     {
         if (ani.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
@@ -171,6 +191,10 @@ public class Player : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// 충돌할 때를 관리한다.
+    /// </summary>
+    /// <param name="coll">충돌체</param>
     private void OnTriggerEnter(Collider coll)
     {
         if (coll.name.Equals("BlackHole"))
@@ -183,6 +207,10 @@ public class Player : MonoBehaviour
         }  
     }
 
+    /// <summary>
+    /// 충돌 후 빠져 나갈때를 관리한다
+    /// </summary>
+    /// <param name="coll">충돌체</param>
     private void OnTriggerExit(Collider coll)
     {
 
@@ -192,6 +220,10 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 포탈과 접촉했는지의 변수를 변경한다. 
+    /// </summary>
+    /// <param name="value"></param>
     void ChangeIsContactWithPortal(bool value)
     {
         isContactWithPortal = value;

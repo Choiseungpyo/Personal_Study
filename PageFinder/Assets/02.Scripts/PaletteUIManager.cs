@@ -18,9 +18,14 @@ public class PaletteUIManager : MonoBehaviour
 
     float clickTimeAboutColorIconBtn = 0;
     bool isClickColorIconBtn = false;
+
+    // 스크립트 관련
+    Palette palette;
+
     private void Awake()
     {
         DontDestroyOnLoad(this);
+        palette = GameObject.FindWithTag("Player").GetComponent<Palette>();
     }
     private void Start()
     {
@@ -30,22 +35,12 @@ public class PaletteUIManager : MonoBehaviour
 
     private void Update()
     {
-        //Debug.Log(Input.mousePosition);
         CheckColorIconButtonClickTime();
     }
 
-
-    // 맨 처음에는 현재 색깔 아이콘만 뜨게함
-    // 해당 아이콘 클릭시 변경할 수 있는 색깔이 위 아래로 뜸
-    
-
-    // 만약 드래그 후 해당 색깔 아이콘 위치까지 갔을 경우 
-    // 해당 색깔 아이콘의 투명도를 1로 변경하여 해당 위치까지 갔다는 것을 알린다. 
-    
    public void ColorIconButtonDown()
     {
         isClickColorIconBtn = true;
-        //Debug.Log("버튼 누름");
         SetColorIcon(true);
     }
 
@@ -60,9 +55,9 @@ public class PaletteUIManager : MonoBehaviour
                     //Debug.Log("아이콘 선택");
                     //Debug.Log("변경할 색깔 : " + Palette.instance.ReturnIconColorToUse(i));
                     //Debug.Log("Button Up");
-                    Img_CurrentColorIcon.color = Palette.instance.ReturnIconColorToUse(i);
-                    Palette.instance.ChangeCurrentColor(Img_CurrentColorIcon.color);
-                    Palette.instance.ChangeColorOfObj();
+                    Img_CurrentColorIcon.color = palette.ReturnIconColorToUse(i);
+                    palette.ChangeCurrentColor(Img_CurrentColorIcon.color);
+                    palette.ChangeColorOfObj();
                     break;
                 }
             }       
@@ -83,7 +78,7 @@ public class PaletteUIManager : MonoBehaviour
     
     bool CheckMousePos(Vector3 mousePos, int colorIconIndexToWant)
     {
-        int totalColorCount = Palette.instance.ReturnTotalColorCount() - 3;
+        int totalColorCount = palette.ReturnTotalColorCount() - 3;
         float width = Obj_ColorSet[totalColorCount].GetComponentInChildren<Image>().rectTransform.rect.width;
         float height = Obj_ColorSet[totalColorCount].GetComponentInChildren<Image>().rectTransform.rect.height;
 
@@ -100,7 +95,7 @@ public class PaletteUIManager : MonoBehaviour
 
     void ChangeObj_ColorSet_State(bool value)
     {
-        int objToSelet = Palette.instance.ReturnTotalColorCount() -3;
+        int objToSelet = palette.ReturnTotalColorCount() -3;
 
         for (int i = 0; i < Obj_ColorSet.Length; i++)
         {
@@ -119,7 +114,7 @@ public class PaletteUIManager : MonoBehaviour
 
     void SetColorToChange_Obj_Color(int colorIndex)
     {
-        Img_ColorIcon[colorIndex].color = Palette.instance.ReturnIconColorToUse(colorIndex);            
+        Img_ColorIcon[colorIndex].color = palette.ReturnIconColorToUse(colorIndex);            
     }
 
     void Add_ListImg_ColorIcon(int colorSetIndex, int colorIconIndex)
@@ -129,8 +124,8 @@ public class PaletteUIManager : MonoBehaviour
 
     void SetImg_ColorIcon()
     {
-        int totalColorCount = Palette.instance.ReturnTotalColorCount() -1;
-        int colorSetIndex = Palette.instance.ReturnTotalColorCount() - 3;
+        int totalColorCount = palette.ReturnTotalColorCount() -1;
+        int colorSetIndex = palette.ReturnTotalColorCount() - 3;
         int colorIconIndex = 0;
         Img_ColorIcon.Clear(); // 한번 리스트 비우기
 
