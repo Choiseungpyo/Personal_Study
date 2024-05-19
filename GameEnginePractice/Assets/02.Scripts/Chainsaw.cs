@@ -29,23 +29,25 @@ public class Chainsaw : MonoBehaviour
     // 플레이어 관련
     GameObject player;
 
+    // 스크립트 관련
+    EnemyManager enemyManager;
+
     // 컴포넌트 관련
     Animator ani;
     private void Awake()
     {
         player = GameObject.FindWithTag("Player");
         ani = GetComponent<Animator>();
-        
+        enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+
     }
     private void Start()
     {
         SetFindStartPos();
         ChangeState(ChainsawState.FIND);
-
     }
     private void Update()
     {
-        Debug.Log(state);
         FindPlayer();
         ChasePlaeyr();
     }
@@ -116,7 +118,7 @@ public class Chainsaw : MonoBehaviour
             ChangeCanMove(true);
             return;
         }
-           
+
         MoveToFind();
         if (!CheckDistanceFromPlayer())
             return;
@@ -178,7 +180,11 @@ public class Chainsaw : MonoBehaviour
     private void OnCollisionEnter(Collision coll)
     {
         if (coll.collider.CompareTag("Object"))
+        {
+            ChangeCanMove(false);
             ChangeState(ChainsawState.STUN);
+            Debug.Log("가로등 부딪힘");
+        }
         else if (coll.collider.CompareTag("Player"))
         {
             ChangeCanMove(false);
@@ -289,18 +295,9 @@ public class Chainsaw : MonoBehaviour
         else 
             return 0;
     }
-
-
-
-    /*
-     * 1. 이동 방향 정하기 
-     * 2. 자기 자신 기준으로 v3.forward 
-     * 3. 탐색 거리 확인
-     * 4. 탐색 거리 도달시 1번으로 loop
-     * 
-     * 
-     * 
-     * 
-     * 
-     */
+    
+    public void RemoveChainsaw()
+    {
+        enemyManager.RemoveObj("enemy", gameObject);
+    }
 }

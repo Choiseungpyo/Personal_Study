@@ -19,18 +19,17 @@ public class Enemy : MonoBehaviour
 
 
     int crawlSpeed = 10;
-    int crawlDist = 25;
+    int crawlDist = 15;
     int crawlCnt = 0; // 기어간 횟수
     int goalCntToCrawl = 3;
     Vector3 crawlStartPos;
 
 
-
-    
     // 스크립트 관련
     GameObject target;
     Player player;
     EnemyManager enemyManager;
+
 
     // 컴포넌트 관련
     Animator ani;
@@ -55,7 +54,6 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         ChasePlayer();
-        CheckCrawlDist();
         CheckGoalCntToCrawl();
     }
 
@@ -86,20 +84,23 @@ public class Enemy : MonoBehaviour
     {
         if (state != State.CRAWL)
             return;
-        
+        if(CheckCrawlDist())
+        {
+            ChangeState(State.IDLE);
+            SetAni();
+            AddCrawlCnt();
+            StartCoroutine(ReCrawl());
+            return;
+        }
+
         transform.Translate(Vector3.forward * Time.deltaTime * crawlSpeed);
     }
 
-    void CheckCrawlDist()
+    bool CheckCrawlDist()
     {
-        if (state != State.CRAWL)
-            return;
         if (Vector3.Distance(transform.position, crawlStartPos) < crawlDist)
-            return;
-        ChangeState(State.IDLE);
-        SetAni();
-        AddCrawlCnt();
-        StartCoroutine(ReCrawl());
+            return false;
+        return true;
     }
 
     IEnumerator ReCrawl()
@@ -126,10 +127,11 @@ public class Enemy : MonoBehaviour
         if (coll.collider.CompareTag("Wall"))
         {
             // 벽과 닿았을 때 움직임 멈추고 다시 플레이어 조준
-            ChangeState(State.IDLE);
-            SetAni();
-            AddCrawlCnt();
-            StartCoroutine(ReCrawl());
+            //ChangeState(State.IDLE);
+            //SetAni();
+            //AddCrawlCnt();
+            //StartCoroutine(ReCrawl());
+            Destroy(gameObject);
         }
         else if(coll.collider.CompareTag("Player"))
         {
@@ -138,7 +140,6 @@ public class Enemy : MonoBehaviour
             enemyManager.RemoveObj("enemy", gameObject);
         }
     }
-
 
     void AddCrawlCnt()
     {
@@ -154,7 +155,7 @@ public class Enemy : MonoBehaviour
     {
         if (crawlCnt < goalCntToCrawl)
             return;
-        //Debug.Log("적 삭제 예정");
+        Debug.Log("삭제 예쩡");
         ResetCrawlCnt();
         StartCoroutine(RemoveEnemy());
     }

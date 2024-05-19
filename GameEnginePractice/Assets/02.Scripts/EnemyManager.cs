@@ -1,9 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.IO.LowLevel.Unsafe;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
+using Random = UnityEngine.Random;
 
 public class EnemyManager : MonoBehaviour
 {
@@ -15,6 +14,11 @@ public class EnemyManager : MonoBehaviour
     // 이펙트
     public GameObject Pierrot_AppearanceEffect;
     public GameObject Pierrot_AreaEffect;
+    public GameObject Zombie_AppearanceEffect;
+    public GameObject Killer_AppearanceEffect;
+
+    // 타겟
+    public GameObject Player_Obj;
 
     // 생성된 적
     List<GameObject> enemys = new List<GameObject> ();
@@ -22,20 +26,23 @@ public class EnemyManager : MonoBehaviour
     List<GameObject> appearanceEffects = new List<GameObject> ();
 
     // 스폰 포인트
-    public Transform[] EnemySpawnPoints = new Transform[4];
+    public Transform[] EnemySpawnPoints = new Transform[10];
 
-
-    private void Start()
-    {
-        Vector3 pos = new Vector3(-15, 0, 5);
-        //StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, pos));
-        
-    }
+    float enemySpawnTime = 5f;
 
     private void Update()
     {
-        //if(Input.GetMouseButtonDown(0))
-        //    AddList("enemy", MakeObj(Zombie_Prefab, ReturnRandPos()));
+        if(Input.GetMouseButtonDown(0))
+        {
+            int randEnemyIndex = 0;
+            Vector3 randPos = Vector3.zero;
+            randEnemyIndex = ReturnRandEnemyIndex();
+            randPos = ReturnRandPos();
+            GameObject tmp = MakeObj(Zombie_Prefab, randPos);
+            tmp.name = "Chainsaw";
+            AddList("enemys", tmp);
+            MakeAppearanceEffect(randEnemyIndex, randPos);
+        }
     }
 
     GameObject MakeObj(GameObject prefab, Vector3 pos)
@@ -56,6 +63,33 @@ public class EnemyManager : MonoBehaviour
             case "appearanceEffects":
                 appearanceEffects.Add(obj);
                 break;
+        }
+    }
+
+    IEnumerator MakeEnemys()
+    {
+        int randEnemyIndex = 0;
+        Vector3 randPos = Vector3.zero;
+        while(true)
+        {
+            randEnemyIndex = ReturnRandEnemyIndex();
+            randPos = ReturnRandPos();
+            if (randEnemyIndex == 0)
+            {
+                AddList("enemys", MakeObj(Zombie_Prefab, randPos));
+                MakeAppearanceEffect(randEnemyIndex, randPos);
+            } 
+            else if (randEnemyIndex == 1)
+            {
+                StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, Player_Obj.transform.position));
+                AddList("enemys", MakeObj(Zombie_Prefab, Player_Obj.transform.position));
+            }
+            else if (randEnemyIndex == 2)
+            {
+                AddList("enemys", MakeObj(Killer_Prefab, randPos));
+                MakeAppearanceEffect(randEnemyIndex, randPos);
+            } 
+            yield return new WaitForSeconds(enemySpawnTime);
         }
     }
 
@@ -108,6 +142,24 @@ public class EnemyManager : MonoBehaviour
     Vector3 ReturnRandPos()
     {
         int randIndex = Random.Range(0, EnemySpawnPoints.Length); // 0 ~ 3
-        return EnemySpawnPoints[randIndex].transform.position;
+        return EnemySpawnPoints[0].transform.position;
+    }
+
+    int ReturnRandEnemyIndex()
+    {
+        // 0 : 좀비
+        // 1 : 삐에로
+        // 2 : 식구
+
+        int randIndex = Random.Range(0, 3); // 0 ~ 2
+        return randIndex;
+    }
+
+    void MakeAppearanceEffect(int index, Vector3 pos)
+    {
+        if(index ==0)
+            Instantiate(Zombie_AppearanceEffect, pos, Quaternion.identity);
+        else if(index==2)
+            Instantiate(Killer_AppearanceEffect, pos, Quaternion.identity);
     }
 }
