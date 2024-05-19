@@ -1,10 +1,19 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Candy : MonoBehaviour
 {
+    // 스크립트 관련
+    PlayerUIManager playerUIManager;
+
+    private void Awake()
+    {
+        playerUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PlayerUIManager>();
+    }
+
     // Candy 관련
     Dictionary<string, int> candy = new Dictionary<string, int>()
     {
@@ -13,7 +22,7 @@ public class Candy : MonoBehaviour
         { "muffin", 0}
     };
 
-    public void ChangeCandy(string type, int value)
+    public void ChangeCandyCnt(string type, int value)
     {
         switch(type)
         {
@@ -30,10 +39,15 @@ public class Candy : MonoBehaviour
                 Debug.LogWarning(type + " - " + value);
                 break;
         }
-        Debug.Log(type + " ++");
-        Debug.Log(candy["hard"]);
-        Debug.Log(candy["lollipop"]);
-        Debug.Log(candy["muffin"]);
+
+        // 변경된 캔디 UI 변경
+        playerUIManager.ChangeCandyCntTxt(0, type);
+
+        //Debug.Log(type + " ++");
+        //Debug.Log(candy["hard"]);
+        //Debug.Log(candy["lollipop"]);
+        //Debug.Log(candy["muffin"]);//
+        //Debug.Log(candy["muffin"]);//
     }
 
 

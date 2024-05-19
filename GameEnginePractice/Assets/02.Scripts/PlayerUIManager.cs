@@ -25,6 +25,7 @@ public class PlayerUIManager : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         for (int i = 0; i < Candy.Length; i++)
             ChangeCandyObjState(i, false);
+        InitRunGauge();
     }
 
     private void Update()
@@ -36,17 +37,22 @@ public class PlayerUIManager : MonoBehaviour
     {
         if (!player.CheckIfCurrentStateIsRun())
         {
-            RunGauge_Slid.value -= Time.deltaTime * runGaugeSpeed;
+            RunGauge_Slid.value += Time.deltaTime * runGaugeSpeed;
         }
         else
         {
-            RunGauge_Slid.value += Time.deltaTime * runGaugeSpeed;
+            RunGauge_Slid.value -= Time.deltaTime * runGaugeSpeed;
         }
     }
 
-    public bool CheckIfRunGaugeIsFull()
+    void InitRunGauge()
     {
-        if (RunGauge_Slid.value == 1)
+        RunGauge_Slid.value = 1;
+    }
+
+    public bool CheckIfRunGaugeHasRunOut()
+    {
+        if (RunGauge_Slid.value == 0)
             return true;
         return false;
     }

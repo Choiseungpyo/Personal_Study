@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.IO.LowLevel.Unsafe;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
@@ -20,12 +21,21 @@ public class EnemyManager : MonoBehaviour
     List<GameObject> areaEffects = new List<GameObject> ();
     List<GameObject> appearanceEffects = new List<GameObject> ();
 
+    // 스폰 포인트
+    public Transform[] EnemySpawnPoints = new Transform[4];
+
 
     private void Start()
     {
         Vector3 pos = new Vector3(-15, 0, 5);
-        StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, pos));
-        //AddList("enemy", MakeObj(Pierrot_Prefab, new Vector3(-15, 0, 5)));
+        //StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, pos));
+        
+    }
+
+    private void Update()
+    {
+        //if(Input.GetMouseButtonDown(0))
+        //    AddList("enemy", MakeObj(Zombie_Prefab, ReturnRandPos()));
     }
 
     GameObject MakeObj(GameObject prefab, Vector3 pos)
@@ -95,4 +105,9 @@ public class EnemyManager : MonoBehaviour
         RemoveListElement(type, obj);
     }
 
+    Vector3 ReturnRandPos()
+    {
+        int randIndex = Random.Range(0, EnemySpawnPoints.Length); // 0 ~ 3
+        return EnemySpawnPoints[randIndex].transform.position;
+    }
 }

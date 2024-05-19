@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour
     int goalCntToCrawl = 3;
     Vector3 crawlStartPos;
 
+
+
     
     // 스크립트 관련
     GameObject target;
@@ -97,7 +99,6 @@ public class Enemy : MonoBehaviour
         ChangeState(State.IDLE);
         SetAni();
         AddCrawlCnt();
-        Debug.Log(crawlCnt);
         StartCoroutine(ReCrawl());
     }
 
@@ -120,16 +121,24 @@ public class Enemy : MonoBehaviour
     {
         crawlStartPos = transform.position;
     }
-
-    private void OnTriggerEnter(Collider coll)
+    private void OnCollisionEnter(Collision coll)
     {
-        if (!coll.CompareTag("Player"))
-            return;
-
-        player.ChangeHp(1);
-        Destroy(gameObject);
-        enemyManager.RemoveObj("enemy", gameObject);
+        if (coll.collider.CompareTag("Wall"))
+        {
+            // 벽과 닿았을 때 움직임 멈추고 다시 플레이어 조준
+            ChangeState(State.IDLE);
+            SetAni();
+            AddCrawlCnt();
+            StartCoroutine(ReCrawl());
+        }
+        else if(coll.collider.CompareTag("Player"))
+        {
+            player.ChangeHp(1);
+            Destroy(gameObject);
+            enemyManager.RemoveObj("enemy", gameObject);
+        }
     }
+
 
     void AddCrawlCnt()
     {
@@ -145,7 +154,7 @@ public class Enemy : MonoBehaviour
     {
         if (crawlCnt < goalCntToCrawl)
             return;
-        Debug.Log("적 삭제 예정");
+        //Debug.Log("적 삭제 예정");
         ResetCrawlCnt();
         StartCoroutine(RemoveEnemy());
     }
@@ -154,6 +163,7 @@ public class Enemy : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         enemyManager.RemoveObj("enemy", gameObject);
-
     }
+
+
 }

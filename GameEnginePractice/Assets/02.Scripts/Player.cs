@@ -21,9 +21,8 @@ public class Player : MonoBehaviour
     bool isClickLeftShift = false;
 
 
-
     // NPC 관련
-    bool isContactWithNPC = false;
+    GameObject npc = null;
 
     // 컴포넌트 관련
     Rigidbody ri;
@@ -31,14 +30,12 @@ public class Player : MonoBehaviour
 
     // 스크립트 관련
     PlayerUIManager playerUIManager;
-    NPC npc;
     [HideInInspector]
     public Candy candy;
 
     private void Awake()
     {
         playerUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PlayerUIManager>();
-        npc = GameObject.FindGameObjectWithTag("NPC").GetComponent<NPC>();
         candy = GetComponent<Candy>();
         ri = GetComponent<Rigidbody>();
         ani = GetComponent<Animator>();
@@ -53,6 +50,7 @@ public class Player : MonoBehaviour
         Run();
         ChangeHitAniToIdleAni();
         TalkNPC();
+        ChangeIdleState();
         if (Input.GetKeyDown(KeyCode.T))
         {
             Debug.Log("t");
@@ -118,7 +116,7 @@ public class Player : MonoBehaviour
     {
         if (state == State.HIT || state == State.TALK)
             return;
-        if (playerUIManager.CheckIfRunGaugeIsFull())
+        if (playerUIManager.CheckIfRunGaugeHasRunOut())
         {
             ChangeIsClickLeftShift(false);
             return;
@@ -226,31 +224,30 @@ public class Player : MonoBehaviour
         hp -= value;
         Debug.Log("플레이어 Hp : " + hp);
     }
-
-    private void OnTriggerEnter(Collider coll)
+    private void OnCollisionEnter(Collision coll)
     {
-        if (coll.CompareTag("NPC"))
+        if (coll.collider.CompareTag("NPC"))
         {
             Debug.Log("Coll NPC");
-            ChangeIsContactWithNPC(true);
-            ChangeState(State.TALK);
-            SetAni();
+            npc = coll.gameObject;
+
             // TALK 애니메이션 끝나고 IDLE 상태로 바꾸고 움직일 수 있게 만드는 코드 작성해야함. 
         }
-        if (coll.CompareTag("Enemy"))
+        if (coll.collider.CompareTag("Enemy"))
         {
-            candy.ChangeCandy(candy.ReturnRandomCandy(), 1);
+            candy.ChangeCandyCnt(candy.ReturnRandomCandy(), 1);
             ChangeState(State.HIT);
             SetAni();
             //StartCoroutine(ChangeHitAniToIdleAni());
         }
     }
 
-    private void OnTriggerExit(Collider coll)
+    private void OnCollisionExit(Collision coll)
     {
-        if (coll.CompareTag("NPC"))
-            ChangeIsContactWithNPC(false);
+        if (coll.collider.CompareTag("NPC"))
+            npc = null;
     }
+
 
     bool CheckIfHitAniIsTerminated()
     {
@@ -275,29 +272,31 @@ public class Player : MonoBehaviour
         SetAni();
     }
 
-    void ChangeIsContactWithNPC(bool value)
-    {
-        isContactWithNPC = value;
-    }
-
     bool CheckIfItIsContactWithNPC()
     {
-        return isContactWithNPC ? true : false;
+        return npc != null ? true : false;
     }
 
     void TalkNPC()
     {
         if (!CheckIfItIsContactWithNPC())
             return;
-
         if(Input.GetKeyDown(KeyCode.R))
         {
-            string candyType = npc.ReturnCandyType();
-            npc.ChangeState(NPCState.TALK);
-            candy.ChangeCandy(candyType, 1);
-            playerUIManager.ChangeCandyCntTxt(0,"hard");
-            playerUIManager.ChangeCandyCntTxt(1,"lollipop");
-            playerUIManager.ChangeCandyCntTxt(2,"muffin");
+            // 플레이어 애니메이션 재생
+            ChangeState(State.TALK);
+            SetAni();
+            // NPC  애니메이션 재생
+            npc.GetComponent<NPC>().ChangeState(NPCState.TALK);
         }
+    }
+
+    void ChangeIdleState()
+    {
+        if (state != State.TALK)
+            return;
+
+        if (ani.GetCurrentAnimatorStateInfo(0).IsName("Talk") && ani.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+            ChangeState(State.IDLE);
     }
 }
