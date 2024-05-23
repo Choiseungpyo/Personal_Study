@@ -20,9 +20,12 @@ public class PlayerUIManager : MonoBehaviour
     bool currentCandyState = false;
 
     Player player;
+    Candy candy;
     private void Start()
     {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        candy = playerObj.GetComponent<Candy>();
         for (int i = 0; i < Candy.Length; i++)
             ChangeCandyObjState(i, false);
         InitRunGauge();
@@ -64,7 +67,7 @@ public class PlayerUIManager : MonoBehaviour
 
     public void ChangeCandyCntTxt(int index, string type)
     {
-        Candy[index].transform.GetChild(0).GetComponent<TMP_Text>().text = player.candy.ReturnCandyCnt(type).ToString();
+        Candy[index].transform.GetChild(0).GetComponent<TMP_Text>().text = candy.ReturnCandyCnt(type).ToString();
     }
 
     void ChangeCandyObjState(int index, bool value)

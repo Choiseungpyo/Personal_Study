@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 using Random = UnityEngine.Random;
 
 public class EnemyManager : MonoBehaviour
@@ -13,17 +15,16 @@ public class EnemyManager : MonoBehaviour
 
     // 이펙트
     public GameObject Pierrot_AppearanceEffect;
-    public GameObject Pierrot_AreaEffect;
     public GameObject Zombie_AppearanceEffect;
     public GameObject Killer_AppearanceEffect;
+
+    public GameObject Pierrot_AreaEffect;
 
     // 타겟
     public GameObject Player_Obj;
 
     // 생성된 적
     List<GameObject> enemys = new List<GameObject> ();
-    List<GameObject> areaEffects = new List<GameObject> ();
-    List<GameObject> appearanceEffects = new List<GameObject> ();
 
     // 스폰 포인트
     public Transform[] EnemySpawnPoints = new Transform[10];
@@ -32,17 +33,18 @@ public class EnemyManager : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
-        {
-            int randEnemyIndex = 0;
-            Vector3 randPos = Vector3.zero;
-            randEnemyIndex = ReturnRandEnemyIndex();
-            randPos = ReturnRandPos();
-            GameObject tmp = MakeObj(Zombie_Prefab, randPos);
-            tmp.name = "Chainsaw";
-            AddList("enemys", tmp);
-            MakeAppearanceEffect(randEnemyIndex, randPos);
-        }
+        //if(Input.GetMouseButtonDown(0))
+        //{
+
+        //    //int randEnemyIndex = 0;
+        //    //Vector3 randPos = Vector3.zero;
+        //    //randEnemyIndex = ReturnRandEnemyIndex();
+        //    //randPos = EnemySpawnPoints[0].transform.position; // ReturnRandPos();
+        //    //GameObject tmp = MakeObj(Killer_Prefab, randPos);
+        //    //AddList("enemys", tmp);
+        //    //StartCoroutine( MakeAppearanceEffect(2, randPos));
+        //    StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, Player_Obj.transform.position));
+        //}
     }
 
     GameObject MakeObj(GameObject prefab, Vector3 pos)
@@ -57,17 +59,15 @@ public class EnemyManager : MonoBehaviour
             case "enemys":
                 enemys.Add(obj);
                 break;
-            case "areaEffects":
-                areaEffects.Add(obj);
-                break;
-            case "appearanceEffects":
-                appearanceEffects.Add(obj);
+            default:
+                Debug.LogWarning(type);
                 break;
         }
     }
 
     IEnumerator MakeEnemys()
     {
+        GameObject tmp = null;
         int randEnemyIndex = 0;
         Vector3 randPos = Vector3.zero;
         while(true)
@@ -76,19 +76,21 @@ public class EnemyManager : MonoBehaviour
             randPos = ReturnRandPos();
             if (randEnemyIndex == 0)
             {
-                AddList("enemys", MakeObj(Zombie_Prefab, randPos));
-                MakeAppearanceEffect(randEnemyIndex, randPos);
-            } 
-            else if (randEnemyIndex == 1)
-            {
-                StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, Player_Obj.transform.position));
-                AddList("enemys", MakeObj(Zombie_Prefab, Player_Obj.transform.position));
+                StartCoroutine(MakeAppearanceEffect(randEnemyIndex, randPos));
+                tmp = MakeObj(Zombie_Prefab, randPos);
+                tmp.name = "Zombie";
+                AddList("enemys", tmp);
             }
+            else if (randEnemyIndex == 1)
+                StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, Player_Obj.transform.position));
             else if (randEnemyIndex == 2)
             {
+                StartCoroutine(MakeAppearanceEffect(randEnemyIndex, randPos));
+                tmp = MakeObj(Zombie_Prefab, randPos);
+                tmp.name = "Chainsaw";
                 AddList("enemys", MakeObj(Killer_Prefab, randPos));
-                MakeAppearanceEffect(randEnemyIndex, randPos);
-            } 
+            }
+               
             yield return new WaitForSeconds(enemySpawnTime);
         }
     }
@@ -100,12 +102,6 @@ public class EnemyManager : MonoBehaviour
             case "enemy":
                 enemys.Remove(obj);
                 break;
-            case "areaEffect":
-                areaEffects.Remove(obj);
-                break;
-            case "appearanceEffect":
-                appearanceEffects.Remove(obj);
-                break;
             default:
                 Debug.LogWarning("type : " + type);
                 break;
@@ -115,22 +111,23 @@ public class EnemyManager : MonoBehaviour
 
     IEnumerator ManagePierrotAppearance(GameObject obj, Vector3 pos)
     {
-        GameObject tmp = null;
+        GameObject tmpObj = null;
         for (int i = 0; i < 3; i++)
         {
             yield return new WaitForSeconds(0.4f - 0.1f * i);
-            tmp = MakeObj(obj, pos);
+            tmpObj = MakeObj(obj, pos);
             if(i==1)
-                tmp.transform.localScale = Vector3.one * 0.3f;
+                tmpObj.transform.localScale = Vector3.one * 0.3f;
             else if(i==2)
-                tmp.transform.localScale = Vector3.one * 0.5f;
-
-            AddList("areaEffect", tmp);
+                tmpObj.transform.localScale = Vector3.one * 0.5f;;
             yield return new WaitForSeconds(0.4f - 0.1f * i);
-            RemoveObj("areaEffect", tmp);
+            Destroy(tmpObj);
         }
-        AddList("appearanceEffect", MakeObj(Pierrot_AppearanceEffect, pos));
-        AddList("enemy", MakeObj(Pierrot_Prefab, pos));
+
+        StartCoroutine(MakeAppearanceEffect(1, pos));
+        tmpObj = MakeObj(Pierrot_Prefab, pos);
+        tmpObj.name = "Pierrot";
+        AddList("enemys", tmpObj);
     }
 
     public void RemoveObj(string type, GameObject obj)
@@ -155,11 +152,18 @@ public class EnemyManager : MonoBehaviour
         return randIndex;
     }
 
-    void MakeAppearanceEffect(int index, Vector3 pos)
+    IEnumerator MakeAppearanceEffect(int index, Vector3 pos)
     {
-        if(index ==0)
-            Instantiate(Zombie_AppearanceEffect, pos, Quaternion.identity);
-        else if(index==2)
-            Instantiate(Killer_AppearanceEffect, pos, Quaternion.identity);
+        GameObject tmp = null;
+        if (index == 0)
+            tmp = Instantiate(Zombie_AppearanceEffect, pos, Quaternion.identity);
+        else if (index == 1)
+            tmp = Instantiate(Pierrot_AppearanceEffect, pos, Quaternion.identity);
+        else if (index == 2)
+            tmp = Instantiate(Killer_AppearanceEffect, pos, Quaternion.identity);
+        else
+            Debug.LogWarning(index);
+        yield return new WaitForSeconds(1f);
+        Destroy(tmp);
     }
 }

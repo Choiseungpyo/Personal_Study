@@ -22,26 +22,31 @@ public class Candy : MonoBehaviour
         { "muffin", 0}
     };
 
-    public void ChangeCandyCnt(string type, int value)
+    public void ChangeCandyCnt(string type, int Candycnt)
     {
+        int index = 0;
         switch(type)
         {
             case "hard":
-                candy["hard"] += value;
+                candy["hard"] += Candycnt;
+                index = 0;
                 break;
             case "lollipop":
-                candy["lollipop"] += value;
+                candy["lollipop"] += Candycnt;
+                index = 1;
                 break;
             case "muffin":
-                candy["muffin"] += value;
+                candy["muffin"] += Candycnt;
+                index = 2;
                 break;
             default:
-                Debug.LogWarning(type + " - " + value);
+                Debug.LogWarning(type + " - " + Candycnt);
+                index = 0;
                 break;
         }
 
         // 변경된 캔디 UI 변경
-        playerUIManager.ChangeCandyCntTxt(0, type);
+        playerUIManager.ChangeCandyCntTxt(index, type);
 
         //Debug.Log(type + " ++");
         //Debug.Log(candy["hard"]);

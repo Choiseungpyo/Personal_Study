@@ -16,9 +16,10 @@ public class Pierrot : MonoBehaviour
 
     // 스크립트 관련
     EnemyManager enemyManager;
-
+    Player player;
     private void Awake()
     {
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
         ani = GetComponent<Animator>();
     }
@@ -80,5 +81,12 @@ public class Pierrot : MonoBehaviour
         yield return new WaitForSeconds(1f);
         enemyManager.RemoveObj("enemy", gameObject);
     }
-    
+    private void OnCollisionEnter(Collision coll)
+    {
+        if (coll.collider.CompareTag("Player"))
+        {
+            player.ChangeHp(2);
+        }
+    }
+
 }

@@ -3663,9 +3663,10 @@ GameObject:
   - component: {fileID: 9216770247553910959}
   - component: {fileID: 5289168251111703020}
   - component: {fileID: 8594872378096939732}
-  m_Layer: 0
+  - component: {fileID: 8218101992199978768}
+  m_Layer: 6
   m_Name: ChainSaw
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3735,6 +3736,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &8218101992199978768
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7917371723577484420}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.48697338, y: 0.4972663, z: 1.5617546}
+  m_Center: {x: 0.00000017016083, y: 0.06352017, z: 0.3968386}
 --- !u!1 &8078812551700127356
 GameObject:
   m_ObjectHideFlags: 0
@@ -3782,7 +3804,7 @@ GameObject:
   - component: {fileID: 8799588634449831289}
   m_Layer: 0
   m_Name: Chainsaw
-  m_TagString: Enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3849,7 +3871,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0

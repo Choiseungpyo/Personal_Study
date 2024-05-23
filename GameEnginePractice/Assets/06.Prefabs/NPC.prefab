@@ -2404,6 +2404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf722dc242c0c844b339cd80c750789, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TalkEffect_Prefab: {fileID: 8550749352190170495, guid: 1fb1bed55e8c8394d959e2cc5c5e7bc6, type: 3}
 --- !u!114 &6535024442223234580
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     float h, v;
     bool isClickLeftShift = false;
 
+    bool didGetCandy = false;
 
     // NPC 관련
     GameObject npc = null;
@@ -31,12 +32,10 @@ public class Player : MonoBehaviour
     // 스크립트 관련
     PlayerUIManager playerUIManager;
     [HideInInspector]
-    public Candy candy;
 
     private void Awake()
     {
         playerUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PlayerUIManager>();
-        candy = GetComponent<Candy>();
         ri = GetComponent<Rigidbody>();
         ani = GetComponent<Animator>();
 
@@ -50,14 +49,7 @@ public class Player : MonoBehaviour
         Run();
         ChangeHitAniToIdleAni();
         TalkNPC();
-        ChangeIdleState();
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Debug.Log("t");
-            ChangeState(State.TALK);
-            SetAni();
-        }
-            
+        ChangeIdleState();            
     }
 
     private void FixedUpdate()
@@ -91,6 +83,7 @@ public class Player : MonoBehaviour
         if (h == 0 && v == 0)
             return;
 
+
         movement.Set(h, 0, v);
         movement = movement.normalized * moveSpeed * Time.deltaTime;
 
@@ -106,6 +99,7 @@ public class Player : MonoBehaviour
             return;
         if (h == 0)
             return;
+
         movement.Set(h, 0, 0);
         transform.Rotate(new Vector3(0, movement.x * Time.deltaTime * turnSpeed, 0)); // 자기 자신기준 회전
     }
@@ -228,14 +222,12 @@ public class Player : MonoBehaviour
     {
         if (coll.collider.CompareTag("NPC"))
         {
-            Debug.Log("Coll NPC");
             npc = coll.gameObject;
 
             // TALK 애니메이션 끝나고 IDLE 상태로 바꾸고 움직일 수 있게 만드는 코드 작성해야함. 
         }
         if (coll.collider.CompareTag("Enemy"))
         {
-            candy.ChangeCandyCnt(candy.ReturnRandomCandy(), 1);
             ChangeState(State.HIT);
             SetAni();
             //StartCoroutine(ChangeHitAniToIdleAni());
@@ -281,8 +273,9 @@ public class Player : MonoBehaviour
     {
         if (!CheckIfItIsContactWithNPC())
             return;
-        if(Input.GetKeyDown(KeyCode.R))
+        if(Input.GetKeyDown(KeyCode.R) && !ReturnDidGetCandyState())
         {
+            ChangeDidGetCandyState(true);
             // 플레이어 애니메이션 재생
             ChangeState(State.TALK);
             SetAni();
@@ -298,5 +291,15 @@ public class Player : MonoBehaviour
 
         if (ani.GetCurrentAnimatorStateInfo(0).IsName("Talk") && ani.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
             ChangeState(State.IDLE);
+    }
+  
+    public void ChangeDidGetCandyState(bool value)
+    {
+        didGetCandy = value;
+    }
+
+    bool ReturnDidGetCandyState()
+    {
+        return didGetCandy;
     }
 }
