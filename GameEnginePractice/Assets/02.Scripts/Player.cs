@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
 
     // 스크립트 관련
     PlayerUIManager playerUIManager;
-    [HideInInspector]
+
 
     private void Awake()
     {

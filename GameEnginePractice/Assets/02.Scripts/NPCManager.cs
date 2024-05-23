@@ -10,7 +10,7 @@ public class NPCManager : MonoBehaviour
     public Avatar[] NPCAvatars = new Avatar[4];
     public Transform[] NPCSpawnPoints = new Transform[4];
 
-    int spawnTime = 1;
+    int spawnTime = 10;
     Vector3[] NPCSpawnDir = new Vector3[4];
 
     bool[] usingNPCIndex = new bool[4];

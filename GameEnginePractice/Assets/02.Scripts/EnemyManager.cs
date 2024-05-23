@@ -27,24 +27,13 @@ public class EnemyManager : MonoBehaviour
     List<GameObject> enemys = new List<GameObject> ();
 
     // 스폰 포인트
-    public Transform[] EnemySpawnPoints = new Transform[10];
+    public Transform[] EnemySpawnPoints = new Transform[3];
 
-    float enemySpawnTime = 5f;
+    float enemySpawnTime = 7f;
 
-    private void Update()
+    private void Start()
     {
-        //if(Input.GetMouseButtonDown(0))
-        //{
-
-        //    //int randEnemyIndex = 0;
-        //    //Vector3 randPos = Vector3.zero;
-        //    //randEnemyIndex = ReturnRandEnemyIndex();
-        //    //randPos = EnemySpawnPoints[0].transform.position; // ReturnRandPos();
-        //    //GameObject tmp = MakeObj(Killer_Prefab, randPos);
-        //    //AddList("enemys", tmp);
-        //    //StartCoroutine( MakeAppearanceEffect(2, randPos));
-        //    StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, Player_Obj.transform.position));
-        //}
+        //StartCoroutine(MakeEnemys());
     }
 
     GameObject MakeObj(GameObject prefab, Vector3 pos)
@@ -72,23 +61,28 @@ public class EnemyManager : MonoBehaviour
         Vector3 randPos = Vector3.zero;
         while(true)
         {
-            randEnemyIndex = ReturnRandEnemyIndex();
+            randEnemyIndex = 2;//ReturnRandEnemyIndex()
             randPos = ReturnRandPos();
             if (randEnemyIndex == 0)
             {
+                //Debug.Log("좀비 생성");
                 StartCoroutine(MakeAppearanceEffect(randEnemyIndex, randPos));
                 tmp = MakeObj(Zombie_Prefab, randPos);
                 tmp.name = "Zombie";
                 AddList("enemys", tmp);
             }
             else if (randEnemyIndex == 1)
+            {
+                //Debug.Log("삐에로 생성");
                 StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, Player_Obj.transform.position));
+            }
             else if (randEnemyIndex == 2)
             {
+                //Debug.Log("체인쏘우 생성");
                 StartCoroutine(MakeAppearanceEffect(randEnemyIndex, randPos));
-                tmp = MakeObj(Zombie_Prefab, randPos);
+                tmp = MakeObj(Killer_Prefab, randPos);
                 tmp.name = "Chainsaw";
-                AddList("enemys", MakeObj(Killer_Prefab, randPos));
+                AddList("enemys", tmp);
             }
                
             yield return new WaitForSeconds(enemySpawnTime);
@@ -139,7 +133,7 @@ public class EnemyManager : MonoBehaviour
     Vector3 ReturnRandPos()
     {
         int randIndex = Random.Range(0, EnemySpawnPoints.Length); // 0 ~ 3
-        return EnemySpawnPoints[0].transform.position;
+        return EnemySpawnPoints[randIndex].transform.position;
     }
 
     int ReturnRandEnemyIndex()
