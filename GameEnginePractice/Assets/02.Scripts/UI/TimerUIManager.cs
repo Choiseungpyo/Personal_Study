@@ -8,7 +8,7 @@ public class TimerUIManager : MonoBehaviour
 
     float   endTime = 60f;
     float   currentTime = 0;
-    int     timerSpeed = 10;
+    float   timerBarRot = 0;
 
 
     private void Update()
@@ -22,8 +22,9 @@ public class TimerUIManager : MonoBehaviour
             return;
 
         // 시간에 따라 시계방향 회전(0~-90 -> -90~-180 -> ... -270->0)
-        TimerBar.transform.localRotation = Quaternion.Euler(0, 0, currentTime);
-        currentTime += -Time.deltaTime * timerSpeed;
+        TimerBar.transform.localRotation = Quaternion.Euler(0, 0, timerBarRot);
+        timerBarRot += -Time.deltaTime;
+        currentTime += Time.deltaTime;
         //Debug.Log(currentTime);
     }
     
