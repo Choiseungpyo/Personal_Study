@@ -126,4 +126,10 @@ public class PlayerUIManager : MonoBehaviour
                 return "";
         }
     }
+
+    public void SetPlayerUICanvasState(bool value)
+    {
+        PlayerUI_Canvas.gameObject.SetActive(value);
+    }
+
 }

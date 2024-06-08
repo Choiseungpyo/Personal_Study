@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
+using UnityEditor.XR;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -20,6 +21,12 @@ public class PuzzleUIManager : MonoBehaviour
     public Canvas PuzzleUICanvas;
     public GameObject EmptyPiece;
     public GameObject[] PuzzlePieces = new GameObject[9];
+    public GameObject ClearObject;
+
+    // 유령
+    public TMP_Text ClearTypeTxt; 
+    public GameObject Ghost;
+    public Sprite[] GhostSprite = new Sprite[2];
 
     // 박쥐
     public GameObject[] Bats = new GameObject[2];
@@ -45,34 +52,32 @@ public class PuzzleUIManager : MonoBehaviour
     bool gameResult = false;
 
     // 타이머
-    float timer = 61;
+    float timer = 60;
     bool shuffleIsEnded = false;
 
     // 캔디 
     int candyCnt = 0;
+    string candyToGive = "";
 
     Candy candy;
+    Candy playerCandy;
+    PlayerUIManager playerUIManager;
     private void Awake()
     {
         candy = GetComponent<Candy>();
+        playerCandy = GameObject.Find("Player").GetComponent<Candy>();
+        playerUIManager = GetComponent<PlayerUIManager>();
     }
 
     private void Start()
     {
-        // 박쥐
-        InitBatPos();
-
-        // 퍼즐
-        InitAnswerPos();
-
-        // 캔디
-        SetCandyToGive();
-        SetCandyRandomCnt();
-        SetCandyCntTxt();
+        SetPuzzleUICanvasState(false);
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.E))
+            ActivatePuzzleUI();
         SetTimerTxt();
     }
 
@@ -136,6 +141,7 @@ public class PuzzleUIManager : MonoBehaviour
             yield return null;
         }
         ChangeEmptyPiecePos(orinalClickedPuzzlePiecePos);
+        SetClearObject(true);
     }
 
 
@@ -165,12 +171,17 @@ public class PuzzleUIManager : MonoBehaviour
         EmptyPiece.GetComponent<Image>().raycastTarget = false;
         EmptyPiece.GetComponent<Button>().interactable = false;
         EmptyPiece.gameObject.SetActive(false);
-        SetFinalPiece(emptyPieceNum);
+        SetFinalPiecePos(emptyPieceNum);
     }
 
-    void SetFinalPiece(int index)
+    void SetFinalPiecePos(int index)
     {
         PuzzlePieces[index].transform.localPosition = new Vector3(470, 0);
+    }
+
+    void SetFinalPieceState(bool value)
+    {
+        PuzzlePieces[emptyPieceNum].SetActive(value);
     }
 
     void InitAnswerPos()
@@ -200,7 +211,7 @@ public class PuzzleUIManager : MonoBehaviour
         int i;
         int randomIndex = Random.Range(0, adjacentObjectIndexStorage.Count);
         int previousIndex = 7;
-        for (int repeatCnt = 0; repeatCnt < 25; repeatCnt++)
+        for (int repeatCnt = 0; repeatCnt < 2; repeatCnt++)
         {
             for (i = 0; i < PuzzlePieces.Length; i++)
             {
@@ -233,10 +244,10 @@ public class PuzzleUIManager : MonoBehaviour
             {
                 StartCoroutine(MoveClickedFinalPiece());
                 SetGameIsEndedState(true);
+                
                 SetGameResult(true);
                 // 사탕 지급
-            }
-                
+            }     
         }
     }
 
@@ -312,11 +323,13 @@ public class PuzzleUIManager : MonoBehaviour
 
         SetGameIsEndedState(true);
         SetGameResult(false);
+        SetClearObject(false);
+        SetFinalPieceState(false);
     }
 
     void ResetTimer()
     {
-        timer = 61;
+        timer = 5;
     }
 
     bool CheckIfGameIsEnded()
@@ -349,25 +362,17 @@ public class PuzzleUIManager : MonoBehaviour
         PuzzleUICanvas.gameObject.SetActive(value);
     }
 
-    void GiveCandy()
+    void GiveCandy(bool value)
     {
-        if (!CheckIfGameIsEnded())
+        if (!value)
             return;
 
-        if (CheckGameResult())
-        {
-            // 사탕 지급
-        }
-        else
-        {
-            // n초 후 창 닫기
-        }
+        playerCandy.ChangeCandyCnt(candyToGive, candyCnt);
     }
 
     void SetCandyToGive()
     {
-
-        string candyToGive = candy.ReturnRandomCandy();
+        candyToGive = candy.ReturnRandomCandy();
         int candySpriteIndex = 0;
 
         switch(candyToGive)
@@ -405,8 +410,49 @@ public class PuzzleUIManager : MonoBehaviour
         candyCnt = randNum;
     }
 
-    private void OnEnable()
+
+    void SetGhostSprite(bool result)
     {
+        if (result)
+            Ghost.GetComponent<Image>().sprite = GhostSprite[0];
+        else
+            Ghost.GetComponent<Image>().sprite = GhostSprite[1];
+    }
+    
+    void SetClearTypeTxt(bool result)
+    {
+        if (result)
+            ClearTypeTxt.text = "!Success!";
+        else
+            ClearTypeTxt.text = "!Fail!";
+    }
+
+    void SetClearObject(bool result)
+    {
+        // 실패했을 때 마지막 퍼즐 조각 삭제 
+        // 코루틴 멈추기
+        StopAllCoroutines();
+
+        
+
+        SetClearObjecState(true);
+        SetGhostSprite(result);
+        SetClearTypeTxt(result);
+        
+        GiveCandy(result);
+
+        Invoke("ClosePuzzleUI", 2f);
+    }
+
+    void SetClearObjecState(bool value)
+    {
+        ClearObject.SetActive(value);
+    }
+
+    public void ActivatePuzzleUI()
+    {
+        playerUIManager.SetPlayerUICanvasState(false);
+        SetPuzzleUICanvasState(true);
         // 실제 타이머 
 
         // 게임 클리어
@@ -420,6 +466,7 @@ public class PuzzleUIManager : MonoBehaviour
 
 
         // 퍼즐
+        SetFinalPieceState(true);
         SetShuffleIsEnded(false);
         InitAnswerPos();
         SetEmptyPiece();
@@ -433,8 +480,14 @@ public class PuzzleUIManager : MonoBehaviour
         SetCandyToGive();
         SetCandyRandomCnt();
         SetCandyCntTxt();
-        
+
+        // 클리어 시
+        SetClearObjecState(false);
     }
 
-    
+    void ClosePuzzleUI()
+    {
+        SetPuzzleUICanvasState(false);
+        playerUIManager.SetPlayerUICanvasState(true);
+    }
 }

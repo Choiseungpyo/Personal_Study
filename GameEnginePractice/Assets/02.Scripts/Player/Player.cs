@@ -273,7 +273,7 @@ public class Player : MonoBehaviour
     {
         if (!CheckIfItIsContactWithNPC())
             return;
-        if(Input.GetKeyDown(KeyCode.R) && !ReturnDidGetCandyState())
+        if(Input.GetKeyDown(KeyCode.Space) && !ReturnDidGetCandyState())
         {
             ChangeDidGetCandyState(true);
             // 플레이어 애니메이션 재생
