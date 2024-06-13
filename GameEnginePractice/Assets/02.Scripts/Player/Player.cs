@@ -42,6 +42,9 @@ public class Player : MonoBehaviour
         ani.SetBool("idle", false);
         ani.SetBool("walk", false);
         ani.SetBool("run", false);
+
+        ChangeState(State.IDLE);
+        ResetPos();
     }
 
     private void Update()
@@ -228,6 +231,8 @@ public class Player : MonoBehaviour
         }
         if (coll.collider.CompareTag("Enemy"))
         {
+
+            GameObject.Find("EnemyManager").GetComponent<EnemyManager>().ChangeGetCandyCnt(coll.collider.name);
             ChangeState(State.HIT);
             SetAni();
             //StartCoroutine(ChangeHitAniToIdleAni());
@@ -301,5 +306,10 @@ public class Player : MonoBehaviour
     bool ReturnDidGetCandyState()
     {
         return didGetCandy;
+    }
+
+    void ResetPos()
+    {
+        transform.position = new Vector3(-18, 0, -12);
     }
 }

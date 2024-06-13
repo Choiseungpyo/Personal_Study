@@ -31,9 +31,26 @@ public class EnemyManager : MonoBehaviour
 
     float enemySpawnTime = 7f;
 
+    // Àû¸¶´Ù »©¾ÑÀº »çÅÁ °³¼ö
+    int[] getCandyCnt = new int[3];
+
     private void Start()
     {
+        ResetGetCandyCnt();
+        enemys.Clear();
         //StartCoroutine(MakeEnemys());
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            GameObject tmp = null;
+            StartCoroutine(MakeAppearanceEffect(2, new Vector3(-15, 0, -12)));
+            tmp = MakeObj(Killer_Prefab, new Vector3(-15, 0, -12));
+            tmp.name = "Chainsaw";
+            AddList("enemys", tmp);
+        }
     }
 
     GameObject MakeObj(GameObject prefab, Vector3 pos)
@@ -61,7 +78,7 @@ public class EnemyManager : MonoBehaviour
         Vector3 randPos = Vector3.zero;
         while(true)
         {
-            randEnemyIndex = 2;//ReturnRandEnemyIndex()
+            randEnemyIndex = ReturnRandEnemyIndex();
             randPos = ReturnRandPos();
             if (randEnemyIndex == 0)
             {
@@ -159,5 +176,26 @@ public class EnemyManager : MonoBehaviour
             Debug.LogWarning(index);
         yield return new WaitForSeconds(1f);
         Destroy(tmp);
+    }
+
+    void ResetGetCandyCnt()
+    {
+        for (int i = 0; i < getCandyCnt.Length; i++)
+            getCandyCnt[i] = 0;
+    }
+
+    public void ChangeGetCandyCnt(string EnemyName)
+    {
+        if(EnemyName.Contains("Zombie"))
+            getCandyCnt[0]++;
+        else if(EnemyName.Contains("Pierrot"))
+            getCandyCnt[1]++;
+        else if (EnemyName.Contains("Chainsaw"))
+            getCandyCnt[2]++;
+    }
+
+    public int ReturnGetCandyCnt(int index)
+    {
+        return getCandyCnt[index];
     }
 }

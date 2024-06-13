@@ -26,9 +26,12 @@ public class PlayerUIManager : MonoBehaviour
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         candy = playerObj.GetComponent<Candy>();
+
         for (int i = 0; i < Candy.Length; i++)
             ChangeCandyObjState(i, false);
         InitRunGauge();
+
+        SetPlayerUICanvasState(true);
     }
 
     private void Update()

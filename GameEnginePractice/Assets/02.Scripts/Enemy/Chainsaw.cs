@@ -213,7 +213,9 @@ public class Chainsaw : MonoBehaviour
 
     void MoveToFind()
     {
-        transform.Translate(currentFindDir * Time.deltaTime * findMoveSpeed);
+        transform.Translate(currentFindDir * Time.deltaTime * findMoveSpeed, Space.World);
+        transform.LookAt(transform.position + currentFindDir);
+
         if (!CheckFindMoveDist())
             return;
         SetRandomDir();

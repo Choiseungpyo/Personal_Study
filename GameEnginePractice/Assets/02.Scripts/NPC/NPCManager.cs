@@ -7,7 +7,7 @@ using UnityEngine.Jobs;
 public class NPCManager : MonoBehaviour
 {
     public GameObject NPCPrefab;
-    public Avatar[] NPCAvatars = new Avatar[4];
+    public Avatar[] NPCAvatars = new Avatar[3];
     public Transform[] NPCSpawnPoints = new Transform[4];
 
     int spawnTime = 10;

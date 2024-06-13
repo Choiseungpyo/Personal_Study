@@ -52,7 +52,7 @@ public class PuzzleUIManager : MonoBehaviour
     bool gameResult = false;
 
     // 타이머
-    float timer = 60;
+    float timer = 45;
     bool shuffleIsEnded = false;
 
     // 캔디 
@@ -211,7 +211,7 @@ public class PuzzleUIManager : MonoBehaviour
         int i;
         int randomIndex = Random.Range(0, adjacentObjectIndexStorage.Count);
         int previousIndex = 7;
-        for (int repeatCnt = 0; repeatCnt < 2; repeatCnt++)
+        for (int repeatCnt = 0; repeatCnt < 20; repeatCnt++)
         {
             for (i = 0; i < PuzzlePieces.Length; i++)
             {
@@ -329,7 +329,7 @@ public class PuzzleUIManager : MonoBehaviour
 
     void ResetTimer()
     {
-        timer = 5;
+        timer = 45;
     }
 
     bool CheckIfGameIsEnded()
@@ -429,11 +429,7 @@ public class PuzzleUIManager : MonoBehaviour
 
     void SetClearObject(bool result)
     {
-        // 실패했을 때 마지막 퍼즐 조각 삭제 
-        // 코루틴 멈추기
         StopAllCoroutines();
-
-        
 
         SetClearObjecState(true);
         SetGhostSprite(result);
@@ -485,7 +481,7 @@ public class PuzzleUIManager : MonoBehaviour
         SetClearObjecState(false);
     }
 
-    void ClosePuzzleUI()
+    public void ClosePuzzleUI()
     {
         SetPuzzleUICanvasState(false);
         playerUIManager.SetPlayerUICanvasState(true);

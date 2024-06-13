@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Candy : MonoBehaviour
@@ -12,6 +13,12 @@ public class Candy : MonoBehaviour
     private void Awake()
     {
         playerUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PlayerUIManager>();
+    }
+
+    private void Start()
+    {
+        // 캔디 개수 리셋
+        ResetCandyCnt();
     }
 
     // Candy 관련
@@ -87,5 +94,12 @@ public class Candy : MonoBehaviour
                 Debug.LogWarning(randCandyType);
                 return "";
         }
+    }
+
+    void ResetCandyCnt()
+    {
+        candy["hard"] = 0;
+        candy["lollipop"] = 0;
+        candy["muffin"] = 0;
     }
 }
