@@ -12,8 +12,6 @@ public enum NPCState
 
 public class NPC : MonoBehaviour
 {
-    public GameObject TalkEffect_Prefab;
-    GameObject TalkEffectObj = null;
     NPCState state;
 
     string candyToGive = "";
@@ -21,6 +19,7 @@ public class NPC : MonoBehaviour
     // 스폰 위치 인덱스
     int posIndex = 0;
 
+    int candyCntToGive = 0;
 
     // 컴포넌트 관련
     Animator ani;
@@ -33,7 +32,7 @@ public class NPC : MonoBehaviour
     private void Awake()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        ani = GetComponent<Animator>();
+        ani = GetComponent<Animator>(); 
         npcUIManager = GetComponent<NPCUIManager>();
         playerCandy = playerObj.GetComponent<Candy>();
         player = playerObj.GetComponent<Player>();
@@ -43,13 +42,13 @@ public class NPC : MonoBehaviour
     private void Start()
     {
         candyToGive = playerCandy.ReturnRandomCandy();
-        npcUIManager.ChangeCandImg(candyToGive); // 플레이어에게 줄 캔디 초기화
+        candyCntToGive = Random.Range(1, 4);
+        npcUIManager.SetCandyData(candyToGive, candyCntToGive); // 플레이어에게 줄 캔디 초기화
     }
     private void Update()
     {
-        DestroyNPC();
+        ChangeEndState();
         SetDir();
-
     }
     /// <summary>
     /// 애니메이션 관련 설정을 한다. 
@@ -63,13 +62,14 @@ public class NPC : MonoBehaviour
             case NPCState.TALK:
                 ani.SetTrigger("talk");
                 ani.SetTrigger("end");
-                
-                // 플레이어에게 캔디 주기
-                playerCandy.ChangeCandyCnt(candyToGive, 1);
                 break;
             case NPCState.END:
+                // 플레이어에게 캔디 주기
+                playerCandy.ChangeCandyCnt(candyToGive, candyCntToGive);
+        
+                transform.parent.GetComponent<NPCManager>().DeactivateNPCIndexState(posIndex);
+                transform.parent.GetComponent<NPCManager>().MakeTalkEffect(transform.position + new Vector3(0, 1.5f, 0), "GetCandy");
                 Destroy(gameObject);
-                Invoke("DestroyTalkEffect", 1.0f);
                 break;
 
         }
@@ -81,27 +81,17 @@ public class NPC : MonoBehaviour
         SetAni();
     }
 
-    void DestroyNPC()
+    void ChangeEndState()
     {
         if (state == NPCState.END)
             return;
 
         if (ani.GetCurrentAnimatorStateInfo(0).IsName("end"))
         {
-            // 대화 종료 후 이펙트 효과 
-            TalkEffectObj = Instantiate(TalkEffect_Prefab, transform.position + new Vector3(0,1.5f,0), Quaternion.identity);
+            
             player.ChangeDidGetCandyState(false);
             ChangeState(NPCState.END);
         }
-    }
-
-    private void OnDestroy()
-    {
-        if(transform.parent != null)
-        {
-            transform.parent.GetComponent<NPCManager>().DeactivateNPCIndexState(posIndex);
-        }
-            
     }
 
     public void ChangePosIndex(int value)
@@ -112,10 +102,5 @@ public class NPC : MonoBehaviour
     void SetDir()
     {
         transform.LookAt(GameObject.FindGameObjectWithTag("Player").transform);
-    }
-
-    void DestroyTalkEffect()
-    {
-        Destroy(TalkEffectObj);
     }
 }

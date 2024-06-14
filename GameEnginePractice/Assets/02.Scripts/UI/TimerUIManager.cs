@@ -7,16 +7,21 @@ public class TimerUIManager : MonoBehaviour
     public Canvas TimerUICanvas;
     public GameObject TimerBar;
 
-    float   endTime = 5;
+    float   endTime = 180;
     float   currentTime = 0;
     float   timerBarRot = 0;
 
+    bool firstSound = false;
 
+    AudioSource audioSource;
     GameManager gameManager;
 
     private void Start()
     {
+        firstSound = false;
+        endTime = 180;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        audioSource = GetComponent<AudioSource>();
         ResetData();
         SetTimerUIState(true);
     }
@@ -37,8 +42,17 @@ public class TimerUIManager : MonoBehaviour
         timerBarRot += -Time.deltaTime;
         currentTime += Time.deltaTime;
 
-        if (CheckEndTime()) // 끝났을 때 한번만 동작하도록 한번 더 호출
+        if (endTime - 1 <= currentTime && !firstSound)
+        {
+            firstSound = true;
+            Debug.Log(currentTime);
+            PlayAudio();
+        }
+            
+
+        if (CheckEndTime()) // 끝났을 때 한번만 동작하도록
             gameManager.GameOver();
+   
     }
     
     bool CheckEndTime()
@@ -58,5 +72,11 @@ public class TimerUIManager : MonoBehaviour
         currentTime = 0;
         timerBarRot = 0;
         TimerBar.transform.localRotation = Quaternion.Euler(0, 0, 0);
+    }
+
+    void PlayAudio()
+    {
+        audioSource.clip = AudioManager.instance.ReturnAudioClip("Clock");
+        audioSource.Play();
     }
 }

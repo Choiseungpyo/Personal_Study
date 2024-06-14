@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.VFX;
 
 public class Player : MonoBehaviour
 {
@@ -10,10 +10,10 @@ public class Player : MonoBehaviour
         IDLE, WALK, RUN, HIT, TALK
     }State state;
 
-    int hp = 10;
+    public AudioSource[] audioSource = new AudioSource[2];
 
     float moveSpeed = 5f;
-    float turnSpeed = 100;
+    float turnSpeed = 500; // 100
 
     Vector3 movement;
 
@@ -26,18 +26,18 @@ public class Player : MonoBehaviour
     GameObject npc = null;
 
     // 컴포넌트 관련
-    Rigidbody ri;
     Animator ani;
+    
 
     // 스크립트 관련
     PlayerUIManager playerUIManager;
-
+    Candy candy;
 
     private void Awake()
     {
         playerUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PlayerUIManager>();
-        ri = GetComponent<Rigidbody>();
         ani = GetComponent<Animator>();
+        candy = GetComponent<Candy>();
 
         ani.SetBool("idle", false);
         ani.SetBool("walk", false);
@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
         Run();
         ChangeHitAniToIdleAni();
         TalkNPC();
-        ChangeIdleState();            
+        ChangeIdleState();
     }
 
     private void FixedUpdate()
@@ -62,7 +62,6 @@ public class Player : MonoBehaviour
 
         Idle();
         Move();
-        
         Turn();
     }
 
@@ -72,6 +71,9 @@ public class Player : MonoBehaviour
             return;
 
         if (!(h == 0 && v == 0))
+            return;
+
+        if (ReturnDidGetCandyState())
             return;
 
         ChangeState(State.IDLE);
@@ -87,6 +89,9 @@ public class Player : MonoBehaviour
             return;
 
 
+        if (ReturnDidGetCandyState())
+            return;
+
         movement.Set(h, 0, v);
         movement = movement.normalized * moveSpeed * Time.deltaTime;
 
@@ -100,11 +105,21 @@ public class Player : MonoBehaviour
     {
         if (state == State.HIT || state == State.TALK)
             return;
-        if (h == 0)
+
+        if (ReturnDidGetCandyState())
             return;
 
-        movement.Set(h, 0, 0);
-        transform.Rotate(new Vector3(0, movement.x * Time.deltaTime * turnSpeed, 0)); // 자기 자신기준 회전
+
+        // 마우스로 회전
+        //Debug.Log(-Input.GetAxis("Mouse X"));
+        transform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * Time.deltaTime * turnSpeed, 0)); // 자기 자신기준 회전
+
+
+        //if (h == 0)
+        //    return;
+        // 왼쪽, 오른쪽 눌러서 회전하는 방법
+        //movement.Set(h, 0, 0);
+        //transform.Rotate(new Vector3(0, movement.x * Time.deltaTime * turnSpeed, 0)); // 자기 자신기준 회전
     }
 
 
@@ -113,20 +128,27 @@ public class Player : MonoBehaviour
     {
         if (state == State.HIT || state == State.TALK)
             return;
+
+
+        if (ReturnDidGetCandyState())
+            return;
+
         if (playerUIManager.CheckIfRunGaugeHasRunOut())
         {
             ChangeIsClickLeftShift(false);
             return;
         }
-           
+
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
+            PlayAudio("Run");
             //Debug.Log("Left Shift 누름");
             ChangeIsClickLeftShift(true);
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
+            StopAudio();
             ChangeIsClickLeftShift(false);
             //Debug.Log("Left Shift 손가락 뗌");
         } 
@@ -212,15 +234,6 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// 플레이어의 Hp를 변경한다. 
-    /// </summary>
-    /// <param name="value">감소시킬 hp 값</param>
-    public void ChangeHp(int value)
-    {
-        hp -= value;
-        Debug.Log("플레이어 Hp : " + hp);
-    }
     private void OnCollisionEnter(Collision coll)
     {
         if (coll.collider.CompareTag("NPC"))
@@ -231,8 +244,19 @@ public class Player : MonoBehaviour
         }
         if (coll.collider.CompareTag("Enemy"))
         {
-
+            GameObject obj = coll.collider.gameObject;
+            ChangeIsClickLeftShift(false);
+            PlayAudio("Hit");
             GameObject.Find("EnemyManager").GetComponent<EnemyManager>().ChangeGetCandyCnt(coll.collider.name);
+            
+            // 적별 사탕 감소
+            if (obj.name.Equals("Zombie"))
+                candy.ChangeCandyCnt(obj.GetComponent<Enemy>().ReturnCandyNameToTake(), -2);
+            else if (obj.name.Equals("Pierrot"))
+                candy.ChangeCandyCnt(obj.GetComponent<Pierrot>().ReturnCandyNameToTake(), -5);
+            else if (obj.name.Equals("Chainsaw"))
+                candy.ChangeCandyCnt(obj.GetComponent<Chainsaw>().ReturnCandyNameToTake(), -7);
+
             ChangeState(State.HIT);
             SetAni();
             //StartCoroutine(ChangeHitAniToIdleAni());
@@ -251,6 +275,7 @@ public class Player : MonoBehaviour
         if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Hit"))
             return false;
         //Debug.Log("Hit Ani 동작");
+        StopAudio();
         if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
             return false;
         //Debug.Log("Hit Ani 종료");
@@ -282,10 +307,15 @@ public class Player : MonoBehaviour
         {
             ChangeDidGetCandyState(true);
             // 플레이어 애니메이션 재생
+            ChangeIsClickLeftShift(false);
+            StopAudio();
             ChangeState(State.TALK);
             SetAni();
             // NPC  애니메이션 재생
-            npc.GetComponent<NPC>().ChangeState(NPCState.TALK);
+            if(npc.name.Equals("SpecialNPC"))
+                npc.GetComponent<SpecialNPC>().ChangeState(NPCState.TALK);
+            else
+                npc.GetComponent<NPC>().ChangeState(NPCState.TALK);
         }
     }
 
@@ -311,5 +341,25 @@ public class Player : MonoBehaviour
     void ResetPos()
     {
         transform.position = new Vector3(-18, 0, -12);
+        transform.rotation = Quaternion.Euler(Vector3.zero);
+    }
+
+    void PlayAudio(string name)
+    {
+        if(name.Equals("Run"))
+            audioSource[0].Play();
+        else
+            audioSource[1].Play();
+    }
+
+    void StopAudio()
+    {
+        audioSource[0].Stop();
+    }
+
+    private void OnDisable()
+    {
+        for(int i=0; i<audioSource.Length; i++)
+            audioSource[i].enabled = false;
     }
 }

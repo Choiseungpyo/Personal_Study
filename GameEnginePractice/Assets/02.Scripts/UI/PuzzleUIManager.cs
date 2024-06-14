@@ -62,11 +62,16 @@ public class PuzzleUIManager : MonoBehaviour
     Candy candy;
     Candy playerCandy;
     PlayerUIManager playerUIManager;
+    Player player;
+    AudioSource audioSource;
     private void Awake()
     {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         candy = GetComponent<Candy>();
-        playerCandy = GameObject.Find("Player").GetComponent<Candy>();
+        playerCandy = playerObj.GetComponent<Candy>();
         playerUIManager = GetComponent<PlayerUIManager>();
+        player = playerObj.GetComponent<Player>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -76,16 +81,14 @@ public class PuzzleUIManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-            ActivatePuzzleUI();
         SetTimerTxt();
     }
 
     // x값이 160 차이나거나 y값이 160 차이 나는 경우 
     public void ClickPuzzlePiece()
     {
-        Debug.Log("Click Puzzle Piece");
-
+        //Debug.Log("Click Puzzle Piece");
+        PlayAudio("PuzzleClick");
         if (clickedPuzzlePiece != null)
         {
             Debug.Log(clickedPuzzlePiece);
@@ -122,6 +125,12 @@ public class PuzzleUIManager : MonoBehaviour
 
     IEnumerator MoveClickedPiece()
     {
+        int loopCnt = 0;
+        if (loopCnt++ > 10000)
+        {
+            Debug.Log("MakeEnemy 무한 반복");
+            yield break;
+        }
         Vector3 orinalClickedPuzzlePiecePos = clickedPuzzlePiece.localPosition;
         while (Vector3.Distance(clickedPuzzlePiece.localPosition, EmptyPiece.transform.localPosition) > 0)
         {
@@ -134,11 +143,19 @@ public class PuzzleUIManager : MonoBehaviour
 
     IEnumerator MoveClickedFinalPiece()
     {
+        int loopCnt = 0;
+
         Vector3 orinalClickedPuzzlePiecePos = PuzzlePieces[emptyPieceNum].transform.localPosition;
         while (Vector3.Distance(PuzzlePieces[emptyPieceNum].transform.localPosition, EmptyPiece.transform.localPosition) > 0)
         {
             PuzzlePieces[emptyPieceNum].transform.localPosition = Vector3.MoveTowards(PuzzlePieces[emptyPieceNum].transform.localPosition, EmptyPiece.transform.localPosition, 2.5f);
             yield return null;
+
+            if (loopCnt++ > 10000)
+            {
+                Debug.Log("MakeEnemy 무한 반복");
+                yield break;
+            }
         }
         ChangeEmptyPiecePos(orinalClickedPuzzlePiecePos);
         SetClearObject(true);
@@ -147,6 +164,8 @@ public class PuzzleUIManager : MonoBehaviour
 
     IEnumerator MoveClickedPiece(int index)
     {
+        int loopCnt = 0;
+
         moveClickedPieceCoroutineState = true;
         Vector3 orinalClickedPuzzlePiecePos = PuzzlePieces[index].transform.localPosition;
 
@@ -154,6 +173,12 @@ public class PuzzleUIManager : MonoBehaviour
         {
             PuzzlePieces[index].transform.localPosition = Vector3.MoveTowards(PuzzlePieces[index].transform.localPosition, EmptyPiece.transform.localPosition, 5f);
             yield return null;
+
+            if (loopCnt++ > 10000)
+            {
+                Debug.Log("MakeEnemy 무한 반복");
+                yield break;
+            }
         }
 
         ChangeEmptyPiecePos(orinalClickedPuzzlePiecePos);
@@ -207,11 +232,12 @@ public class PuzzleUIManager : MonoBehaviour
 
     IEnumerator ShufflePuzzlePiece()
     {
+        int loopCnt = 0;
         List<int> adjacentObjectIndexStorage = new List<int>();
         int i;
         int randomIndex = Random.Range(0, adjacentObjectIndexStorage.Count);
         int previousIndex = 7;
-        for (int repeatCnt = 0; repeatCnt < 20; repeatCnt++)
+        for (int repeatCnt = 0; repeatCnt < 15; repeatCnt++)
         {
             for (i = 0; i < PuzzlePieces.Length; i++)
             {
@@ -224,7 +250,15 @@ public class PuzzleUIManager : MonoBehaviour
             randomIndex = Random.Range(0, adjacentObjectIndexStorage.Count);
 
             while(previousIndex == adjacentObjectIndexStorage[randomIndex])
+            {
+                if (loopCnt++ > 10000)
+                {
+                    Debug.Log("MakeEnemy 무한 반복");
+                    yield break;
+                }
                 randomIndex = Random.Range(0, adjacentObjectIndexStorage.Count);
+            }
+                
 
             previousIndex = adjacentObjectIndexStorage[randomIndex];
             StartCoroutine(MoveClickedPiece(adjacentObjectIndexStorage[randomIndex]));
@@ -238,7 +272,8 @@ public class PuzzleUIManager : MonoBehaviour
 
     public void ClickFinalPuzzlePiece()
     {
-        if(CheckAnswerPos())
+        PlayAudio("PuzzleClick");
+        if (CheckAnswerPos())
         {
             if (!moveClickedPieceCoroutineState)
             {
@@ -253,6 +288,7 @@ public class PuzzleUIManager : MonoBehaviour
 
     IEnumerator MoveBat(int index)
     {
+        int loopCnt = 0;
         Vector3[] targetRot = new Vector3[2];
 
         targetRot[0] = new Vector3(0, 180 * index, 35);
@@ -265,12 +301,24 @@ public class PuzzleUIManager : MonoBehaviour
             {
                 Bats[index].transform.localRotation = Quaternion.RotateTowards(Bats[index].transform.localRotation, Quaternion.Euler(targetRot[0]), 0.1f);
                 yield return null;
+
+                if (loopCnt++ > 10000)
+                {
+                    Debug.Log("MakeEnemy 무한 반복");
+                    yield break;
+                }
             }
             // 루틴2
             while (Bats[index].transform.localEulerAngles.z > 5)
             {
                 Bats[index].transform.localRotation = Quaternion.RotateTowards(Bats[index].transform.localRotation, Quaternion.Euler(targetRot[1]), 0.1f);
                 yield return null;
+
+                if (loopCnt++ > 10000)
+                {
+                    Debug.Log("MakeEnemy 무한 반복");
+                    yield break;
+                }
             }
         }
        
@@ -300,6 +348,9 @@ public class PuzzleUIManager : MonoBehaviour
             return;
 
         if (CheckIfGameIsEnded())
+            return;
+
+        if (!PuzzleUICanvas.enabled)
             return;
 
         if (timer < 0)
@@ -350,11 +401,11 @@ public class PuzzleUIManager : MonoBehaviour
         gameResult = value;
     }
     
-    bool CheckGameResult()
+    public string ReturnGameResult()
     {
         if(gameResult)
-            return true;
-        return false;
+            return "Success";
+        return "Fail";
     }
 
     public void SetPuzzleUICanvasState(bool value)
@@ -429,13 +480,14 @@ public class PuzzleUIManager : MonoBehaviour
 
     void SetClearObject(bool result)
     {
-        StopAllCoroutines();
-
         SetClearObjecState(true);
         SetGhostSprite(result);
         SetClearTypeTxt(result);
         
         GiveCandy(result);
+
+        GameObject.Find("SpecialNPC").GetComponent<SpecialNPC>().ChangeState(NPCState.END);
+        player.ChangeDidGetCandyState(false);
 
         Invoke("ClosePuzzleUI", 2f);
     }
@@ -481,9 +533,21 @@ public class PuzzleUIManager : MonoBehaviour
         SetClearObjecState(false);
     }
 
-    public void ClosePuzzleUI()
+    void ClosePuzzleUI()
     {
-        SetPuzzleUICanvasState(false);
+        StopAllCoroutines();
         playerUIManager.SetPlayerUICanvasState(true);
+        SetPuzzleUICanvasState(false);
+    }
+
+    void PlayAudio(string name)
+    {
+        audioSource.clip = AudioManager.instance.ReturnAudioClip(name);
+        audioSource.Play();
+    }
+
+    public bool CheckIfCanvasIsActivated()
+    {
+        return PuzzleUICanvas.gameObject.activeSelf;
     }
 }

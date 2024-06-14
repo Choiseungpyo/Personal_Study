@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum ChainsawState
 {
@@ -12,10 +13,12 @@ public class Chainsaw : MonoBehaviour
 {
     ChainsawState state;
 
+    public GameObject Weapon;
+
     float   chaseSpeed = 5;             // 플레이어를 추격할 때 이동 속도
     int     playerDetectDist = 20;      // 플레이어 감지 범위
     
-    float   turnSpeed = 1.5f;           // 플레이어를 바라볼 때 회전 속도
+    float   turnSpeed = 3f;           // 플레이어를 바라볼 때 회전 속도
     bool    canMove = true;
 
     // Find
@@ -24,13 +27,14 @@ public class Chainsaw : MonoBehaviour
     float   findMoveSpeed = 2.5f;
     Vector3 currentFindDir = Vector3.forward;
 
-
+    string candyToTake = "";
 
     // 플레이어 관련
     GameObject player;
 
     // 스크립트 관련
     EnemyManager enemyManager;
+    PuzzleUIManager puzzleUIManager;
 
     // 컴포넌트 관련
     Animator ani;
@@ -39,7 +43,8 @@ public class Chainsaw : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         ani = GetComponent<Animator>();
         enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
-
+        puzzleUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PuzzleUIManager>();
+        candyToTake = player.GetComponent<Candy>().ReturnRandomCandy();
     }
     private void Start()
     {
@@ -48,8 +53,14 @@ public class Chainsaw : MonoBehaviour
     }
     private void Update()
     {
+        if (puzzleUIManager.CheckIfCanvasIsActivated())
+            return;
+
         FindPlayer();
-        ChasePlaeyr();
+        ChasePlayer();
+
+        if (puzzleUIManager.CheckIfCanvasIsActivated())
+            enemyManager.RemoveObj("enemy", gameObject);
     }
 
     /// <summary>
@@ -119,6 +130,9 @@ public class Chainsaw : MonoBehaviour
             return;
         }
 
+        if (CheckIfCurrentStateIsDesiredState(ChainsawState.CHASE) || CheckIfCurrentStateIsDesiredState(ChainsawState.STUN))
+            return;
+
         MoveToFind();
         if (!CheckDistanceFromPlayer())
             return;
@@ -150,7 +164,7 @@ public class Chainsaw : MonoBehaviour
         //transform.LookAt(player.transform);
     }
 
-    void ChasePlaeyr()
+    void ChasePlayer()
     {
         if (!CheckCanMove())
         {
@@ -161,7 +175,6 @@ public class Chainsaw : MonoBehaviour
         if (!CheckIfCurrentStateIsDesiredState(ChainsawState.CHASE))
             return;
         LookAtPlayer();
-
         Vector3 dir = (player.transform.position - transform.position).normalized;
         Vector3 movement = dir * chaseSpeed * Time.deltaTime;
         transform.position += movement;
@@ -187,8 +200,12 @@ public class Chainsaw : MonoBehaviour
         }
         else if (coll.collider.CompareTag("Player"))
         {
+            if (CheckIfCurrentStateIsDesiredState(ChainsawState.STUN) || CheckIfCurrentStateIsDesiredState(ChainsawState.DEAD))
+                return;
+
             ChangeCanMove(false);
             ChangeState(ChainsawState.ATTACK);
+            Destroy(Weapon.GetComponent<BoxCollider>(), 0.5f);
         }
         else if (coll.collider.CompareTag("Wall"))
         {
@@ -199,12 +216,7 @@ public class Chainsaw : MonoBehaviour
 
     private void OnCollisionExit(Collision coll)
     {
-        if (coll.collider.CompareTag("Player"))
-        {
-            ChangeCanMove(true);
-            ChangeState(ChainsawState.CHASE);
-        }
-        else if (coll.collider.CompareTag("Wall"))
+        if (coll.collider.CompareTag("Wall"))
         {
             //Debug.Log("Wall");
             ChangeCanMove(true);
@@ -301,5 +313,15 @@ public class Chainsaw : MonoBehaviour
     public void RemoveChainsaw()
     {
         enemyManager.RemoveObj("enemy", gameObject);
+    }
+    
+    public bool CheckAttackState()
+    { 
+        return (state == ChainsawState.ATTACK) ? true : false;
+    }
+
+    public string ReturnCandyNameToTake()
+    {
+        return candyToTake;
     }
 }

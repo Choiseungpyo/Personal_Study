@@ -10,6 +10,7 @@ public class Pierrot : MonoBehaviour
         IDLE, SCARE
     }State state;
 
+    string candyToTake = "";
 
     // 컴포넌트 관련
     Animator ani;
@@ -17,17 +18,24 @@ public class Pierrot : MonoBehaviour
     // 스크립트 관련
     EnemyManager enemyManager;
     Player player;
+    PuzzleUIManager puzzleUIManager;
+
     private void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+        puzzleUIManager = GameObject.Find("UIManager").GetComponent<PuzzleUIManager>();
         ani = GetComponent<Animator>();
     }
     private void Start()
     {
+        candyToTake = player.GetComponent<Candy>().ReturnRandomCandy();
         ChangeState(State.SCARE);
         SetAni();
         transform.LookAt(GameObject.FindGameObjectWithTag("Player").transform);
+
+        if (puzzleUIManager.CheckIfCanvasIsActivated())
+            enemyManager.RemoveObj("enemy", gameObject);
     }
 
     private void Update()
@@ -81,12 +89,9 @@ public class Pierrot : MonoBehaviour
         yield return new WaitForSeconds(1f);
         enemyManager.RemoveObj("enemy", gameObject);
     }
-    private void OnCollisionEnter(Collision coll)
-    {
-        if (coll.collider.CompareTag("Player"))
-        {
-            player.ChangeHp(2);
-        }
-    }
 
+    public string ReturnCandyNameToTake()
+    {
+        return candyToTake;
+    }
 }

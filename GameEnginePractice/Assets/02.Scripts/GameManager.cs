@@ -8,16 +8,16 @@ public class GameManager : MonoBehaviour
 
     GameOverUIManager gameOverUIManager;
 
-    GameObject player;
-    GameObject enemyManager;
-    GameObject npcManager;
+    Player player;
+    EnemyManager enemyManager;
+    NPCManager npcManager;
 
     private void Start()
     {
-        gameOverUIManager = GetComponent<GameOverUIManager>();
-        player = GameObject.FindGameObjectWithTag("Player");
-        enemyManager = GameObject.Find("EnemyManager");
-        npcManager = GameObject.Find("npcManager");
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        enemyManager = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
+        npcManager = GameObject.Find("NPCManager").GetComponent<NPCManager>();
+        gameOverUIManager = GameObject.Find("UIManager").GetComponent<GameOverUIManager>();
     }
 
     public void SetGameOverState(bool value)
@@ -27,10 +27,11 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        player.SetActive(false);
-        enemyManager.SetActive(false);
-        npcManager.SetActive(false);
-
+        bool value = false;
+        player.enabled = value;
+        enemyManager.enabled = value;
+        npcManager.enabled = value;
+        AudioManager.instance.SetAudioClip("GameOverBGM");
         gameOverUIManager.ActivateGameOverUI();
     }
 }

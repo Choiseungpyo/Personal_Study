@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,8 +8,9 @@ public class NPCUIManager : MonoBehaviour
 {
     public Sprite[] CandySprites = new Sprite[3]; 
     public Image CandyImg;
+    public TMP_Text CandyCntTxt;
 
-    public void ChangeCandImg(string type)
+    void ChangeCandImg(string type)
     {
         switch (type)
         {
@@ -25,5 +27,17 @@ public class NPCUIManager : MonoBehaviour
                 Debug.LogWarning(type);
                 break;
         }
+    }
+
+    void ChangeCandyCntTxt(int cnt)
+    {
+        CandyCntTxt.text = "X " + cnt.ToString();
+    }
+
+
+    public void SetCandyData(string type, int cnt)
+    {
+        ChangeCandImg(type);
+        ChangeCandyCntTxt(cnt);
     }
 }

@@ -36,14 +36,23 @@ public class Candy : MonoBehaviour
         {
             case "hard":
                 candy["hard"] += Candycnt;
+                if (candy["hard"] < 0)
+                    candy["hard"] = 0;
+  
                 index = 0;
                 break;
             case "lollipop":
                 candy["lollipop"] += Candycnt;
+                if (candy["lollipop"] < 0)
+                    candy["lollipop"] = 0;
+
                 index = 1;
                 break;
             case "muffin":
                 candy["muffin"] += Candycnt;
+                if (candy["muffin"] < 0)
+                    candy["muffin"] = 0;
+
                 index = 2;
                 break;
             default:

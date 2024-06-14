@@ -24,12 +24,13 @@ public class Enemy : MonoBehaviour
     int goalCntToCrawl = 3;
     Vector3 crawlStartPos;
 
+    string candyToTake = "";
 
     // 스크립트 관련
     GameObject target;
     Player player;
     EnemyManager enemyManager;
-
+    PuzzleUIManager puzzleUIManager;
 
     // 컴포넌트 관련
     Animator ani;
@@ -39,6 +40,8 @@ public class Enemy : MonoBehaviour
         target = GameObject.FindGameObjectWithTag("Player");
         player = target.GetComponent<Player>();
         enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+        puzzleUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PuzzleUIManager>();
+        candyToTake = target.GetComponent<Candy>().ReturnRandomCandy();
     }
 
     private void Start()
@@ -53,8 +56,12 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
+        if (puzzleUIManager.CheckIfCanvasIsActivated())
+            enemyManager.RemoveObj("enemy", gameObject);
+
         ChasePlayer();
         CheckGoalCntToCrawl();
+
     }
 
     /// <summary>
@@ -126,17 +133,10 @@ public class Enemy : MonoBehaviour
     {
         if (coll.collider.CompareTag("Wall"))
         {
-            // 벽과 닿았을 때 움직임 멈추고 다시 플레이어 조준
-            //ChangeState(State.IDLE);
-            //SetAni();
-            //AddCrawlCnt();
-            //StartCoroutine(ReCrawl());
-            Destroy(gameObject);
+            enemyManager.RemoveObj("enemy", gameObject);
         }
         else if(coll.collider.CompareTag("Player"))
         {
-            player.ChangeHp(1);
-            Destroy(gameObject);
             enemyManager.RemoveObj("enemy", gameObject);
         }
     }
@@ -155,7 +155,7 @@ public class Enemy : MonoBehaviour
     {
         if (crawlCnt < goalCntToCrawl)
             return;
-        Debug.Log("삭제 예쩡");
+        //Debug.Log("삭제 예쩡");
         ResetCrawlCnt();
         StartCoroutine(RemoveEnemy());
     }
@@ -166,5 +166,14 @@ public class Enemy : MonoBehaviour
         enemyManager.RemoveObj("enemy", gameObject);
     }
 
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+
+    public string ReturnCandyNameToTake()
+    {
+        return candyToTake;
+    }
 
 }

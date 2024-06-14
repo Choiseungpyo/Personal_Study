@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEditor.PlayerSettings;
 using Random = UnityEngine.Random;
 
@@ -29,28 +30,19 @@ public class EnemyManager : MonoBehaviour
     // 스폰 포인트
     public Transform[] EnemySpawnPoints = new Transform[3];
 
-    float enemySpawnTime = 7f;
+    float enemySpawnTime = 7f; //7
 
     // 적마다 빼앗은 사탕 개수
     int[] getCandyCnt = new int[3];
 
+    PuzzleUIManager puzzleUIManager;
+
     private void Start()
     {
+        puzzleUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PuzzleUIManager>();
         ResetGetCandyCnt();
         enemys.Clear();
-        //StartCoroutine(MakeEnemys());
-    }
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.P))
-        {
-            GameObject tmp = null;
-            StartCoroutine(MakeAppearanceEffect(2, new Vector3(-15, 0, -12)));
-            tmp = MakeObj(Killer_Prefab, new Vector3(-15, 0, -12));
-            tmp.name = "Chainsaw";
-            AddList("enemys", tmp);
-        }
+        StartCoroutine(MakeEnemys());
     }
 
     GameObject MakeObj(GameObject prefab, Vector3 pos)
@@ -73,12 +65,25 @@ public class EnemyManager : MonoBehaviour
 
     IEnumerator MakeEnemys()
     {
+        int loopCnt = 0;
         GameObject tmp = null;
         int randEnemyIndex = 0;
         Vector3 randPos = Vector3.zero;
         while(true)
         {
-            randEnemyIndex = ReturnRandEnemyIndex();
+            yield return new WaitForSeconds(enemySpawnTime);
+
+            if (loopCnt++ > 10000)
+            {
+                Debug.Log("MakeEnemy 무한 반복");
+                yield break;
+            }
+
+            if (enemys.Count > 3)
+                continue;
+            
+
+            randEnemyIndex = ReturnRandEnemyIndex();//
             randPos = ReturnRandPos();
             if (randEnemyIndex == 0)
             {
@@ -101,8 +106,6 @@ public class EnemyManager : MonoBehaviour
                 tmp.name = "Chainsaw";
                 AddList("enemys", tmp);
             }
-               
-            yield return new WaitForSeconds(enemySpawnTime);
         }
     }
 
@@ -122,9 +125,19 @@ public class EnemyManager : MonoBehaviour
 
     IEnumerator ManagePierrotAppearance(GameObject obj, Vector3 pos)
     {
+        int loopCnt = 0;
         GameObject tmpObj = null;
         for (int i = 0; i < 3; i++)
         {
+            if (loopCnt++ > 10000)
+            {
+                Debug.Log("MakeEnemy 무한 반복");
+                yield break;
+            }
+
+            if (puzzleUIManager.CheckIfCanvasIsActivated())
+                yield break;
+
             yield return new WaitForSeconds(0.4f - 0.1f * i);
             tmpObj = MakeObj(obj, pos);
             if(i==1)
@@ -165,7 +178,15 @@ public class EnemyManager : MonoBehaviour
 
     IEnumerator MakeAppearanceEffect(int index, Vector3 pos)
     {
+        int loopCnt = 0;
         GameObject tmp = null;
+
+        if (loopCnt++ > 10000)
+        {
+            Debug.Log("MakeEnemy 무한 반복");
+            yield break;
+        }
+
         if (index == 0)
             tmp = Instantiate(Zombie_AppearanceEffect, pos, Quaternion.identity);
         else if (index == 1)

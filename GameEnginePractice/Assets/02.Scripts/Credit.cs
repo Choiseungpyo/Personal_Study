@@ -1,26 +1,57 @@
-/*
- * <»çÁø>
- * »çÅÁ1 : https://www.cleanpng.com/png-bonbon-halloween-candy-trick-or-treating-clip-art-2442873/
- * »çÅÁ2 : https://kr.freepik.com/free-vector/hand-drawn-flat-halloween-candy-collection_18496410.htm#fromView=search&page=1&position=1&uuid=ae6ac50d-2a00-45cc-a10e-9ce9c656255a
- * »çÅÁ ¹Ù±¸´Ï : https://gallery.yopriceville.com/Free-Clipart-Pictures/Halloween-PNG-Pictures/Pumpkin_Basket_PNG_Clip_Art_Image
- * ¹è°æ : https://www.pngkey.com/download/u2q8y3o0e6w7q8r5_halloween-vector-free-png-border-halloween/
+ï»¿/*
+ * <ì‚¬ì§„>
+ * ì‚¬íƒ•1 : https://www.cleanpng.com/png-bonbon-halloween-candy-trick-or-treating-clip-art-2442873/
+ * ì‚¬íƒ•2 : https://kr.freepik.com/free-vector/hand-drawn-flat-halloween-candy-collection_18496410.htm#fromView=search&page=1&position=1&uuid=ae6ac50d-2a00-45cc-a10e-9ce9c656255a
+ * ì‚¬íƒ• ë°”êµ¬ë‹ˆ : https://gallery.yopriceville.com/Free-Clipart-Pictures/Halloween-PNG-Pictures/Pumpkin_Basket_PNG_Clip_Art_Image
+ * ë°°ê²½ : https://www.pngkey.com/download/u2q8y3o0e6w7q8r5_halloween-vector-free-png-border-halloween/
  * 
- * <ÆÛÁñ>
- * ³î¸®´Â À¯·É 1: https://www.pngwing.com/ko/free-png-zlrnr
- * ÃàÇÏÇØÁÖ´Â À¯·É 2: https://www.cleanpng.com/png-cute-ghost-cartoon-ghost-ghost-with-big-eyes-happy-7850208/download-png.html
+ * <í¼ì¦>
+ * ë†€ë¦¬ëŠ” ìœ ë ¹ 1: https://www.pngwing.com/ko/free-png-zlrnr
+ * ì¶•í•˜í•´ì£¼ëŠ” ìœ ë ¹ 2: https://www.cleanpng.com/png-cute-ghost-cartoon-ghost-ghost-with-big-eyes-happy-7850208/download-png.html
  * 
- * <½Ã°è>
- * ¹ÚÁãµé : https://www.freepik.com/free-vector/bats-silhouettes-solated-transparent-background-halloween-traditional-design-element-vector-vampire-bat-set-isolated_17561957.htm#query=halloween%20png&position=19&from_view=keyword&track=ais_user&uuid=cba9b748-b434-4822-ade1-a2d4b99a02d7
+ * <ì‹œê³„>
+ * ë°•ì¥ë“¤ : https://www.freepik.com/free-vector/bats-silhouettes-solated-transparent-background-halloween-traditional-design-element-vector-vampire-bat-set-isolated_17561957.htm#query=halloween%20png&position=19&from_view=keyword&track=ais_user&uuid=cba9b748-b434-4822-ade1-a2d4b99a02d7
  * 
- * <°ÔÀÓ Á¾·á UI>
- * ÀüÃ¼ ¹è°æ : https://www.pngwing.com/en/free-png-bkrtk
- * °í¾çÀÌ : https://pngtree.com/element/down?id=NDg5NjYxNQ==&type=1&time=1718282970&token=NTk3NGJiNmY4NDFlMDc1NGYxYWJiOTU1YWFlNmJmZGM=&t=0
- * °í¾çÀÌ µŞ¹è°æ : https://www.cleanpng.com/png-halloween-trick-or-treat-895375/download-png.html
+ * <ê²Œì„ ì¢…ë£Œ UI>
+ * ì „ì²´ ë°°ê²½ : https://www.pngwing.com/en/free-png-bkrtk
+ * ê³ ì–‘ì´ : https://pngtree.com/element/down?id=NDg5NjYxNQ==&type=1&time=1718282970&token=NTk3NGJiNmY4NDFlMDc1NGYxYWJiOTU1YWFlNmJmZGM=&t=0
+ * ê³ ì–‘ì´ ë’·ë°°ê²½ : https://www.cleanpng.com/png-halloween-trick-or-treat-895375/download-png.html
  * 
- * <»ç¿îµå>
- * 
- * 
- * 
- * <ÆùÆ®>
- * continuous : https://beomdolee.com/continuous-eng/
- */ 
+ * <ì‚¬ìš´ë“œ>
+ * 1. ë°°ê²½ ìŒì•… : https://www.motionelements.com/ko/stock-music-27557173-happy-halloween
+
+   2. í¼ì¦ ì‹¤íŒ¨ ì‚¬ìš´ë“œ :Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6008">Pixabay</a>
+
+   3. í¼ì¦ ì„±ê³µ ì‚¬ìš´ë“œ :Sound Effect by <a href="https://pixabay.com/ko/users/liecio-3298866/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=190035">LIECIO</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=190035">Pixabay</a>
+
+   4. NPC ìº”ë”” ì§€ê¸‰ ì‚¬ìš´ë“œ : https://sellbuymusic.com/md/sagwkkf-jnkhnnf
+
+   5. íƒ€ì´í‹€ ë²„íŠ¼ í´ë¦­ ì‚¬ìš´ë“œ : Sound Effect by <a href="https://pixabay.com/ko/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=126517">UNIVERSFIELD</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=126517">Pixabay</a>
+
+   6. íƒ€ê²© ì‚¬ìš´ë“œ : Thanks to, Mike Koenig From: http://soundbible.com/995-Jab.html
+    Distributor: Stop worrying about music & free sound effects with Mewpotâ€™
+    https://www.mewpot.comğŸ« ì¶”ì²œì¸ ì½”ë“œ: mewc.at/ref/1wx0
+    ìœ„ì˜ URLì„ í†µí•´ êµ¬ë…í•˜ì‹œë©´ 2ê°œì›” ì¶”ê°€ í˜œíƒ! ì €ì™€ í•¨ê»˜ ë®¤íŒŸ í˜œíƒì„ ë°›ì•„ìš”~ğŸ
+
+   7. ì¢€ë¹„ ì‚¬ìš´ë“œ : https://www.mewpot.com/sound-effects/921
+    
+   8. ì¢€ë¹„ ì‚¬ë§ ì‚¬ìš´ë“œ : https://www.mewpot.com/sound-effects/938
+
+   9. ì‚ì—ë¡œ ë“±ì¥ ì‚¬ìš´ë“œ : Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6313">Pixabay</a>
+
+   10. ë‹¬ë¦¬ê¸° : Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6306">Pixabay</a>
+
+   11. íƒ€ì´í‹€ BGM : Music by <a href="https://pixabay.com/ko/users/momotmusic-36971640/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=170695">Kyrylo Momot</a> from <a href="https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=170695">Pixabay</a>
+
+   12. í†± : Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=31764">Pixabay</a>
+
+   13.  ìŠ¤í„´ : Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=99826">Pixabay</a>
+
+   14. Clock : Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=29462">Pixabay</a>
+
+   15. GameOverBGM : Music by <a href="https://pixabay.com/ko/users/soundgallerybydmitrytaras-11640913/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=116010">Dmitry Taras</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=116010">Pixabay</a>
+
+   16. Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=47609">Pixabay</a>
+
+   í°íŠ¸ : https://noonnu.cc/font_page/395
+ */

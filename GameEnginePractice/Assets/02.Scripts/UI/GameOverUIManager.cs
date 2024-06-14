@@ -21,25 +21,41 @@ public class GameOverUIManager : MonoBehaviour
     TimerUIManager timerUIManager;
     Player player;
     EnemyManager enemyManager;
+    NPCManager npcManager;
+    AudioSource audioSource;
 
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+        npcManager = GameObject.Find("NPCManager").GetComponent<NPCManager>();
         GameObject uiManager = GameObject.Find("UIManager");
         playerUIManager = uiManager.GetComponent<PlayerUIManager>();
         puzzleUIManager = uiManager.GetComponent<PuzzleUIManager>();
         timerUIManager = uiManager.GetComponent<TimerUIManager>();
+        audioSource = GetComponent<AudioSource>();
 
         SetGameOverUIState(false);
     }
 
     public void ActivateGameOverUI()
     {
+        // UI 
         playerUIManager.SetPlayerUICanvasState(false);
-        puzzleUIManager.ClosePuzzleUI();
         timerUIManager.SetTimerUIState(false);
+        puzzleUIManager.SetPuzzleUICanvasState(false);
         SetGameOverUIState(true);
+
+        // 스크립트
+        player.enabled = false;
+        puzzleUIManager.StopAllCoroutines();
+        puzzleUIManager.enabled = false;
+        enemyManager.StopAllCoroutines();
+        enemyManager.enabled = false;
+        npcManager.StopAllCoroutines();
+        npcManager.enabled = false;
+        puzzleUIManager.StopAllCoroutines();
+
         SetCandyData();
         StartCoroutine(RotateCat());
     }
@@ -59,10 +75,10 @@ public class GameOverUIManager : MonoBehaviour
         GetCandyTxt[0].text = " X " + candyCnt.ToString();
 
         candyCnt = player.GetComponent<Candy>().ReturnCandyCnt("lollipop");
-        GetCandyTxt[0].text = " X " + candyCnt.ToString();
+        GetCandyTxt[1].text = " X " + candyCnt.ToString();
 
         candyCnt = player.GetComponent<Candy>().ReturnCandyCnt("muffin");
-        GetCandyTxt[0].text = " X " + candyCnt.ToString();
+        GetCandyTxt[2].text = " X " + candyCnt.ToString();
 
 
         // Lost
@@ -75,12 +91,12 @@ public class GameOverUIManager : MonoBehaviour
 
     public void ClickReplayBtn()
     {
-        SceneManager.LoadScene("Main");
+        StartCoroutine(LoadScene("Main"));
     }
 
-    public void ClickGoTitmeBtn()
+    public void ClickGoTitleBtn()
     {
-        SceneManager.LoadScene("Title");
+        StartCoroutine(LoadScene("Title"));
     }
 
     IEnumerator RotateCat()
@@ -93,7 +109,18 @@ public class GameOverUIManager : MonoBehaviour
             yield return null;
             catTime += Time.deltaTime;
         }
-        
     }
 
+    IEnumerator LoadScene(string name)
+    {
+        SetAudioClip("ButtonClick");
+        audioSource.Play();
+        yield return new WaitForSeconds(0.5f);
+        SceneManager.LoadScene(name);
+    }
+
+    void SetAudioClip(string name)
+    {
+        audioSource.clip = AudioManager.instance.ReturnAudioClip(name);
+    }
 }

@@ -7,20 +7,39 @@ using UnityEngine.Jobs;
 public class NPCManager : MonoBehaviour
 {
     public GameObject NPCPrefab;
+    public GameObject SpecialNPCPrefab;
     public Avatar[] NPCAvatars = new Avatar[3];
+
+    // À§Ä¡
     public Transform[] NPCSpawnPoints = new Transform[4];
+    public Transform[] SpecialNPCSpawnPoints = new Transform[4];
+    
+    // ÀÌÆåÆ®
+    public GameObject TalkEffect_Prefab;
+    public GameObject AppearanceEffect_Prefab;
+
+    GameObject TalkEffectObj = null;
+    GameObject AppearanceEffect = null;
 
     int spawnTime = 10;
-    Vector3[] NPCSpawnDir = new Vector3[4];
+    int specialNPCSpawnTime = 30;
 
     bool[] usingNPCIndex = new bool[4];
+    bool SpecialNPCISSpawn = false;
+
+    AudioSource audioSource;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     private void Start()
     {
-        //Vector3[0] = 
-
+        ChangeSpecialNPCISSpawnState(false);
         InitUsingNpcIndex();
         StartCoroutine(MakeNPC());
+        StartCoroutine(MakeSpecialNPC());
     }
 
     IEnumerator MakeNPC()
@@ -31,8 +50,7 @@ public class NPCManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(spawnTime);
                 continue;
-            }
-                
+            }        
 
             int posIndex = ReturnRandPosIndex();
             int avatarIndex = ReturnRandNPCAvatarIndex();
@@ -42,10 +60,33 @@ public class NPCManager : MonoBehaviour
             ChangeNPCAvatar(avatarIndex);
             GameObject npc = Instantiate(NPCPrefab, NPCSpawnPoints[posIndex].transform.position, Quaternion.identity, transform);
             npc.GetComponent<NPC>().ChangePosIndex(posIndex);
-
+           
             yield return new WaitForSeconds(spawnTime);
         }
     }
+
+    IEnumerator MakeSpecialNPC()
+    {
+        while (true)
+        {
+            if (SpecialNPCISSpawn)
+            {
+                yield return new WaitForSeconds(specialNPCSpawnTime);
+                continue;
+            }
+
+            int posIndex = ReturnRandPosIndex();
+
+            ChangeSpecialNPCISSpawnState(true);
+            GameObject speicalNPC = Instantiate(SpecialNPCPrefab, SpecialNPCSpawnPoints[posIndex].transform.position, Quaternion.identity, transform);
+            AppearanceEffect = Instantiate(AppearanceEffect_Prefab, SpecialNPCSpawnPoints[posIndex].transform.position + new Vector3(0,3.5f,0), Quaternion.identity, transform);
+            Destroy(AppearanceEffect, 1.0f);
+            speicalNPC.name = "SpecialNPC";
+
+            yield return new WaitForSeconds(specialNPCSpawnTime);
+        }
+    }
+
 
     int ReturnRandNPCAvatarIndex()
     {
@@ -92,5 +133,29 @@ public class NPCManager : MonoBehaviour
     void ChangeNPCAvatar(int index)
     {
         NPCPrefab.GetComponent<Animator>().avatar = NPCAvatars[index];
+    }
+
+    public void ChangeSpecialNPCISSpawnState(bool value)
+    {
+        SpecialNPCISSpawn = value;
+    }
+
+    public void MakeTalkEffect(Vector3 pos, string name)
+    {
+        SetAudioClip(name);
+        audioSource.Play();
+
+        TalkEffectObj = Instantiate(TalkEffect_Prefab, pos, Quaternion.identity);
+        Destroy(TalkEffectObj, 1.0f);
+    }
+
+    void SetAudioClip(string name)
+    {
+        audioSource.clip = AudioManager.instance.ReturnAudioClip(name);
+    }
+
+    private void OnDisable()
+    {
+        audioSource.enabled = false;
     }
 }

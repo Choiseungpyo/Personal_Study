@@ -19,8 +19,11 @@ public class TitleUIManager : MonoBehaviour
 
     int currentPage = 0;
 
+    AudioSource audioSource;
+
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         currentPage = 0;
         InitGuideObj();
 
@@ -29,11 +32,13 @@ public class TitleUIManager : MonoBehaviour
 
     public void ClickPlayBtn()
     {
+        PlayAudio();
         SceneManager.LoadScene("Main");
     }
 
     public void ClickGuideBtn()
     {
+        PlayAudio();
         ActivateHomeBtn(false);
         Guide.SetActive(true);
         InitGuideObj();
@@ -41,6 +46,7 @@ public class TitleUIManager : MonoBehaviour
 
     public void ClickExitBtn()
     {
+        PlayAudio();
         Application.Quit();
     }
 
@@ -56,12 +62,14 @@ public class TitleUIManager : MonoBehaviour
 
     public void ClickCloseGuide()
     {
+        PlayAudio();
         Guide.SetActive(false);
         ActivateHomeBtn(true);
     }
 
     public void ClickNextPage()
     {
+        PlayAudio();
         Pages[currentPage].SetActive(false);
         SetPageBtn(1);
         Pages[currentPage].SetActive(true);
@@ -70,6 +78,7 @@ public class TitleUIManager : MonoBehaviour
 
     public void ClickPreviousPage()
     {
+        PlayAudio();
         Pages[currentPage].SetActive(false);
         SetPageBtn(-1);
         Pages[currentPage].SetActive(true);
@@ -79,7 +88,7 @@ public class TitleUIManager : MonoBehaviour
     void InitPageBtn()
     {
         PageBtn[0].SetActive(false);
-        PageBtn[0].SetActive(true);
+        PageBtn[1].SetActive(true);
     }
 
     void SetPageBtn(int value)
@@ -117,7 +126,14 @@ public class TitleUIManager : MonoBehaviour
     {
         int tmpPage = currentPage - 2;
         if (currentPage >= 2)
+        {
             EnemyVideoPlayer.GetComponent<VideoPlayer>().clip = EnemyVideoClip[tmpPage];
+            EnemyVideoPlayer.GetComponent<VideoPlayer>().Play();
+        } 
     }
 
+    void PlayAudio()
+    {
+        audioSource.Play();
+    }
 }
