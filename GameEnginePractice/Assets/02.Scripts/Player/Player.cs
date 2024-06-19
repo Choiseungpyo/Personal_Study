@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.VFX;
 
 public class Player : MonoBehaviour
 {
@@ -113,7 +112,7 @@ public class Player : MonoBehaviour
         // 마우스로 회전
         //Debug.Log(-Input.GetAxis("Mouse X"));
         transform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * Time.deltaTime * turnSpeed, 0)); // 자기 자신기준 회전
-
+        //Debug.Log(Input.GetAxis("Mouse X"));
 
         //if (h == 0)
         //    return;
@@ -255,7 +254,7 @@ public class Player : MonoBehaviour
             else if (obj.name.Equals("Pierrot"))
                 candy.ChangeCandyCnt(obj.GetComponent<Pierrot>().ReturnCandyNameToTake(), -5);
             else if (obj.name.Equals("Chainsaw"))
-                candy.ChangeCandyCnt(obj.GetComponent<Chainsaw>().ReturnCandyNameToTake(), -7);
+                candy.ChangeCandyCnt(obj.GetComponent<Chainsaw>().ReturnCandyNameToTake(), -7);   
 
             ChangeState(State.HIT);
             SetAni();

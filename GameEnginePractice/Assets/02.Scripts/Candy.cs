@@ -1,8 +1,6 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Candy : MonoBehaviour
@@ -60,15 +58,10 @@ public class Candy : MonoBehaviour
                 index = 0;
                 break;
         }
-
+        //Debug.Log("변경된 캔디값 - "+ type  + " : "+ candy[type]);
         // 변경된 캔디 UI 변경
         playerUIManager.ChangeCandyCntTxt(index, type);
 
-        //Debug.Log(type + " ++");
-        //Debug.Log(candy["hard"]);
-        //Debug.Log(candy["lollipop"]);
-        //Debug.Log(candy["muffin"]);//
-        //Debug.Log(candy["muffin"]);//
     }
 
 

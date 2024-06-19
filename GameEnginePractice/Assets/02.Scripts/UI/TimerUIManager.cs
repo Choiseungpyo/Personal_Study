@@ -7,7 +7,7 @@ public class TimerUIManager : MonoBehaviour
     public Canvas TimerUICanvas;
     public GameObject TimerBar;
 
-    float   endTime = 180;
+    float   endTime = 120;
     float   currentTime = 0;
     float   timerBarRot = 0;
 
@@ -19,7 +19,7 @@ public class TimerUIManager : MonoBehaviour
     private void Start()
     {
         firstSound = false;
-        endTime = 180;
+        endTime = 120;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         audioSource = GetComponent<AudioSource>();
         ResetData();

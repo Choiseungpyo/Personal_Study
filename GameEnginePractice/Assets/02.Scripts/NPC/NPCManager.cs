@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Jobs;
+
 
 public class NPCManager : MonoBehaviour
 {
@@ -75,7 +74,8 @@ public class NPCManager : MonoBehaviour
                 continue;
             }
 
-            int posIndex = ReturnRandPosIndex();
+
+            int posIndex = Random.Range(0, SpecialNPCSpawnPoints.Length);
 
             ChangeSpecialNPCISSpawnState(true);
             GameObject speicalNPC = Instantiate(SpecialNPCPrefab, SpecialNPCSpawnPoints[posIndex].transform.position, Quaternion.identity, transform);

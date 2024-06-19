@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 
 public class Enemy : MonoBehaviour
 {
@@ -155,7 +153,6 @@ public class Enemy : MonoBehaviour
     {
         if (crawlCnt < goalCntToCrawl)
             return;
-        //Debug.Log("»èÁ¦ ¿¹ÂÄ");
         ResetCrawlCnt();
         StartCoroutine(RemoveEnemy());
     }

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Pierrot : MonoBehaviour
@@ -78,7 +77,7 @@ public class Pierrot : MonoBehaviour
     {
         if (!CheckIfScareAnIsTerminated())
             return;
-        Debug.Log("Idle 상태로 변환");
+        //Debug.Log("Idle 상태로 변환");
         ChangeState(State.IDLE);
         SetAni();
         StartCoroutine(RemovePierrot());
