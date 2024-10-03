@@ -23,9 +23,6 @@ def checkIfDataIsCorrect(data,n):
         return False
     
     for i in data:    
-        if i.isdigit() == False:
-            print("올바르지 않은 값을 입력하였습니다.")
-            return False
         i = int(i)
         if i < -100 or i > 100:
             print("값의 범위가 올바르지 않습니다.")
@@ -34,9 +31,6 @@ def checkIfDataIsCorrect(data,n):
     return True
 
 def checkIfVIsCorrect(v):
-    if v.isdigit() == False:
-        print("올바르지 않은 값을 입력하였습니다.")
-        return False
     v = int(v)
     if v < -100 or v > 100:
         print("값의 범위가 올바르지 않습니다.")
@@ -59,7 +53,7 @@ def printNumCnt():
     if checkIfVIsCorrect(v) == False:
         return
         
-    print(v.count(numToCheck))
+    print(data.count(v))
         
 # Main
 printNumCnt()
