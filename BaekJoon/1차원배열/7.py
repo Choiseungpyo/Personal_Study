@@ -31,4 +31,4 @@ def setAttendanceBook(maxStudentNum, submittedStudentNum):
     
 
 # Main
-setAttendanceBook(5, 3)
+setAttendanceBook(30, 28)
