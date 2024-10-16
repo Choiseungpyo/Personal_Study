@@ -1,0 +1,49 @@
+#include <math.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+int checkIfInputIsCorrect(int n)
+{
+    if (n < 1 || n > 10000)
+        return 0;
+    return 1;
+}
+
+int getNumOfDigits(int n)
+{
+    int cnt = 1;
+    
+    while (n >= 10)
+    {
+        cnt++;
+        n /= 10;
+    } 
+    return cnt;
+}
+
+int solution(int a, int b) {
+    int resultA = 0;
+    int resultB = 0;
+    int aNumOfDigits = getNumOfDigits(a);
+    int bNumOfDigits = getNumOfDigits(b);
+
+    if (!checkIfInputIsCorrect(a) || !checkIfInputIsCorrect(b))
+    {
+        printf("값의 범위가 올바르지 않습니다.");
+        return 0;
+    }
+
+    resultA = a * pow(10, bNumOfDigits) + b;
+    resultB = b * pow(10, aNumOfDigits) + a;
+
+    if (resultA >= resultB)
+        return resultA;
+    return resultB;
+}
+
+int main()
+{
+    int s = solution(899, 90);
+    return 0;
+}

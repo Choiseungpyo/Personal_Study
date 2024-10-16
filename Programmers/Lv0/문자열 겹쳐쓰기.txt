@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+int checkIfInputIsCorrect(const char* my_string, const char* overwrite_string, int s)
+{
+    if (strlen(my_string) <= 0 || strlen(overwrite_string) > 1000)
+        return 0;
+    if (strlen(overwrite_string) <= 0 || strlen(overwrite_string) > 1000)
+        return 0;
+    if (strlen(overwrite_string) > strlen(my_string))
+        return 0;
+    if (s < 0 || s > strlen(my_string) - strlen(overwrite_string))
+        return 0;
+    return 1;
+}
+
+// 파라미터로 주어지는 문자열은 const로 주어집니다. 변경하려면 문자열을 복사해서 사용하세요.
+char* solution(const char* my_string, const char* overwrite_string, int s) {
+    if (!checkIfInputIsCorrect(my_string, overwrite_string, s))
+        return "";
+
+    // return 값은 malloc 등 동적 할당을 사용해주세요. 할당 길이는 상황에 맞게 변경해주세요.
+    char* answer = (char*)malloc(strlen(my_string)+1);
+
+    strcpy(answer, ""); // strcat을 사용하기 위해 초기화
+    strncat(answer, my_string, s);
+    strcat(answer, overwrite_string);
+
+
+    for (int i = s + strlen(overwrite_string); i < strlen(my_string); i++)
+        strncat(answer, &my_string[i], 2);
+    return answer;
+}
