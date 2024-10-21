@@ -1,0 +1,26 @@
+#include <math.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+int getNumOfDigits(int n)
+{
+    int cnt = 1;
+
+    while (n >= 10)
+    {
+        cnt++;
+        n /= 10;
+    }
+    return cnt;
+}
+
+int solution(int a, int b) {
+    int result = 0;
+    int aNumOfDigits = getNumOfDigits(a);
+    int bNumOfDigits = getNumOfDigits(b);
+
+    result = a * pow(10, bNumOfDigits) + b;
+
+    return result >= 2 * a * b ? result : 2 * a * b;
+}
