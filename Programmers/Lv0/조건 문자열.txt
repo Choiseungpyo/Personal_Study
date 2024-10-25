@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+// 파라미터로 주어지는 문자열은 const로 주어집니다. 변경하려면 문자열을 복사해서 사용하세요.
+int solution(const char* ineq, const char* eq, int n, int m) {
+    char op[3];
+    op[0] = ineq[0];
+    op[1] = eq[0];
+    op[2] = '\0';
+    
+    if (!strcmp(op, ">="))
+        return n >= m ? 1 : 0;
+    else if (!strcmp(op, "<="))
+        return n <= m ? 1 : 0;
+    else if (!strcmp(op, ">!"))
+        return n > m ? 1 : 0;
+    else if (!strcmp(op, "<!"))
+        return n < m ? 1 : 0;
+    
+    printf("잘못된 값을 입력하였습니다.");
+    return 0;
+}
