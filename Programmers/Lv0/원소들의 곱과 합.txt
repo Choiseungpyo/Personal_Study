@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+// num_list_len은 배열 num_list의 길이입니다.
+int solution(int num_list[], size_t num_list_len) {
+    int result1 = 1;
+    int result2 = 0;
+    for(int i=0; i<num_list_len; i++)
+    {
+        result1 *= num_list[i];
+        result2 += num_list[i];
+    }
+    return result1 < result2*result2 ? 1 : 0;
+}
