@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* solution(const char* code) {
+    int size = strlen(code);
+    int mode = 0;
+    int retIdx = 0;
+    char* ret = (char*)malloc(size + 1);
+    memset(ret, 0, size + 1);
+
+    for (int idx = 0; idx < size; idx++)
+    {
+        if (code[idx] != '1')
+        {
+            if ((idx % 2 == 0) == (mode == 0))
+                ret[retIdx++] = code[idx];
+        }
+        else
+            mode = abs(1 - mode);
+    }
+
+    if (!strcmp(ret, ""))
+        strcpy(ret, "EMPTY");
+
+    return ret;
+}
