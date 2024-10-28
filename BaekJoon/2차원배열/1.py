@@ -9,7 +9,6 @@ def getMatrix(n, m):
 # 행렬 더하기
 def addMatrix(a, b):
     result = []
-
     for row in range(len(a)):
         rowResult = []
         for col in range(len(a[row])):
@@ -32,4 +31,3 @@ for i in range(2):
 
 result = addMatrix(storage[0], storage[1])
 printMatrix(result)
-    
