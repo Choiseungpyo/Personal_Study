@@ -7,6 +7,7 @@ if int(n) < x :
 else:
     for i in range(len(n)-1, -1, -1):
         num = 0
+        print(n[i])
         if n[i].isalpha():
             num = ord(n[i]) - 55
         else:
