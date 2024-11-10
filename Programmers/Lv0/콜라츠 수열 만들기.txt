@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+int* solution(int n) {
+    int i = 1;
+    int tmp = n;
+    
+    while (tmp != 1)
+    {
+        if (tmp % 2 == 0)
+            tmp /= 2;
+        else
+            tmp = 3 * tmp + 1;
+        i++;
+    }
+  
+    int* answer = (int*)malloc(sizeof(int) * i);
+    i = 0;
+
+    while (n != 1)
+    {
+        answer[i++] = n;
+        if (n % 2 == 0)
+            n /= 2;
+        else
+            n = 3 * n + 1;
+    }
+    answer[i] = 1;
+    return answer;
+}
