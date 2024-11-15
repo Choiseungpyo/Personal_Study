@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+int solution(const char* my_string, const char* is_suffix) {
+    int myStringSize = strlen(my_string);
+    int isSuffinxSize = strlen(is_suffix);
+    
+    for (int i = 0; i < isSuffinxSize; i++)
+    {
+        if (my_string[myStringSize - 1 - i] != is_suffix[isSuffinxSize - 1 - i])
+            return 0;
+    }
+    
+    return 1;
+}
