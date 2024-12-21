@@ -21,7 +21,7 @@ char** solution(const char* str_list[], size_t str_list_len) {
         }
         else if (!strcmp(str_list[i], "r"))
         {
-            startIndex = i+1;
+            startIndex = i + 1;
             if (startIndex >= str_list_len - 1)
                 startIndex = -1;
             break;
@@ -33,7 +33,7 @@ char** solution(const char* str_list[], size_t str_list_len) {
         realloc(answer, 0);
         return answer;
     }
-        
+
     realloc(answer, sizeof(char*) * (endIndex - startIndex + 1));
 
     int answerIndex = 0;
@@ -42,14 +42,7 @@ char** solution(const char* str_list[], size_t str_list_len) {
         answer[answerIndex] = (char*)malloc(strlen(str_list[i]) + 1);
         strcpy(answer[answerIndex++], str_list[i]);
     }
-        
-    
-    return answer;
-}
 
-int main()
-{
-    const char* str_list[] = {"a", "r"};
-    char** a = solution(str_list, 2);
-    return 0;
+
+    return answer;
 }
