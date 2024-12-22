@@ -3,9 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// todo_list_len은 배열 todo_list의 길이입니다.
-// finished_len은 배열 finished의 길이입니다.
-// 파라미터로 주어지는 문자열은 const로 주어집니다. 변경하려면 문자열을 복사해서 사용하세요.
 char** solution(const char* todo_list[], size_t todo_list_len, bool finished[], size_t finished_len) {
     char** answer = (char**)malloc(sizeof(char*) * todo_list_len);
     int answerIndex = 0;
@@ -14,16 +11,10 @@ char** solution(const char* todo_list[], size_t todo_list_len, bool finished[], 
     {
         if (finished[i])
             continue;
-        
+
         answer[answerIndex] = (char*)malloc(strlen(todo_list[i]) + 1);
         strcpy(answer[answerIndex++], todo_list[i]);
     }
+
     return answer;
-}
-int main()
-{
-    const char* str_list[] = { "problemsolving", "practiceguitar", "swim", "studygraph" };
-    bool fubusged[] = { true, false, true, false };
-    char** a = solution(str_list, 4, fubusged, 4);
-    return 0;
 }
