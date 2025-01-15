@@ -1,35 +1,21 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
+#include <math.h>
 
-char** solution(const char* players[], size_t players_len, const char* callings[], size_t callings_len) {
-    char** answer = (char**)malloc(sizeof(char*) * players_len);
+int solution(int n) {
+    int answer = 0;
 
-    for (int i = 0; i < players_len; i++)
+    for (int i = 1; i < sqrt(n); i++)
     {
-        answer[i] = (char*)malloc(strlen(players[i])+1);
-        strcpy(answer[i], players[i]);
-    }
-
-   
-    for (int i = 0; i < callings_len; i++)
-    {
-        for (int a = 0; a < players_len; a++)
+        if (n % i == 0)
         {
-            if (strcmp(callings[i], answer[a]))
-                continue;
-
-            char* tmp = (char*)malloc(strlen(answer[a - 1]));
-            strcpy(tmp, answer[a - 1]);
-
-            strcpy(answer[a-1], answer[a]);
-            strcpy(answer[a], tmp);
-            break;
+            answer += i;
+            int tmp = n / i;
+            if (i != tmp)
+                answer += tmp;
         }
     }
-    
-
     return answer;
 }
 
@@ -38,6 +24,6 @@ int main()
     const char* players[] = { "mumu", "soe", "poe", "kai", "mine" };
     const char* callings[] = { "kai", "kai", "mine", "mine" };
 
-    char** a = solution(players, 5, callings, 4);
+    int a = solution(12);
     return 0;
 }

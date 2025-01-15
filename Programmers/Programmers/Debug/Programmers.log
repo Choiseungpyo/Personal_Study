@@ -1,5 +1,2 @@
 ﻿  main.cpp
-C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(9,23): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(16,23): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(18,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   Programmers.vcxproj -> C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\Debug\Programmers.exe
