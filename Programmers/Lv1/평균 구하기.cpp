@@ -10,12 +10,3 @@ double solution(int arr[], size_t arr_len) {
     answer /= arr_len;
     return answer;
 }
-
-int main()
-{
-    const char* players[] = { "mumu", "soe", "poe", "kai", "mine" };
-    const char* callings[] = { "kai", "kai", "mine", "mine" };
-
-    int a = solution(987);
-    return 0;
-}
