@@ -9,21 +9,14 @@ vector<int> solution(vector<int> arr, int divisor) {
 
     for (auto value : arr)
     {
-        if(value % divisor == 0)
+        if (value % divisor == 0)
             answer.push_back(value);
     }
-        
+
     if (answer.empty())
         answer.push_back(-1);
     else
         sort(answer.begin(), answer.end());
 
     return answer;
-}
-
-int main()
-{
-    vector<int> arr = {3,2,6};
-    auto s = solution(arr, 10);
-    return 0;
 }
