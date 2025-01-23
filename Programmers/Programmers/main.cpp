@@ -1,24 +1,13 @@
-#include <string>
-#include <vector>
-#include <algorithm>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
-using namespace std;
-
-vector<int> solution(vector<int> arr, int divisor) {
-    vector<int> answer;
-
-    for (auto value : arr)
+int solution(int n) {
+    for (int i = 3; i < n; i++)
     {
-        if(value % divisor == 0)
-            answer.push_back(value);
+        if (n % i == 1)
+            return answer;
     }
-        
-    if (answer.empty())
-        answer.push_back(-1);
-    else
-        sort(answer.begin(), answer.end());
-
-    return answer;
 }
 
 int main()
