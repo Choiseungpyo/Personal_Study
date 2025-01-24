@@ -3,8 +3,9 @@
 #include <stdlib.h>
 
 int* solution(long long n) {
-    int* answer = (int*)malloc(sizeof(int) * 10000000000);
+    int* answer = (int*)malloc(sizeof(int) * 11);
     int index = 0;
+
     while (n)
     {
         answer[index++] = n % 10;
@@ -13,10 +14,4 @@ int* solution(long long n) {
     realloc(answer, sizeof(int) * index);
 
     return answer;
-}
-
-int main()
-{
-    auto s = solution(12345);
-    return 0;
 }
