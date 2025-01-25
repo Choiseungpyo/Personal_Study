@@ -1,4 +1,1 @@
-﻿  main.cpp
-C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(6,57): warning C4305: '인수': '__int64'에서 'size_t'(으)로 잘립니다.
-C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(6,44): warning C4309: '인수': 상수 값이 잘립니다.
-  Programmers.vcxproj -> C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\Debug\Programmers.exe
+﻿  Programmers.vcxproj -> C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\Debug\Programmers.exe

@@ -8,17 +8,11 @@ bool solution(const char* s) {
     if (size != 4 && size != 6)
         return false;
 
-    for (int i = 0; i<size; i++)
+    for (int i = 0; i < size; i++)
     {
         if (s[i] < '0' || s[i] > '9')
             return false;
     }
 
     return true;
-}
-
-int main()
-{
-    auto s = solution("1234");
-    return 0;
 }
