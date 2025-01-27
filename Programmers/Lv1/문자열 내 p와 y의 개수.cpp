@@ -8,7 +8,7 @@ bool solution(string s)
     int pCnt = 0;
     int yCnt = 0;
 
-    for (int i = 0; i<s.length(); i++)
+    for (int i = 0; i < s.length(); i++)
     {
         if (s[i] >= 'A' && s[i] <= 'Z')
             s[i] = 'a' + s[i] - 'A';
@@ -20,10 +20,4 @@ bool solution(string s)
     }
 
     return pCnt == yCnt ? true : false;
-}
-
-int main()
-{
-    auto s = solution("aa");
-    return 0;
 }
