@@ -1,7 +1,20 @@
-input()
-numCardData = input().split()
-input()
-numCardDataToCheck = input().split()
+import sys
+
+sys.stdin.readline()
+numCardData = list(map(int, sys.stdin.readline().split()))
+sys.stdin.readline()
+numCardDataToCheck = list(map(int, sys.stdin.readline().split()))
+
+hash = {}
+for num in numCardData:
+    if num in hash:
+        hash[num] += 1
+    else:
+        hash[num] = 1
+
 result = ""
 for num in numCardDataToCheck:
-    print(numCardData.count(num), end = ' ')
+    if num in hash:
+        print(hash[num], end = ' ')
+    else:
+        print(0, end = ' ')

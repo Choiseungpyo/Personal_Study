@@ -1,17 +1,15 @@
 import sys
-n = sys.stdin.readline()
-storage = []
-storage = list(sys.stdin.readline().split())
-m = int(sys.stdin.readline().rstrip())
-data = list(sys.stdin.readline().split())
-s = ""
-dataLength = len(data)
-for i in range(dataLength):
-    result = 0
-    if data[i] in storage:
-        result = 1
-        
-    s += f"{result}"
-    if i != dataLength -1:
-        s += "\n"
-print(s)
+sys.stdin.readline()
+data = sys.stdin.readline().split()
+sys.stdin.readline()
+dataToCheck = sys.stdin.readline().split()
+
+hash = {}
+for num in data:
+    hash[num] = 1
+
+for num in dataToCheck:
+    if num in hash:
+        print(1)
+    else:
+        print(0)
