@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <math.h>
 
 using namespace std;
 
@@ -17,10 +18,4 @@ long long solution(long long n) {
         answer += nums[i] * pow(10, i);
 
     return answer;
-}
-
-int main()
-{
-    auto s = solution(118372);
-    return 0;
 }
