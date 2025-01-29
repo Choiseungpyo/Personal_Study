@@ -1,26 +1,18 @@
-#include <string>
-#include <vector>
-#include <algorithm>
-
-using namespace std;
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <math.h>
 
 long long solution(long long n) {
-    long long answer = 0;
-    vector<long long> nums;
+    long long answer = sqrt(n);
 
-    for (int i = 0; n != 0; n /= 10)
-        nums.push_back(n % 10);
-
-    sort(nums.begin(), nums.end());
-
-    for (int i = 0; i < nums.size(); i++)
-        answer += nums[i] * pow(10, i);
-
-    return answer;
+    if (answer - int(answer) == 0)
+        return (int(answer) + 1) * (int(answer) + 1);
+    return -1;
 }
 
 int main()
 {
-    auto s = solution(118372);
+    long long s = solution(50000000000000);
     return 0;
 }
