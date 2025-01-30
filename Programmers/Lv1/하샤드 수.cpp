@@ -14,8 +14,3 @@ bool solution(int x) {
 
     return x % sum == 0;
 }
-int main()
-{
-    auto result = solution(13);
-    return 0;
-}
