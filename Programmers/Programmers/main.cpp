@@ -6,8 +6,8 @@
 long long solution(long long n) {
     long long answer = sqrt(n);
 
-    if (answer - int(answer) == 0)
-        return (int(answer) + 1) * (int(answer) + 1);
+    if (answer - (int)answer == 0)
+        return pow(answer + 1, 2);
     return -1;
 }
 
