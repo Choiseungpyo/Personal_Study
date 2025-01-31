@@ -5,7 +5,7 @@ using namespace std;
 
 string solution(vector<string> seoul) {
     string answer = "";
-    for (int i=0; i< seoul.size(); i++)
+    for (int i = 0; i < seoul.size(); i++)
     {
         if (seoul[i] == "Kim")
         {
@@ -14,12 +14,4 @@ string solution(vector<string> seoul) {
         }
     }
     return answer;
-}
-
-
-int main()
-{
-    vector<string> seoul = {"Jane", "Kim"};
-    auto result = solution(seoul);
-    return 0;
 }
