@@ -13,15 +13,7 @@ int solution(long long num) {
 
         ++answer;
         if (answer >= 500)
-        {
             return -1;
-        }            
     }
     return answer;
-}
-
-int main()
-{
-    auto result = solution(626331);
-    return 0;
 }
