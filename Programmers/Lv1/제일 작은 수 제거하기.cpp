@@ -5,12 +5,12 @@
 using namespace std;
 
 vector<int> solution(vector<int> arr) {
-    vector<int> answer = {-1};
+    vector<int> answer = { -1 };
 
     if (!arr.empty())
     {
         vector<int>::iterator minIt = arr.begin();
-        for (auto it = arr.begin()+1; it<arr.end(); it++)
+        for (auto it = arr.begin() + 1; it < arr.end(); it++)
         {
             if (*it < *minIt)
                 minIt = it;
@@ -23,12 +23,4 @@ vector<int> solution(vector<int> arr) {
             answer.push_back(-1);
     }
     return answer;
-}
-
-int main()
-{
-    int absolutes[] = { 5,8,4,0,6,7,9 };
-    vector<int> arr = {10};
-    auto result = solution(arr);
-    return 0;
 }
