@@ -24,10 +24,3 @@ int solution(int left, int right) {
 
     return answer;
 }
-
-int main()
-{
-    int absolutes[] = { 5,8,4,0,6,7,9 };
-    auto result = solution(13, 17);
-    return 0;
-}
