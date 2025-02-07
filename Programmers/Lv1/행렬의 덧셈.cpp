@@ -6,21 +6,13 @@ using namespace std;
 vector<vector<int>> solution(vector<vector<int>> arr1, vector<vector<int>> arr2) {
     vector<vector<int>> answer;
 
-    for (int row=0; row<arr1.size(); row++)
+    for (int row = 0; row < arr1.size(); row++)
     {
         vector<int> tmp;
-        for (int col=0; col<arr1[row].size(); col++)
+        for (int col = 0; col < arr1[row].size(); col++)
             tmp.push_back(arr1[row][col] + arr2[row][col]);
         answer.push_back(tmp);
     }
 
     return answer;
-}
-
-int main()
-{
-    vector<vector<int>> arr1 = { {1,2}, {2,3} };
-    vector<vector<int>> arr2 = { {3,4}, {5,6} };
-    auto result = solution(arr1, arr2);
-    return 0;
 }
