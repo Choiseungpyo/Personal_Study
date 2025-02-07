@@ -6,11 +6,11 @@
 int solution(int number[], size_t number_len) {
     int answer = 0;
 
-    for (int a = 0; a < number_len-2; a++)
+    for (int a = 0; a < number_len - 2; a++)
     {
-        for (int b = a+1; b < number_len - 1; b++)
+        for (int b = a + 1; b < number_len - 1; b++)
         {
-            for (int c = b+1; c < number_len; c++)
+            for (int c = b + 1; c < number_len; c++)
             {
                 if (number[a] + number[b] + number[c] == 0)
                     answer++;
@@ -19,12 +19,4 @@ int solution(int number[], size_t number_len) {
     }
 
     return answer;
-}
-
-int main(void) 
-{
-    int arr[] = { -1, 1, -1, 1 };
-    auto result = solution(arr, 4);
-
-    return 0;
 }
