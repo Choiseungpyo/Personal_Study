@@ -11,24 +11,15 @@ string solution(string s, int n) {
         int c = s[i];
         if (isupper(c)) {
             c = s[i] + n;
-            if (c > 'Z') 
-                c -= 26;
+            if (c > 'Z') c -= 26;
         }
         else
         {
             c = s[i] + n;
-            if (c > 'z')
-                c -= 26;
+            if (c > 'z') c -= 26;
         }
         s[i] = c;
     }
 
     return s;
-}
-int main(void) 
-{
-    int arr[] = { -1, 1, -1, 1 };
-    auto result = solution("a B Z", 25);
-
-    return 0;
 }
