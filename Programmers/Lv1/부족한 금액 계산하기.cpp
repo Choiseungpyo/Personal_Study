@@ -4,18 +4,11 @@
 
 long long solution(int price, int money, int count) {
     long long answer = money;
+
     for (int i = 1; i <= count; i++)
         answer -= price * i;
 
     if (answer < 0)
         return -answer;
-    return 0;
-}
-
-int main(void) 
-{
-    int arr[] = { -1, 1, -1, 1 };
-    auto result = solution(3, 20, 4);
-
     return 0;
 }
