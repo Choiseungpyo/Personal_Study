@@ -1,21 +1,15 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#include <string>
 
-long long solution(int price, int money, int count) {
-    long long answer = money;
-    for (int i = 1; i <= count; i++)
-        answer -= price * i;
+using namespace std;
 
-    if (answer < 0)
-        return -answer;
-    return 0;
+int solution(const char* s) {
+    return stoi(s);
 }
 
 int main(void) 
 {
     int arr[] = { -1, 1, -1, 1 };
-    auto result = solution(3, 20, 4);
+    auto result = solution("-1234");
 
     return 0;
 }
