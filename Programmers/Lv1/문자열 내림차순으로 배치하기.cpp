@@ -7,11 +7,3 @@ string solution(string s) {
     sort(s.begin(), s.end(), greater<char>());
     return s;
 }
-
-int main(void) 
-{
-    int arr[] = { -1, 1, -1, 1 };
-    auto result = solution("Zbcdefg");
-
-    return 0;
-}
