@@ -1,6 +1,5 @@
 #include <vector>
 #include <iostream>
-#include <algorithm>
 
 using namespace std;
 
@@ -15,11 +14,4 @@ vector<int> solution(vector<int> arr)
     }
 
     return answer;
-}
-int main(void) 
-{
-    vector<int> arr = { 4,4,4,3,3,1 };
-    auto result = solution(arr);
-
-    return 0;
 }
