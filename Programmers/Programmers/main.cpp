@@ -1,25 +1,23 @@
+#include <string>
 #include <vector>
-#include <iostream>
-#include <algorithm>
 
 using namespace std;
 
-vector<int> solution(vector<int> arr)
-{
-    vector<int> answer = { arr[0] };
-
-    for (int i = 1; i < arr.size(); i++)
+int solution(string t, string p) {
+    int answer = 0;
+    for (int i = 0; i < t.length()-p.length()+1; i++)
     {
-        if (answer.back() != arr[i])
-            answer.push_back(arr[i]);
+        if (stoi(t.substr(i, p.length())) <= stoi(p))
+            answer++;
     }
-
     return answer;
 }
+
+
 int main(void) 
 {
     vector<int> arr = { 4,4,4,3,3,1 };
-    auto result = solution(arr);
+    auto result = solution("3141592", "271");
 
     return 0;
 }
