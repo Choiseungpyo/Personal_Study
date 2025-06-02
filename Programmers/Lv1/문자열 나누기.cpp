@@ -11,32 +11,23 @@ int solution(const char* s) {
     int diffCnt = 0;
     char x = s[0];
 
-    for (int i = 0; i<n; i++)
+    for (int i = 0; i < n; i++)
     {
         if (sameCnt == diffCnt)
         {
             x = s[i];
             sameCnt = 0;
             diffCnt = 0;
-       }
-           
+        }
+
         if (s[i] == x)
             sameCnt++;
         else
             diffCnt++;
 
-        if (sameCnt == diffCnt || i == n-1)
+        if (sameCnt == diffCnt || i == n - 1)
             answer++;
     }
 
     return answer;
-}
-
-
-int main(void) 
-{
-    // vector<int> arr = { 4,4,4,3,3,1 };
-    auto result = solution("abracadabra");
-
-    return 0;
 }
