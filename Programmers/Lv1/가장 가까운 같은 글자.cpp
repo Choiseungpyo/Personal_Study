@@ -10,23 +10,15 @@ int* solution(const char* s) {
     for (int i = 0; i < n; i++)
     {
         answer[i] = -1;
-        if (i <= 1)
-            continue;
 
-        for (int a = 0; a < i; a++)
+        for (int a = i - 1; a >= 0; a--)
         {
-            if (s[i] == s[a])
-                answer[i] = i-a;
+            if (s[i] != s[a])
+                continue;
+
+            answer[i] = i - a;
+            break;
         }
     }
     return answer;
-}
-
-
-int main(void) 
-{
-    // vector<int> arr = { 4,4,4,3,3,1 };
-    auto result = solution("foobar");
-
-    return 0;
 }
