@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -16,12 +15,4 @@ int f(vector<int> numbers, int target, int i = 0, int result = 0)
 int solution(vector<int> numbers, int target) {
     int answer = f(numbers, target);
     return answer;
-}
-
-
-int main() {
-    vector<int> numbers = { 1, 1, 1, 1, 1 };
-    int target = 3;
-    cout << solution(numbers, target) << endl; // Ãâ·Â: 5
-    return 0;
 }
