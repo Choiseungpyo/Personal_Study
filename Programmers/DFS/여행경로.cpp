@@ -33,17 +33,3 @@ vector<string> solution(vector<vector<string>> tickets) {
 
     return dfs("ICN", tickets, visited, answer, ticket_size);
 }
-
-int main() {
-    vector<vector<string>> tickets = {
-        {"ICN", "JFK"},
-        {"HND", "IAD"},
-        {"JFK", "HND"}
-    };
-
-    vector<string> answer = solution(tickets);
-
-
-
-    return 0;
-}
