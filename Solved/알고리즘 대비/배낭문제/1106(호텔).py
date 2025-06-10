@@ -1,5 +1,6 @@
 import sys
 sys.setrecursionlimit(10**5)
+
 def solve(n, c):
     if n < 0:
         return float('inf')

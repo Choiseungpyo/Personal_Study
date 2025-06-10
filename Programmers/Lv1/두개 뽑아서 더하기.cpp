@@ -16,13 +16,6 @@ vector<int> solution(vector<int> numbers) {
 
     for (const auto& i : set)
         answer.push_back(i);
-    
-    return answer;
-}
 
-int main()
-{
-    vector<int> tmp = { 2,1,3,4,1 };
-    auto a  = solution(tmp);
-    return 0;
+    return answer;
 }
