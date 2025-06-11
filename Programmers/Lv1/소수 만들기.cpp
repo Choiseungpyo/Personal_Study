@@ -33,10 +33,3 @@ int solution(vector<int> nums) {
     }
     return answer;
 }
-
-int main()
-{
-    vector<int> tmp = { 1,2,7,6,4 };
-    auto a  = solution(tmp);
-    return 0;
-}
