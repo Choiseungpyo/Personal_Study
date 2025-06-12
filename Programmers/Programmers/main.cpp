@@ -1,42 +1,29 @@
+#include <string>
 #include <vector>
-#include <iostream>
+
 using namespace std;
 
-bool isPrime(int n)
-{
-    if (n <= 1) return false;
-    if (n == 2) return true;
-    if (n % 2 == 0) return false;
-
-    for (int i = 3; i * i <= n; i += 2)
-    {
-        if (n % i == 0)
-            return false;
-    }
-    return true;
-}
-
-int solution(vector<int> nums) {
+int solution(vector<int> ingredient) {
     int answer = 0;
-    int n = nums.size();
+    int k = 1;
 
-    for (int i = 0; i < n - 2; i++)
+    for (int i = 0; i < ingredient.size(); i++)
     {
-        for (int j = i + 1; j < n - 1; j++)
+        if (ingredient[i] != k)
+            continue;
+
+        if (++k == 4)
         {
-            for (int k = j + 1; k < n; k++)
-            {
-                if (isPrime(nums[i] + nums[j] + nums[k]))
-                    answer++;
-            }
+            answer++;
+            k = 1;
+            i = 0;
         }
     }
     return answer;
 }
-
 int main()
 {
-    vector<int> tmp = { 1,2,7,6,4 };
+    vector<int> tmp = { 1, 3, 2, 1, 2, 1, 3, 1, 2 };
     auto a  = solution(tmp);
     return 0;
 }
