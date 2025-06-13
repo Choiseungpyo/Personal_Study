@@ -1,5 +1,4 @@
 #include <string>
-#include <vector>
 using namespace std;
 
 string solution(string s) {
@@ -12,24 +11,18 @@ string solution(string s) {
             k = 0;
             continue;
         }
-       
+
         if (k++ % 2 == 0)
         {
-            if(islower(s[i]))
+            if (islower(s[i]))
                 s[i] = 'A' + s[i] - 'a';
         }
         else
         {
-            if(isupper(s[i]))
+            if (isupper(s[i]))
                 s[i] = 'a' + s[i] - 'A';
         }
     }
 
     return s;
-}
-
-int main()
-{
-    auto a  = solution("try hello world");
-    return 0;
 }
