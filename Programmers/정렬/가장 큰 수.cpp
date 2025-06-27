@@ -11,9 +11,9 @@ string solution(vector<int> numbers) {
     for (auto c : numbers)
         strNumbers.push_back(to_string(c));
 
-    sort(strNumbers.begin(), strNumbers.end(), 
+    sort(strNumbers.begin(), strNumbers.end(),
         [](const string& a, const string& b) {
-        return a + b > b + a;
+            return a + b > b + a;
         });
 
     if (strNumbers[0] == "0")
@@ -23,9 +23,4 @@ string solution(vector<int> numbers) {
         answer += s;
 
     return answer;
-}
-int main()
-{
-   // auto a  = solution("try hello world");
-    return 0;
 }
