@@ -16,7 +16,7 @@ vector<long long> dijkstra(int start, int n, const vector<vector<pair<int, int>>
     while (!pq.empty()) {
         auto [cost, now] = pq.top(); pq.pop();
 
-        if (cost > dist[now]) 
+        if (cost > dist[now])
             continue;
 
         for (auto& [next, weight] : graph[now]) {
@@ -46,7 +46,7 @@ int solution(int n, int s, int a, int b, vector<vector<int>> fares) {
 
     long long answer = INF;
     for (int i = 1; i <= n; i++) {
-        if (distS[i] == INF || distA[i] == INF || distB[i] == INF) 
+        if (distS[i] == INF || distA[i] == INF || distB[i] == INF)
             continue;
 
         answer = min(answer, distS[i] + distA[i] + distB[i]);
