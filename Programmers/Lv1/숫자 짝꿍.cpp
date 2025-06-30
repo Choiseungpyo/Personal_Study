@@ -7,10 +7,10 @@ using namespace std;
 string solution(string X, string Y) {
     string answer = "";
     vector<int> x_count(10, 0), y_count(10, 0);
-   
-    for (char c : X) 
+
+    for (char c : X)
         x_count[c - '0']++;
-    for (char c : Y) 
+    for (char c : Y)
         y_count[c - '0']++;
 
     for (int i = 9; i >= 0; i--) {
@@ -19,9 +19,9 @@ string solution(string X, string Y) {
             answer.append(common_count, '0' + i);
     }
 
-    if (answer.empty()) 
+    if (answer.empty())
         return "-1";
-    if (answer[0] == '0') 
+    if (answer[0] == '0')
         return "0";
     return answer;
 }
