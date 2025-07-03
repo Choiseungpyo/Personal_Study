@@ -12,12 +12,3 @@ int solution(int n, std::vector<int> money) {
 
     return dp[n];
 }
-
-int main() {
-    int n = 5;
-    std::vector<int> money = { 1, 2, 5 };
-
-    int result = solution(n, money);
-
-    return 0;
-}
