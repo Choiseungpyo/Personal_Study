@@ -14,8 +14,8 @@ bool solution(string s)
             q.push(c);
             continue;
         }
-           
-        
+
+
         if (q.empty())
             return false;
 
@@ -23,12 +23,4 @@ bool solution(string s)
     }
 
     return q.empty() ? true : false;
-}
-
-
-
-int main()
-{
-    auto answer = solution("(()(");
-    return 0;
 }
