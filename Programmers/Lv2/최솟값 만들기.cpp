@@ -14,12 +14,3 @@ int solution(vector<int> A, vector<int> B)
 
     return answer;
 }
-
-int main()
-{
-    auto answer = solution(
-        { 1,2},
-        { 3, 4}
-    );
-    return 0;
-}
