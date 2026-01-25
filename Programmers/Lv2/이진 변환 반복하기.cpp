@@ -32,11 +32,3 @@ vector<int> solution(string s)
 
     return { convertCount, removedZero };
 }
-
-int main()
-{
-    auto answer = solution(
-        "110010101001"
-    );
-    return 0;
-}
