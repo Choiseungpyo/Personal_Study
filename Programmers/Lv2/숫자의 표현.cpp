@@ -6,7 +6,7 @@ using namespace std;
 int solution(int n) {
     int answer = 0;
 
-    for (int i = 1; i<=n; ++i)
+    for (int i = 1; i <= n; ++i)
     {
         int v = n;
         for (int j = i; j <= n; ++j)
@@ -21,12 +21,4 @@ int solution(int n) {
     }
 
     return answer;
-}
-
-int main()
-{
-    auto answer = solution(
-        15
-    );
-    return 0;
 }
