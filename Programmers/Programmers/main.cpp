@@ -1,46 +1,32 @@
 #include <string>
-#include <algorithm>
-#include <utility>
+#include <vector>
+
 using namespace std;
 
-static string toBinary(int n) {
-    string s;
-    while (n > 0) {
-        s.push_back('0' + (n % 2));
-        n /= 2;
-    }
-    reverse(s.begin(), s.end());
-    return s;
-}
-
 int solution(int n) {
-    string s = "0" + toBinary(n);
-    int len = (int)s.size();
+    int answer = 0;
 
-    for (int i = len - 1; i >= 1; --i) {
-        if (s[i - 1] == '0' && s[i] == '1') {
-            swap(s[i - 1], s[i]); 
-
-            int ones = count(s.begin() + i, s.end(), '1');
-
-            for (int k = i; k < len; ++k) {
-                if (k >= len - ones) 
-                    s[k] = '1';
-                else                
-                    s[k] = '0';
-            }
-            break;
+    for (int i = 1; i<=n; ++i)
+    {
+        int v = n;
+        for (int j = i; j <= n; ++j)
+        {
+            v -= j;
+            if (v <= 0)
+                break;
         }
+
+        if (v == 0)
+            ++answer;
     }
 
-    return stoi(s, nullptr, 2);
+    return answer;
 }
-
 
 int main()
 {
     auto answer = solution(
-        78
+        15
     );
-     return 0;
+    return 0;
 }
