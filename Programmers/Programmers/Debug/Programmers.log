@@ -1,2 +1,4 @@
 ﻿  main.cpp
+C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(26,20): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(35,23): warning C4553: '==': 식의 결과가 사용되지 않습니다. '='을(를) 의도했습니까?
   Programmers.vcxproj -> C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\Debug\Programmers.exe
