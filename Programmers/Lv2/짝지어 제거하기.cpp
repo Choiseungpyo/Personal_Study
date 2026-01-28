@@ -15,11 +15,3 @@ int solution(string s)
 
     return stack.empty();
 }
-
-int main()
-{
-    auto answer = solution(
-        "baabaac"
-    );
-    return 0;
-}
