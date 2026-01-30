@@ -11,11 +11,3 @@ int solution(int n) {
     }
     return curr;
 }
-
-int main()
-{
-    auto answer = solution(
-        1000000
-    );
-    return 0;
-}
