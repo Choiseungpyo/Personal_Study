@@ -9,7 +9,7 @@ int solution(vector<int> rank, vector<bool> attendance) {
     vector<int> participants;
     participants.reserve(size);
 
-    for (int i = 0; i < size; ++i){
+    for (int i = 0; i < size; ++i) {
         if (attendance[i])  participants.push_back(i);
     }
 
@@ -18,12 +18,4 @@ int solution(vector<int> rank, vector<bool> attendance) {
         });
 
     return 10000 * participants[0] + 100 * participants[1] + participants[2];
-}
-
-int main()
-{
-    auto answer = solution(
-        { 12, 4, 15, 46, 38, 1, 14, 56, 32, 10 }
-    );
-    return 0;
 }
