@@ -17,19 +17,9 @@ int solution(vector<int> people, int limit) {
 
         if (people[front] + people[back] <= limit)  ++front;
 
-        --back;             
-        ++answer;           
+        --back;
+        ++answer;
     }
 
     return answer;
-}
-
-
-int main()
-{
-    auto answer = solution(
-        {70,80,50},
-        100
-    );
-    return 0;
 }
