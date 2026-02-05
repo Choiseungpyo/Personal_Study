@@ -13,19 +13,10 @@ int solution(int k, vector<int> tangerine) {
 
     sort(data.begin(), data.end(), [](int a, int b) {return a > b; });
 
-    while (k > 0){
+    while (k > 0) {
         k -= data[i++];
         ++answer;
     }
 
     return answer;
-}
-
-
-int main()
-{
-    auto answer = solution(
-        6, { 1, 3, 2, 5, 4, 5, 2, 3 }
-    );
-    return 0;
 }
