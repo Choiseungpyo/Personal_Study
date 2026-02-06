@@ -15,11 +15,3 @@ vector<int> solution(int brown, int yellow) {
 
     return {};
 }
-
-int main()
-{
-    auto answer = solution(
-        10, 2
-    );
-    return 0;
-}
