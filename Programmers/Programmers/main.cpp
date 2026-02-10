@@ -1,25 +1,27 @@
+#include <string>
 #include <vector>
+
 using namespace std;
 
-vector<int> solution(int brown, int yellow) {
-    int total = brown + yellow;
+long long sol(int n) {
 
-    for (int h = 3; h * h <= total; ++h) {
-        if (total % h != 0) continue;
+}
 
-        int w = total / h;
-        if (w < h) continue;
+long long solution(int n) {
+    if (n == 0)    return 1;
+    else if (n < 0)  return 0;
 
-        if ((w - 2) * (h - 2) == yellow)     return { w, h };
-    }
+    long long answer = 0;
+    answer = solution(n - 1) + solution(n - 2);
 
-    return {};
+    return answer;
 }
 
 int main()
 {
-    auto answer = solution(
-        10, 2
+    auto tmp = solution(
+       3
     );
+
     return 0;
 }
