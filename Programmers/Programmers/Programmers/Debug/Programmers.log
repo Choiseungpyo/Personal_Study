@@ -1,2 +1,7 @@
 ﻿  main.cpp
+C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(48,33): warning C4244: '인수': 'double'에서 '_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(48,33): warning C4244:         with
+C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(48,33): warning C4244:         [
+C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(48,33): warning C4244:             _Ty=int
+C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\main.cpp(48,33): warning C4244:         ]
   Programmers.vcxproj -> C:\Users\OWNER\Documents\GitHub\Personal_Study\Programmers\Programmers\Debug\Programmers.exe

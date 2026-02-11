@@ -24,12 +24,3 @@ int solution(vector<int> elements) {
 
     return set.size();
 }
-
-int main()
-{
-    auto tmp = solution(
-       "1D2S#10S"
-    );
-
-    return 0;
-}
