@@ -1,9 +1,8 @@
-#include <string>
 #include <vector>
 
 using namespace std;
 
-int toMin(int t) { 
+int toMin(int t) {
     return (t / 100) * 60 + (t % 100);
 }
 
@@ -20,7 +19,7 @@ int solution(vector<int> schedules, vector<vector<int>> timelogs, int startday) 
         int limit = toMin(schedules[i]) + 10;
         bool ok = true;
         for (int d = 0; d < 7; ++d) {
-            if (work[d] && toMin(timelogs[i][d]) > limit) { 
+            if (work[d] && toMin(timelogs[i][d]) > limit) {
                 ok = false;
                 break;
             }
@@ -29,15 +28,4 @@ int solution(vector<int> schedules, vector<vector<int>> timelogs, int startday) 
         if (ok) ++answer;
     }
     return answer;
-}
-int main()
-{
-    auto tmp = solution(
-        { 700, 800, 1100 },
-        { {710, 2359, 1050, 700, 650, 631, 659} ,
-        {800, 801, 805, 800, 759, 810, 809},
-        {1105, 1001, 1002, 600, 1059, 1001, 1100 } }, 5
-    );
-
-    return 0;
 }
