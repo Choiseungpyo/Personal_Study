@@ -18,7 +18,7 @@ int solution(vector<string> want, vector<int> number, vector<string> discount) {
     for (const auto& d : discount) {
         q.push(d);
         if (--data[d] == 0) size--;
-        
+
         if (q.size() > 10) {
             auto front = q.front();
             if (data[front]++ == 0)
@@ -29,19 +29,4 @@ int solution(vector<string> want, vector<int> number, vector<string> discount) {
         if (!size) ++answer;
     }
     return answer;
-}
-
-int main()
-{
-    auto tmp = solution(
-        { {0,0,0,0,0},
-        {0,0,1,0,3},
-        {0,2,5,0,1},
-        {4,2,4,4,2},
-        {3,5,1,3,1} },
-        
-        {1,5,3,5,1,2,1,4}
-    );
-
-    return 0;
 }
