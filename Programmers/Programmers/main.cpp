@@ -1,33 +1,23 @@
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-int solution(string A, string B) {
-    int answer = 0;
-    int n = A.size();
+string solution(string my_string) {
+    string answer = "";
 
-    for (; answer < n; ++answer) {
-        if (A == B)   break;
+    transform(my_string.begin(), my_string.end(), answer.begin(),
+        [](unsigned char c) { return (char)tolower(c); });
+    sort(answer.begin(), answer.end());
 
-        char c = A.back();
-        A.pop_back();
-        A = c + A;
-    }
-
-    return answer == n ? -1 : answer;
+    return answer;
 }
 
 int main()
 {
     auto tmp = solution(
-        { {0,0,0,0,0},
-        {0,0,1,0,3},
-        {0,2,5,0,1},
-        {4,2,4,4,2},
-        {3,5,1,3,1} },
-        
-        {1,5,3,5,1,2,1,4}
+        "abc1Addfggg4556b", 6
     );
 
     return 0;
