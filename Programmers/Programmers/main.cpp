@@ -1,15 +1,16 @@
 #include <string>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
-string solution(string my_string) {
-    string answer = "";
+int solution(int n) {
+    int answer = 0;
 
-    transform(my_string.begin(), my_string.end(), answer.begin(),
-        [](unsigned char c) { return (char)tolower(c); });
-    sort(answer.begin(), answer.end());
+    for (int i = 1; i < sqrt(n); ++i) {
+        int r = n / i;
+        if (n % i == 0)    ++answer;
+    }
+    answer * 2;
 
     return answer;
 }
@@ -17,7 +18,7 @@ string solution(string my_string) {
 int main()
 {
     auto tmp = solution(
-        "abc1Addfggg4556b", 6
+       20
     );
 
     return 0;
