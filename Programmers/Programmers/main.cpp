@@ -1,14 +1,22 @@
-int solution(int n) {
-    int cnt = 0;
-    for (int i = 1; i * i <= n; ++i)
-        if (n % i == 0) cnt += (i * i == n ? 1 : 2);
-    return cnt;
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+vector<int> solution(int n, long long left, long long right) {
+    vector<int> answer;
+    answer.reserve(right - left + 1);
+
+    for (int i = left; i <= right; ++i) {
+        answer.push_back((max(i / n, i % n) + 1));
+    }
+        
+    return answer;
 }
 
 int main()
 {
     auto tmp = solution(
-       20
+       3,2,5
     );
 
     return 0;
