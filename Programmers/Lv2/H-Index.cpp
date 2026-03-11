@@ -14,14 +14,5 @@ int solution(vector<int> citations) {
 
         if (min <= i && max >= i)    return i;
     }
-    return -1;
-}
-
-int main()
-{
-    auto tmp = solution(
-        {3, 0, 6, 1, 5}
-    );
-
     return 0;
 }
