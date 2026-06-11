@@ -7,19 +7,19 @@ using UnityEngine.Video;
 
 public class TitleUIManager : MonoBehaviour
 {
-    public GameObject[] HomeBtn = new GameObject[3];
+    [SerializeField] private GameObject[] HomeBtn = new GameObject[3];
 
-    public GameObject Guide;
+    [SerializeField] private GameObject Guide;
 
-    public GameObject[] Pages = new GameObject[5];
-    public GameObject[] PageBtn = new GameObject[2];
+    [SerializeField] private GameObject[] Pages = new GameObject[5];
+    [SerializeField] private GameObject[] PageBtn = new GameObject[2];
 
-    public VideoClip[] EnemyVideoClip = new VideoClip[3];
-    public GameObject EnemyVideoPlayer;
+    [SerializeField] private VideoClip[] EnemyVideoClip = new VideoClip[3];
+    [SerializeField] private GameObject EnemyVideoPlayer;
 
-    int currentPage = 0;
+    private int currentPage = 0;
 
-    AudioSource audioSource;
+    private AudioSource audioSource;
 
     private void Start()
     {
@@ -51,7 +51,7 @@ public class TitleUIManager : MonoBehaviour
     }
 
 
-    void InitGuideObj()
+    private void InitGuideObj()
     {
         for (int i = 0; i < Pages.Length; i++)
             Pages[i].SetActive(false);
@@ -85,13 +85,13 @@ public class TitleUIManager : MonoBehaviour
         SetEnemyVideoClip();
     }
 
-    void InitPageBtn()
+    private void InitPageBtn()
     {
         PageBtn[0].SetActive(false);
         PageBtn[1].SetActive(true);
     }
 
-    void SetPageBtn(int value)
+    private void SetPageBtn(int value)
     {
         if (value == 1)
             currentPage += 1;
@@ -116,13 +116,13 @@ public class TitleUIManager : MonoBehaviour
         }
     }
     
-    void ActivateHomeBtn(bool value)
+    private void ActivateHomeBtn(bool value)
     {
         for(int i=0; i<HomeBtn.Length; i++)
             HomeBtn[i].SetActive(value);
     }
 
-    void SetEnemyVideoClip()
+    private void SetEnemyVideoClip()
     {
         int tmpPage = currentPage - 2;
         if (currentPage >= 2)
@@ -132,7 +132,7 @@ public class TitleUIManager : MonoBehaviour
         } 
     }
 
-    void PlayAudio()
+    private void PlayAudio()
     {
         audioSource.Play();
     }

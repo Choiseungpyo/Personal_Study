@@ -1,90 +1,132 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class GameOverUIManager : MonoBehaviour
+public class GameOverUIManager : Singleton<GameOverUIManager>, IEventListener
 {
-    public Canvas GameOverUICanvas;
+    [SerializeField] private Canvas GameOverUICanvas;
+    [SerializeField] private TMP_Text[] GetCandyTxt = new TMP_Text[3];
+    [SerializeField] private TMP_Text[] LostCandyTxt = new TMP_Text[3];
+    [SerializeField] private GameObject Cat;
 
-    public TMP_Text[] GetCandyTxt = new TMP_Text[3];
-    public TMP_Text[] LostCandyTxt = new TMP_Text[3];
+    private float catTime = 0;
+    private Player player;
+    private EnemyManager enemyManager;
+    private AudioSource audioSource;
 
-    public GameObject Cat;
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
-    float catTime = 0;
-
-    PlayerUIManager playerUIManager;
-    PuzzleUIManager puzzleUIManager;
-    TimerUIManager timerUIManager;
-    Player player;
-    EnemyManager enemyManager;
-    NPCManager npcManager;
-    AudioSource audioSource;
+    private void OnEnable()
+    {
+        GameEventDispatcher.AddListener(GameEventType.GameStarted, this);
+        GameEventDispatcher.AddListener(GameEventType.GameOverStarted, this);
+    }
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        enemyManager = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
-        npcManager = GameObject.Find("NPCManager").GetComponent<NPCManager>();
-        GameObject uiManager = GameObject.Find("UIManager");
-        playerUIManager = uiManager.GetComponent<PlayerUIManager>();
-        puzzleUIManager = uiManager.GetComponent<PuzzleUIManager>();
-        timerUIManager = uiManager.GetComponent<TimerUIManager>();
+        CacheReferences();
         audioSource = GetComponent<AudioSource>();
-
         SetGameOverUIState(false);
+    }
+
+    protected override void OnDestroy()
+    {
+        GameEventDispatcher.RemoveListener(GameEventType.GameStarted, this);
+        GameEventDispatcher.RemoveListener(GameEventType.GameOverStarted, this);
+        base.OnDestroy();
     }
 
     public void ActivateGameOverUI()
     {
-        // UI 
-        playerUIManager.SetPlayerUICanvasState(false);
-        timerUIManager.SetTimerUIState(false);
-        puzzleUIManager.SetPuzzleUICanvasState(false);
+        HandleGameOverStarted();
+    }
+
+    public void OnEvent(GameEventType eventType)
+    {
+        switch (eventType)
+        {
+            case GameEventType.GameStarted:
+                HandleGameStarted();
+                break;
+            case GameEventType.GameOverStarted:
+                HandleGameOverStarted();
+                break;
+        }
+    }
+
+    private void HandleGameOverStarted()
+    {
+        CacheReferences();
+        StopAllCoroutines();
+        catTime = 0;
+
         SetGameOverUIState(true);
-
-        // 스크립트
-        player.enabled = false;
-        puzzleUIManager.StopAllCoroutines();
-        puzzleUIManager.enabled = false;
-        enemyManager.StopAllCoroutines();
-        enemyManager.enabled = false;
-        npcManager.StopAllCoroutines();
-        npcManager.enabled = false;
-        puzzleUIManager.StopAllCoroutines();
-
         SetCandyData();
         StartCoroutine(RotateCat());
     }
 
-    void SetGameOverUIState(bool value)
+    private void CacheReferences()
     {
-        GameOverUICanvas.gameObject.SetActive(value);
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+                player = playerObj.GetComponent<Player>();
+        }
+
+        if (enemyManager == null)
+            enemyManager = EnemyManager.Instance;
     }
 
-
-    void SetCandyData()
+    private void HandleGameStarted()
     {
-        int candyCnt = 0;
+        StopAllCoroutines();
+        catTime = 0;
+        SetGameOverUIState(false);
+    }
 
-        // Get
-        candyCnt = player.GetComponent<Candy>().ReturnCandyCnt("hard");
-        GetCandyTxt[0].text = " X " + candyCnt.ToString();
+    private void SetGameOverUIState(bool value)
+    {
+        if (GameOverUICanvas == null)
+            return;
 
-        candyCnt = player.GetComponent<Candy>().ReturnCandyCnt("lollipop");
-        GetCandyTxt[1].text = " X " + candyCnt.ToString();
+        GameOverUICanvas.transform.localScale = Vector3.one;
+        GameOverUICanvas.enabled = value;
+        GraphicRaycaster raycaster = GameOverUICanvas.GetComponent<GraphicRaycaster>();
+        if (raycaster != null)
+            raycaster.enabled = value;
+    }
 
-        candyCnt = player.GetComponent<Candy>().ReturnCandyCnt("muffin");
-        GetCandyTxt[2].text = " X " + candyCnt.ToString();
+    private void SetCandyData()
+    {
+        if (player == null)
+            return;
 
+        Candy candy = player.GetComponent<Candy>();
+        if (candy == null)
+            return;
 
-        // Lost
-        for(int i=0; i<LostCandyTxt.Length; i++)
+        if (GetCandyTxt.Length > 0 && GetCandyTxt[0] != null)
+            GetCandyTxt[0].text = " X " + candy.ReturnCandyCnt(CandyType.Hard).ToString();
+
+        if (GetCandyTxt.Length > 1 && GetCandyTxt[1] != null)
+            GetCandyTxt[1].text = " X " + candy.ReturnCandyCnt(CandyType.Lollipop).ToString();
+
+        if (GetCandyTxt.Length > 2 && GetCandyTxt[2] != null)
+            GetCandyTxt[2].text = " X " + candy.ReturnCandyCnt(CandyType.Muffin).ToString();
+
+        if (enemyManager == null)
+            return;
+
+        for (int i = 0; i < LostCandyTxt.Length; i++)
         {
-            candyCnt = enemyManager.ReturnGetCandyCnt(i);
-            LostCandyTxt[i].text = " X " + candyCnt.ToString();
+            if (LostCandyTxt[i] != null)
+                LostCandyTxt[i].text = " X " + enemyManager.ReturnGetCandyCnt(i).ToString();
         }
     }
 
@@ -98,28 +140,43 @@ public class GameOverUIManager : MonoBehaviour
         StartCoroutine(LoadScene("Title"));
     }
 
-    IEnumerator RotateCat()
+    private IEnumerator RotateCat()
     {
-        while(true)
+        if (Cat == null)
+            yield break;
+
+        while (true)
         {
             if (Input.GetKey(KeyCode.Y))
                 break;
+
             Cat.transform.localRotation = Quaternion.Euler(0, 0, catTime * 50);
             yield return null;
             catTime += Time.deltaTime;
         }
     }
 
-    IEnumerator LoadScene(string name)
+    private IEnumerator LoadScene(string name)
     {
         SetAudioClip("ButtonClick");
-        audioSource.Play();
+        if (audioSource != null)
+            audioSource.Play();
+
         yield return new WaitForSeconds(0.5f);
         SceneManager.LoadScene(name);
     }
 
-    void SetAudioClip(string name)
+    private void SetAudioClip(string name)
     {
-        audioSource.clip = AudioManager.instance.ReturnAudioClip(name);
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+            return;
+
+        if (AudioManager.Instance == null)
+            return;
+
+        audioSource.clip = AudioManager.Instance.ReturnAudioClip(name);
     }
 }

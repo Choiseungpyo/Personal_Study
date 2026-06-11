@@ -1,94 +1,75 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum NPCState
-{
-    IDLE, TALK, END
-}
-
+癤퓎sing UnityEngine;
 
 public class NPC : MonoBehaviour
 {
-    NPCState state;
+    private NPCState idleState = new NPCIdleState();
+    private NPCState talkState = new NPCTalkState();
+    private NPCState endState = new NPCEndState();
+    private NPCState currentState;
 
-    string candyToGive = "";
+    private CandyType candyToGive = CandyType.Hard;
+    private int posIndex = 0;
+    private int candyCntToGive = 0;
+    private Animator ani;
+    private Transform playerTransform;
+    private Player player;
+    private Candy playerCandy;
+    private NPCUIManager npcUIManager;
 
-    // 스폰 위치 인덱스
-    int posIndex = 0;
-
-    int candyCntToGive = 0;
-
-    // 컴포넌트 관련
-    Animator ani;
-
-    //스크립트 관련
-    Player player;
-    Candy playerCandy;
-    NPCUIManager npcUIManager;
+    public NPCState IdleState => idleState;
+    public NPCState TalkState => talkState;
+    public NPCState EndState => endState;
 
     private void Awake()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        ani = GetComponent<Animator>(); 
+        ani = GetComponent<Animator>();
         npcUIManager = GetComponent<NPCUIManager>();
+        playerTransform = playerObj.transform;
         playerCandy = playerObj.GetComponent<Candy>();
         player = playerObj.GetComponent<Player>();
-        ChangeState(NPCState.IDLE);
+        ChangeState(idleState);
     }
 
-    private void Start()
+    public void ResetNPCForSpawn(int posIndex, Avatar avatar)
     {
+        ChangePosIndex(posIndex);
+        if (avatar != null)
+            ani.avatar = avatar;
+
+        ani.ResetTrigger("talk");
+        ani.ResetTrigger("end");
+        ani.Play("Idle", 0, 0f);
         candyToGive = playerCandy.ReturnRandomCandy();
         candyCntToGive = Random.Range(1, 4);
-        npcUIManager.SetCandyData(candyToGive, candyCntToGive); // 플레이어에게 줄 캔디 초기화
+        npcUIManager.SetCandyData(candyToGive, candyCntToGive);
+        ChangeState(idleState);
     }
+
     private void Update()
     {
-        ChangeEndState();
-        SetDir();
+        currentState?.Update(this);
     }
-    /// <summary>
-    /// 애니메이션 관련 설정을 한다. 
-    /// </summary>
-    void SetAni()
+
+    public void ChangeState(NPCState nextState)
     {
-        switch (state)
+        currentState = nextState;
+        currentState.Enter(this);
+    }
+
+    public void ChangeState(NPCStateType stateType)
+    {
+        switch (stateType)
         {
-            case NPCState.IDLE:
+            case NPCStateType.Idle:
+                ChangeState(idleState);
                 break;
-            case NPCState.TALK:
-                ani.SetTrigger("talk");
-                ani.SetTrigger("end");
+            case NPCStateType.Talk:
+                ChangeState(talkState);
                 break;
-            case NPCState.END:
-                // 플레이어에게 캔디 주기
-                playerCandy.ChangeCandyCnt(candyToGive, candyCntToGive);
-        
-                transform.parent.GetComponent<NPCManager>().DeactivateNPCIndexState(posIndex);
-                transform.parent.GetComponent<NPCManager>().MakeTalkEffect(transform.position + new Vector3(0, 1.5f, 0), "GetCandy");
-                Destroy(gameObject);
+            case NPCStateType.End:
+                ChangeState(endState);
                 break;
-
-        }
-    }
-
-    public void ChangeState(NPCState value)
-    {
-        state = value;
-        SetAni();
-    }
-
-    void ChangeEndState()
-    {
-        if (state == NPCState.END)
-            return;
-
-        if (ani.GetCurrentAnimatorStateInfo(0).IsName("end"))
-        {
-            
-            player.ChangeDidGetCandyState(false);
-            ChangeState(NPCState.END);
         }
     }
 
@@ -97,8 +78,42 @@ public class NPC : MonoBehaviour
         posIndex = value;
     }
 
-    void SetDir()
+    public void PlayTalkAnimation()
     {
-        transform.LookAt(GameObject.FindGameObjectWithTag("Player").transform);
+        ani.SetTrigger("talk");
+    }
+
+    public void PlayEndAnimation()
+    {
+        ani.SetTrigger("end");
+    }
+
+    public bool IsAnimationPlaying(string stateName)
+    {
+        return ani.GetCurrentAnimatorStateInfo(0).IsName(stateName);
+    }
+
+    public bool IsAnimationFinished(string stateName)
+    {
+        AnimatorStateInfo stateInfo = ani.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.IsName(stateName) && stateInfo.normalizedTime >= 1f;
+    }
+
+    public void ReleasePlayerFromTalk()
+    {
+        player.ChangeDidGetCandyState(false);
+    }
+
+    public void GiveCandyAndRemove()
+    {
+        playerCandy.ChangeCandyCnt(candyToGive, candyCntToGive);
+        NPCManager.Instance.DeactivateNPCIndexState(posIndex);
+        NPCManager.Instance.MakeTalkEffect(transform.position + new Vector3(0, 1.5f, 0), "GetCandy");
+        NPCManager.Instance.ReleaseNPC(gameObject);
+    }
+
+    public void LookAtPlayer()
+    {
+        transform.LookAt(playerTransform);
     }
 }

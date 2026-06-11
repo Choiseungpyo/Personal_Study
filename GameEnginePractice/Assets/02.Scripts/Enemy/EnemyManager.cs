@@ -1,57 +1,51 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class EnemyManager : MonoBehaviour
+public class EnemyManager : Singleton<EnemyManager>
 {
-    // 프리팹
-    public GameObject Zombie_Prefab;
-    public GameObject Pierrot_Prefab;
-    public GameObject Killer_Prefab;
+    [SerializeField] private EnemyData[] EnemyDatas;
+    [SerializeField] private GameObject Player_Obj;
+    [SerializeField] private Transform[] EnemySpawnPoints = new Transform[3];
 
-    // 이펙트
-    public GameObject Pierrot_AppearanceEffect;
-    public GameObject Zombie_AppearanceEffect;
-    public GameObject Killer_AppearanceEffect;
+    private List<GameObject> enemys = new List<GameObject>();
+    private List<int> enemyToAppear = new List<int>();
+    private float enemySpawnTime = 10f;
+    private int[] getCandyCnt = new int[3];
+    private GameManager gameManager;
+    private EnemyPool enemyPool;
 
-    public GameObject Pierrot_AreaEffect;
-
-    // 타겟
-    public GameObject Player_Obj;
-
-    // 생성된 적
-    List<GameObject> enemys = new List<GameObject> ();
-    List<int> enemyToAppear =   new List<int> ();
-
-    // 스폰 포인트
-    public Transform[] EnemySpawnPoints = new Transform[3];
-
-    float enemySpawnTime = 10f; //7
-
-    // 적마다 빼앗은 사탕 개수
-    int[] getCandyCnt = new int[3];
-
-    PuzzleUIManager puzzleUIManager;
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     private void Start()
     {
-        puzzleUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PuzzleUIManager>();
+        gameManager = GameManager.Instance;
+        enemyPool = GetComponent<EnemyPool>();
+        if (enemyPool == null)
+            enemyPool = gameObject.AddComponent<EnemyPool>();
+
+        enemyPool.Configure(EnemyDatas, transform);
+        enemyPool.PreloadAll();
         ResetGetCandyCnt();
         enemys.Clear();
         enemyToAppear.Clear();
         StartCoroutine(MakeEnemys());
     }
 
-
-    GameObject MakeObj(GameObject prefab, Vector3 pos)
+    private GameObject MakeObj(EnemyData data, Vector3 pos)
     {
-        return Instantiate(prefab, pos, Quaternion.identity, transform);
+        return enemyPool.Spawn(data.Type, pos);
     }
 
-    void AddList(string type, GameObject obj)
+    private void AddList(string type, GameObject obj)
     {
+        if (obj == null)
+            return;
+
         switch(type)
         {
             case "enemys":
@@ -63,50 +57,45 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    IEnumerator MakeEnemys()
+    private IEnumerator MakeEnemys()
     {
         GameObject tmp = null;
         int randEnemyIndex = 0;
         Vector3 randPos = Vector3.zero;
+        EnemyData data = null;
+
         while(true)
         {
             yield return new WaitForSeconds(enemySpawnTime);
 
-            if (puzzleUIManager.CheckIfCanvasIsActivated()) // 플레이어가 퍼즐을 풀고있을 경우
+            if (!gameManager.CanSpawnEnemy())
                 continue;
 
             if (enemys.Count > 3)
                 continue;
-            
 
-            randEnemyIndex = ReturnRandEnemyIndex();//
+            randEnemyIndex = ReturnRandEnemyIndex();
             enemyToAppear.Add(randEnemyIndex);
+            data = ReturnEnemyData(randEnemyIndex);
+
+            if (data == null)
+                continue;
+
             randPos = ReturnRandPos();
-            if (randEnemyIndex == 0)
+
+            if (data.Type == EnemyType.Pierrot)
             {
-                //Debug.Log("좀비 생성");
-                StartCoroutine(MakeAppearanceEffect(randEnemyIndex, randPos));
-                tmp = MakeObj(Zombie_Prefab, randPos);
-                tmp.name = "Zombie";
-                AddList("enemys", tmp);
+                StartCoroutine(ManagePierrotAppearance(data, Player_Obj.transform.position));
+                continue;
             }
-            else if (randEnemyIndex == 1)
-            {
-                //Debug.Log("삐에로 생성");
-                StartCoroutine(ManagePierrotAppearance(Pierrot_AreaEffect, Player_Obj.transform.position));
-            }
-            else if (randEnemyIndex == 2)
-            {
-                //Debug.Log("체인쏘우 생성");
-                StartCoroutine(MakeAppearanceEffect(randEnemyIndex, randPos));
-                tmp = MakeObj(Killer_Prefab, randPos);
-                tmp.name = "Chainsaw";
-                AddList("enemys", tmp);
-            }
+
+            StartCoroutine(MakeAppearanceEffect(data, randPos));
+            tmp = MakeObj(data, randPos);
+            AddList("enemys", tmp);
         }
     }
 
-    void RemoveListElement(string type, GameObject obj)
+    private void RemoveListElement(string type, GameObject obj)
     {
         switch (type)
         {
@@ -119,81 +108,93 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-
-    IEnumerator ManagePierrotAppearance(GameObject obj, Vector3 pos)
+    private IEnumerator ManagePierrotAppearance(EnemyData data, Vector3 pos)
     {
-        GameObject tmpObj = null;
         for (int i = 0; i < 3; i++)
         {
             yield return new WaitForSeconds(0.4f - 0.1f * i);
-            tmpObj = MakeObj(obj, pos);
-            if(i==1)
-                tmpObj.transform.localScale = Vector3.one * 0.3f;
-            else if(i==2)
-                tmpObj.transform.localScale = Vector3.one * 0.5f;;
-            yield return new WaitForSeconds(0.4f - 0.1f * i);
-            Destroy(tmpObj);
+            if (data.AreaEffectType == EffectType.None)
+                continue;
+
+            float duration = 0.4f - 0.1f * i;
+            Vector3 scale = Vector3.one;
+            if (i == 1)
+                scale = Vector3.one * 0.3f;
+            else if (i == 2)
+                scale = Vector3.one * 0.5f;
+
+            EffectManager.Instance.Play(data.AreaEffectType, pos, scale, duration);
+            yield return new WaitForSeconds(duration);
         }
 
-        if (puzzleUIManager.CheckIfCanvasIsActivated())
+        if (!gameManager.CanSpawnEnemy())
             yield break;
 
-        StartCoroutine(MakeAppearanceEffect(1, pos));
-        tmpObj = MakeObj(Pierrot_Prefab, pos);
-        tmpObj.name = "Pierrot";
+        StartCoroutine(MakeAppearanceEffect(data, pos));
+        GameObject tmpObj = MakeObj(data, pos);
         AddList("enemys", tmpObj);
     }
 
     public void RemoveObj(string type, GameObject obj)
     {
-        Destroy(obj);
         RemoveListElement(type, obj);
+        enemyPool.Release(obj);
     }
 
-    Vector3 ReturnRandPos()
+    private Vector3 ReturnRandPos()
     {
-        int randIndex = Random.Range(0, EnemySpawnPoints.Length); // 0 ~ 3
+        int randIndex = Random.Range(0, EnemySpawnPoints.Length);
         return EnemySpawnPoints[randIndex].transform.position;
     }
 
-    int ReturnRandEnemyIndex()
+    private int ReturnRandEnemyIndex()
     {
-        
-        // 0 : 좀비
-        // 1 : 삐에로
-        // 2 : 식구
-        int randIndex = 0; // 0 ~ 2
+        int randIndex = 0;
+        int enemyCount = EnemyDatas == null ? 0 : EnemyDatas.Length;
 
-        // 차례대로 적이 한번씩 등장하게 하고 그 뒤로부터는 랜덤하게 나오도록 설정
-        if (enemyToAppear.Count == 0)
-            randIndex = 0;
-        else if (enemyToAppear.Count == 1)
-            randIndex = 1;
-        else if (enemyToAppear.Count == 2)
-            randIndex = 2;
+        if (enemyCount <= 0)
+            return randIndex;
+
+        if (enemyToAppear.Count < enemyCount)
+            randIndex = enemyToAppear.Count;
         else
-            randIndex = Random.Range(0, 3);
+            randIndex = Random.Range(0, enemyCount);
 
         return randIndex;
     }
 
-    IEnumerator MakeAppearanceEffect(int index, Vector3 pos)
+    private EnemyData ReturnEnemyData(int index)
     {
-        GameObject tmp = null;
+        if (EnemyDatas == null)
+            return null;
 
-        if (index == 0)
-            tmp = Instantiate(Zombie_AppearanceEffect, pos, Quaternion.identity);
-        else if (index == 1)
-            tmp = Instantiate(Pierrot_AppearanceEffect, pos, Quaternion.identity);
-        else if (index == 2)
-            tmp = Instantiate(Killer_AppearanceEffect, pos, Quaternion.identity);
-        else
-            Debug.LogWarning(index);
-        yield return new WaitForSeconds(1f);
-        Destroy(tmp);
+        if (index < 0 || index >= EnemyDatas.Length)
+            return null;
+
+        return EnemyDatas[index];
     }
 
-    void ResetGetCandyCnt()
+    private IEnumerator MakeAppearanceEffect(EnemyData data, Vector3 pos)
+    {
+        if (data.AppearanceEffectType == EffectType.None)
+            yield break;
+
+        EffectManager.Instance.Play(data.AppearanceEffectType, pos);
+        yield return null;
+    }
+
+    public void ReleaseAllEnemies()
+    {
+        for (int i = enemys.Count - 1; i >= 0; i--)
+        {
+            if (enemys[i] != null)
+                enemyPool.Release(enemys[i]);
+        }
+
+        enemys.Clear();
+    }
+
+    private void ResetGetCandyCnt()
     {
         for (int i = 0; i < getCandyCnt.Length; i++)
             getCandyCnt[i] = 0;

@@ -362,11 +362,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 100213125}
-  - component: {fileID: 100213124}
-  - component: {fileID: 100213126}
-  - component: {fileID: 100213127}
-  - component: {fileID: 100213129}
-  - component: {fileID: 100213128}
   - component: {fileID: 100213130}
   m_Layer: 0
   m_Name: UIManager
@@ -375,24 +370,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &100213124
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100213123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b556b0f3b81cdad4c8358abb2929d762, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerUI_Canvas: {fileID: 412285844}
-  Candy:
-  - {fileID: 1241441413}
-  - {fileID: 68552063}
-  - {fileID: 1337895639}
-  RunGauge_Slid: {fileID: 1999214304}
 --- !u!4 &100213125
 Transform:
   m_ObjectHideFlags: 0
@@ -412,94 +389,6 @@ Transform:
   - {fileID: 1582299899}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &100213126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100213123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31163e2cd01a6f94a878696f6d36b830, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TimerUICanvas: {fileID: 702017187}
-  TimerBar: {fileID: 327981164}
---- !u!114 &100213127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100213123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c71b94cc37798945bd12007113560a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PuzzleUICanvas: {fileID: 1267455419}
-  EmptyPiece: {fileID: 1773222339}
-  PuzzlePieces:
-  - {fileID: 1980191927}
-  - {fileID: 942202925}
-  - {fileID: 185204921}
-  - {fileID: 1941416669}
-  - {fileID: 425023621}
-  - {fileID: 1608018164}
-  - {fileID: 1803559179}
-  - {fileID: 667693290}
-  - {fileID: 1649026052}
-  ClearObject: {fileID: 401894421}
-  ClearTypeTxt: {fileID: 2099663785}
-  Ghost: {fileID: 1857621918}
-  GhostSprite:
-  - {fileID: 21300000, guid: bd6afb883e7fb6c419f972da37333912, type: 3}
-  - {fileID: 21300000, guid: 65eb838e9065ee847b41fd19fbca82f8, type: 3}
-  Bats:
-  - {fileID: 1236531930}
-  - {fileID: 1913780204}
-  TimerTxt: {fileID: 1438421749}
-  CandyToGiveImg: {fileID: 2090327218}
-  CandysSpirte:
-  - {fileID: 21300000, guid: b521c9f48e3a5ec47ac53e8cd58bbfba, type: 3}
-  - {fileID: 21300000, guid: 52c3569d890dded40a615486cbaf89e1, type: 3}
-  - {fileID: 21300000, guid: 8297301d3c5e043498cb7f8899cff4cc, type: 3}
-  CandyCntTxt: {fileID: 2030088048}
---- !u!114 &100213128
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100213123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16930c93f04d011499f6dffaac51896c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &100213129
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100213123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f031aa32295e964e8f294f459be739f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GameOverUICanvas: {fileID: 1582299902}
-  GetCandyTxt:
-  - {fileID: 1563302338}
-  - {fileID: 1241646407}
-  - {fileID: 357989732}
-  LostCandyTxt:
-  - {fileID: 223854470}
-  - {fileID: 474915766}
-  - {fileID: 1592661173}
-  Cat: {fileID: 1731363744}
 --- !u!82 &100213130
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1059,7 +948,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickPuzzlePiece
         m_Mode: 1
@@ -1171,6 +1060,70 @@ Transform:
   m_Children: []
   m_Father: {fileID: 449592760}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &219352718
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 219352720}
+  - component: {fileID: 219352719}
+  - component: {fileID: 219352721}
+  m_Layer: 0
+  m_Name: EffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &219352719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219352718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d66b01410974982bf17e8d6c7a3a37a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EffectDatas:
+  - {fileID: 11400000, guid: ec33b8a9f8914f2b9d8bbba8df99be8e, type: 2}
+  - {fileID: 11400000, guid: 2bbe17d16ed84664bcc8d408b1e7d43f, type: 2}
+  - {fileID: 11400000, guid: 0decb5c3a6b34bb9b52d8cc07ca54af4, type: 2}
+  - {fileID: 11400000, guid: 5d22a06ca7404332a073a7010c3d5e0d, type: 2}
+  - {fileID: 11400000, guid: f107d4ddc68d45ba97b688a59e9f7f87, type: 2}
+  - {fileID: 11400000, guid: cb483be7a87d4a149aec82cd2f5c864f, type: 2}
+--- !u!4 &219352720
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219352718}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &219352721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219352718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b13a33141f2413a9f5c0ecdc4b6b63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &219645537
 GameObject:
   m_ObjectHideFlags: 0
@@ -2278,6 +2231,7 @@ GameObject:
   - component: {fileID: 412285844}
   - component: {fileID: 412285843}
   - component: {fileID: 412285842}
+  - component: {fileID: 412285846}
   m_Layer: 5
   m_Name: PlayerUICanvas
   m_TagString: Untagged
@@ -2369,6 +2323,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &412285846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 412285841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b556b0f3b81cdad4c8358abb2929d762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerUI_Canvas: {fileID: 412285844}
+  Candy:
+  - {fileID: 1241441413}
+  - {fileID: 68552063}
+  - {fileID: 1337895639}
+  RunGauge_Slid: {fileID: 1999214304}
 --- !u!1 &414932315
 GameObject:
   m_ObjectHideFlags: 0
@@ -2545,7 +2517,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickPuzzlePiece
         m_Mode: 1
@@ -4127,7 +4099,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickPuzzlePiece
         m_Mode: 1
@@ -4381,6 +4353,7 @@ GameObject:
   - component: {fileID: 702017187}
   - component: {fileID: 702017186}
   - component: {fileID: 702017185}
+  - component: {fileID: 702017188}
   m_Layer: 0
   m_Name: TimerUICanvas
   m_TagString: Untagged
@@ -4472,6 +4445,21 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &702017188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 702017183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31163e2cd01a6f94a878696f6d36b830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TimerUICanvas: {fileID: 702017187}
+  TimerBar: {fileID: 327981164}
+  endTime: 120
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -5837,7 +5825,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickPuzzlePiece
         m_Mode: 1
@@ -7714,13 +7702,14 @@ GameObject:
   - component: {fileID: 1267455419}
   - component: {fileID: 1267455418}
   - component: {fileID: 1267455417}
+  - component: {fileID: 1267455420}
   m_Layer: 0
   m_Name: PuzzleUICanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1267455416
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7811,6 +7800,46 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1267455420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267455415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c71b94cc37798945bd12007113560a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PuzzleUICanvas: {fileID: 1267455419}
+  EmptyPiece: {fileID: 1773222339}
+  PuzzlePieces:
+  - {fileID: 1980191927}
+  - {fileID: 942202925}
+  - {fileID: 185204921}
+  - {fileID: 1941416669}
+  - {fileID: 425023621}
+  - {fileID: 1608018164}
+  - {fileID: 1803559179}
+  - {fileID: 667693290}
+  - {fileID: 1649026052}
+  ClearObject: {fileID: 401894421}
+  ClearTypeTxt: {fileID: 2099663785}
+  Ghost: {fileID: 1857621918}
+  GhostSprite:
+  - {fileID: 21300000, guid: bd6afb883e7fb6c419f972da37333912, type: 3}
+  - {fileID: 21300000, guid: 65eb838e9065ee847b41fd19fbca82f8, type: 3}
+  Bats:
+  - {fileID: 1236531930}
+  - {fileID: 1913780204}
+  TimerTxt: {fileID: 1438421749}
+  CandyToGiveImg: {fileID: 2090327218}
+  CandysSpirte:
+  - {fileID: 21300000, guid: b521c9f48e3a5ec47ac53e8cd58bbfba, type: 3}
+  - {fileID: 21300000, guid: 52c3569d890dded40a615486cbaf89e1, type: 3}
+  - {fileID: 21300000, guid: 8297301d3c5e043498cb7f8899cff4cc, type: 3}
+  CandyCntTxt: {fileID: 2030088048}
 --- !u!1 &1270189398
 GameObject:
   m_ObjectHideFlags: 0
@@ -9407,6 +9436,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1538320277}
   - component: {fileID: 1538320278}
+  - component: {fileID: 1538320279}
   m_Layer: 0
   m_Name: EnemyManager
   m_TagString: EnemyManager
@@ -9442,18 +9472,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc71332d47668994f8cb8537fcd5f1b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Zombie_Prefab: {fileID: 8102875988410636603, guid: 9a5a590e6a9df204fa609eb0f75dab36, type: 3}
-  Pierrot_Prefab: {fileID: 5505942905975225946, guid: dd1c313ceaff9434b99c9e347fde9823, type: 3}
-  Killer_Prefab: {fileID: 8122228800675930600, guid: 5b4ae5e9b82d6594f972a72e25e9db57, type: 3}
-  Pierrot_AppearanceEffect: {fileID: 7213288059403881622, guid: 257f9b67f8b9c974fadb39458e7d1daf, type: 3}
-  Zombie_AppearanceEffect: {fileID: 6654170293511049052, guid: e7cd7a8caa398a640a8ef8a6f33a9db7, type: 3}
-  Killer_AppearanceEffect: {fileID: 3223031359271505891, guid: 155410a7086d1d34ca48c448dfc33156, type: 3}
-  Pierrot_AreaEffect: {fileID: 4895876932836289129, guid: 0e91efe2b4a917d48b266865d4f54b82, type: 3}
+  EnemyDatas:
+  - {fileID: 11400000, guid: 1a41d21e6b9a47648b21d76dff857a31, type: 2}
+  - {fileID: 11400000, guid: 1b413d5412e54207964e158c427fa4c5, type: 2}
+  - {fileID: 11400000, guid: 91379de3607d43aca789c75734986546, type: 2}
   Player_Obj: {fileID: 1101883499442661433}
   EnemySpawnPoints:
   - {fileID: 779859709}
   - {fileID: 193296557}
   - {fileID: 1744791364}
+--- !u!114 &1538320279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1538320276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6165934128931394589c9766a0c48272, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1558961928
 GameObject:
   m_ObjectHideFlags: 0
@@ -9684,13 +9723,14 @@ GameObject:
   - component: {fileID: 1582299902}
   - component: {fileID: 1582299901}
   - component: {fileID: 1582299900}
+  - component: {fileID: 1582299903}
   m_Layer: 0
   m_Name: GameOverUICanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1582299899
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9779,6 +9819,28 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1582299903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1582299898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f031aa32295e964e8f294f459be739f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameOverUICanvas: {fileID: 1582299902}
+  GetCandyTxt:
+  - {fileID: 1563302338}
+  - {fileID: 1241646407}
+  - {fileID: 357989732}
+  LostCandyTxt:
+  - {fileID: 223854470}
+  - {fileID: 474915766}
+  - {fileID: 1592661173}
+  Cat: {fileID: 1731363744}
 --- !u!1 &1592661171
 GameObject:
   m_ObjectHideFlags: 0
@@ -10288,7 +10350,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickPuzzlePiece
         m_Mode: 1
@@ -10494,7 +10556,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickFinalPuzzlePiece
         m_Mode: 1
@@ -10798,7 +10860,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameOverUIManager, Assembly-CSharp
         m_MethodName: ClickReplayBtn
         m_Mode: 1
@@ -11284,7 +11346,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickPuzzlePiece
         m_Mode: 1
@@ -11469,7 +11531,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickPuzzlePiece
         m_Mode: 1
@@ -12275,7 +12337,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213124}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayerUIManager, Assembly-CSharp
         m_MethodName: ClickCandyBasketBtn
         m_Mode: 1
@@ -12647,7 +12709,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickPuzzlePiece
         m_Mode: 1
@@ -12947,8 +13009,8 @@ MonoBehaviour:
   - {fileID: 1562557225}
   - {fileID: 132839518}
   - {fileID: 709674384}
-  TalkEffect_Prefab: {fileID: 8550749352190170495, guid: 1fb1bed55e8c8394d959e2cc5c5e7bc6, type: 3}
-  AppearanceEffect_Prefab: {fileID: 8601954688275068322, guid: b6758f80bd5629a47857c9ad3952e0cd, type: 3}
+  TalkEffectType: 5
+  AppearanceEffectType: 6
 --- !u!82 &1977502649
 AudioSource:
   m_ObjectHideFlags: 0
@@ -12959,8 +13021,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: f939c411b6cf78e4d8cff71a2648a7c9, type: 3}
-  m_PlayOnAwake: 0
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -13193,7 +13255,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213127}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PuzzleUIManager, Assembly-CSharp
         m_MethodName: ClickPuzzlePiece
         m_Mode: 1
@@ -13998,7 +14060,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 100213129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameOverUIManager, Assembly-CSharp
         m_MethodName: ClickGoTitleBtn
         m_Mode: 1
@@ -19662,3 +19724,4 @@ SceneRoots:
   - {fileID: 100213125}
   - {fileID: 1334880521}
   - {fileID: 1368809370}
+  - {fileID: 219352720}

@@ -1469,7 +1469,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &7932032068817208046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4304,7 +4304,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d18e0ca7ac8e4fb46a0b6451f876f28d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 0
   Weapon: {fileID: 7917371723577484420}
+  chaseSpeed: 5
+  turnSpeed: 3
+  playerDetectDist: 20
+  findMoveDist: 7
+  findMoveSpeed: 2.5
+  canMove: 1
+  findStartPos: {x: 0, y: 0, z: 0}
+  findDirs:
+  - {x: 0, y: 0, z: 1}
+  - {x: 0, y: 0, z: -1}
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}
+  reverseFindDirIndex: 01000000000000000300000002000000
+  currentFindDirIndex: 0
 --- !u!114 &7839316718186799792
 MonoBehaviour:
   m_ObjectHideFlags: 0

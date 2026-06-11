@@ -1,82 +1,175 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class TimerUIManager : MonoBehaviour
+public class TimerUIManager : Singleton<TimerUIManager>, IEventListener
 {
-    public Canvas TimerUICanvas;
-    public GameObject TimerBar;
+    [SerializeField] private Canvas TimerUICanvas;
+    [SerializeField] private GameObject TimerBar;
 
-    float   endTime = 120;
-    float   currentTime = 0;
-    float   timerBarRot = 0;
+    [SerializeField] private float endTime = 120;
+    private float elapsedTime = 0;
+    private bool firstSound = false;
+    private bool gameOverTriggered = false;
+    private AudioSource audioSource;
+    private GameManager gameManager;
 
-    bool firstSound = false;
-
-    AudioSource audioSource;
-    GameManager gameManager;
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     private void Start()
     {
         firstSound = false;
-        endTime = 120;
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gameManager = GameManager.Instance;
         audioSource = GetComponent<AudioSource>();
         ResetData();
         SetTimerUIState(true);
     }
 
+    private void OnEnable()
+    {
+        GameEventDispatcher.AddListener(GameEventType.GameStarted, this);
+        GameEventDispatcher.AddListener(GameEventType.PuzzleStarted, this);
+        GameEventDispatcher.AddListener(GameEventType.PuzzleEnded, this);
+        GameEventDispatcher.AddListener(GameEventType.GameOverStarted, this);
+    }
+
+    protected override void OnDestroy()
+    {
+        GameEventDispatcher.RemoveListener(GameEventType.GameStarted, this);
+        GameEventDispatcher.RemoveListener(GameEventType.PuzzleStarted, this);
+        GameEventDispatcher.RemoveListener(GameEventType.PuzzleEnded, this);
+        GameEventDispatcher.RemoveListener(GameEventType.GameOverStarted, this);
+        base.OnDestroy();
+    }
+
+    public void OnEvent(GameEventType eventType)
+    {
+        switch (eventType)
+        {
+            case GameEventType.GameStarted:
+                HandleGameStarted();
+                break;
+            case GameEventType.PuzzleStarted:
+                HandlePuzzleStarted();
+                break;
+            case GameEventType.PuzzleEnded:
+                HandlePuzzleEnded();
+                break;
+            case GameEventType.GameOverStarted:
+                HandleGameOverStarted();
+                break;
+        }
+    }
+
     private void Update()
     {
-        SetTimerBar();
+        UpdateTimer();
     }
 
-    void SetTimerBar()
+    private void UpdateTimer()
     {
-        if (CheckEndTime())
+        if (gameOverTriggered)
             return;
 
+        if (endTime <= 0f)
+        {
+            TriggerGameOver();
+            return;
+        }
 
-        // 시간에 따라 시계방향 회전(0~-90 -> -90~-180 -> ... -270->0)
-        TimerBar.transform.localRotation = Quaternion.Euler(0, 0, timerBarRot * (360 / endTime));
-        timerBarRot += -Time.deltaTime;
-        currentTime += Time.deltaTime;
+        elapsedTime = Mathf.Min(elapsedTime + Time.deltaTime, endTime);
 
-        if (endTime - 1 <= currentTime && !firstSound)
+        if (TimerBar != null)
+        {
+            float progress = elapsedTime / endTime;
+            TimerBar.transform.localRotation = Quaternion.Euler(0, 0, -360f * progress);
+        }
+
+        if (endTime - elapsedTime <= 1f && !firstSound)
         {
             firstSound = true;
-            Debug.Log(currentTime);
             PlayAudio();
         }
-            
 
-        if (CheckEndTime()) // 끝났을 때 한번만 동작하도록
-            gameManager.GameOver();
-   
+        if (CheckEndTime())
+            TriggerGameOver();
     }
-    
-    bool CheckEndTime()
+
+    private void TriggerGameOver()
     {
-        if (currentTime > endTime)
-            return true;
-        return false;
+        if (gameOverTriggered)
+            return;
+
+        gameOverTriggered = true;
+
+        if (gameManager == null)
+            gameManager = GameManager.Instance;
+
+        if (gameManager != null)
+            gameManager.GameOver();
+    }
+
+    private bool CheckEndTime()
+    {
+        return elapsedTime >= endTime;
     }
 
     public void SetTimerUIState(bool value)
     {
-        TimerUICanvas.gameObject.SetActive(value);
+        if (TimerUICanvas != null)
+        {
+            TimerUICanvas.enabled = value;
+            GraphicRaycaster raycaster = TimerUICanvas.GetComponent<GraphicRaycaster>();
+            if (raycaster != null)
+                raycaster.enabled = false;
+        }
     }
 
-    void ResetData()
+    private void HandleGameStarted()
     {
-        currentTime = 0;
-        timerBarRot = 0;
-        TimerBar.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        ResetData();
+        SetTimerUIState(true);
     }
 
-    void PlayAudio()
+    private void HandlePuzzleStarted()
     {
-        audioSource.clip = AudioManager.instance.ReturnAudioClip("Clock");
+        SetTimerUIState(true);
+    }
+
+    private void HandlePuzzleEnded()
+    {
+        SetTimerUIState(true);
+    }
+
+    private void HandleGameOverStarted()
+    {
+        gameOverTriggered = true;
+        SetTimerUIState(false);
+    }
+
+    private void ResetData()
+    {
+        elapsedTime = 0;
+        gameOverTriggered = false;
+
+        if (TimerBar != null)
+            TimerBar.transform.localRotation = Quaternion.Euler(0, 0, 0);
+    }
+
+    private void PlayAudio()
+    {
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+            return;
+
+        if (AudioManager.Instance == null)
+            return;
+
+        audioSource.clip = AudioManager.Instance.ReturnAudioClip("Clock");
         audioSource.Play();
     }
 }

@@ -1,66 +1,93 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerUIManager : MonoBehaviour
+public class PlayerUIManager : Singleton<PlayerUIManager>, IEventListener
 {
-    public Canvas PlayerUI_Canvas;
+    [SerializeField] private Canvas PlayerUI_Canvas;
+    [SerializeField] private GameObject[] Candy = new GameObject[3];
+    [SerializeField] private Slider RunGauge_Slid;
 
-    public GameObject[] Candy = new GameObject[3];
+    private bool currentCandyState = false;
+    private Player player;
+    private Candy playerCandy;
+    private int[] candyCounts = new int[3];
 
-    // 달리기 게이지 관련
-    public Slider RunGauge_Slid;
-    float runGaugeSpeed = 0.5f;
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
-    // 사탕 바구니 관련
-    bool currentCandyState = false;
+    private void OnEnable()
+    {
+        GameEventDispatcher.AddListener(GameEventType.GameStarted, this);
+        GameEventDispatcher.AddListener(GameEventType.PuzzleStarted, this);
+        GameEventDispatcher.AddListener(GameEventType.PuzzleEnded, this);
+        GameEventDispatcher.AddListener(GameEventType.GameOverStarted, this);
+    }
 
-    Player player;
-    Candy candy;
     private void Start()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        candy = playerObj.GetComponent<Candy>();
+        player = playerObj.GetComponent<Player>();
+        playerCandy = playerObj.GetComponent<Candy>();
+
+        player.OnRunGaugeChanged += ChangeRunGauge;
+        playerCandy.OnCandyCountChanged += ChangeCandyCntTxt;
 
         for (int i = 0; i < Candy.Length; i++)
             ChangeCandyObjState(i, false);
-        InitRunGauge();
 
+        InitRunGauge();
+        playerCandy.NotifyAllCandyCountsChanged();
+        player.NotifyRunGaugeChanged();
         SetPlayerUICanvasState(true);
     }
 
-    private void Update()
+    protected override void OnDestroy()
     {
-        ChangeRunGauge();
+        if (player != null)
+            player.OnRunGaugeChanged -= ChangeRunGauge;
+
+        if (playerCandy != null)
+            playerCandy.OnCandyCountChanged -= ChangeCandyCntTxt;
+
+        GameEventDispatcher.RemoveListener(GameEventType.GameStarted, this);
+        GameEventDispatcher.RemoveListener(GameEventType.PuzzleStarted, this);
+        GameEventDispatcher.RemoveListener(GameEventType.PuzzleEnded, this);
+        GameEventDispatcher.RemoveListener(GameEventType.GameOverStarted, this);
+
+        base.OnDestroy();
     }
 
-    void ChangeRunGauge()
+    public void OnEvent(GameEventType eventType)
     {
-        if (!player.CheckIfCurrentStateIsRun())
+        switch (eventType)
         {
-            RunGauge_Slid.value += Time.deltaTime * runGaugeSpeed;
-        }
-        else
-        {
-            RunGauge_Slid.value -= Time.deltaTime * runGaugeSpeed;
+            case GameEventType.GameStarted:
+                HandleGameStarted();
+                break;
+            case GameEventType.PuzzleStarted:
+                HandlePuzzleStarted();
+                break;
+            case GameEventType.PuzzleEnded:
+                HandlePuzzleEnded();
+                break;
+            case GameEventType.GameOverStarted:
+                HandleGameOverStarted();
+                break;
         }
     }
 
-    void InitRunGauge()
+    private void ChangeRunGauge(float value)
+    {
+        RunGauge_Slid.value = value;
+    }
+
+    private void InitRunGauge()
     {
         RunGauge_Slid.value = 1;
-    }
-
-    public bool CheckIfRunGaugeHasRunOut()
-    {
-        if (RunGauge_Slid.value == 0)
-            return true;
-        return false;
     }
 
     public void ClickCandyBasketBtn()
@@ -68,71 +95,85 @@ public class PlayerUIManager : MonoBehaviour
         StartCoroutine(MakeCandyBasketEffct());
     }
 
-    public void ChangeCandyCntTxt(int index, string type)
+    private void ChangeCandyCntTxt(CandyType type, int count)
     {
-        Candy[index].transform.GetChild(0).GetComponent<TMP_Text>().text = candy.ReturnCandyCnt(type).ToString();
+        int index = type.ToIndex();
+        candyCounts[index] = count;
+        Candy[index].transform.GetChild(0).GetComponent<TMP_Text>().text = count.ToString();
     }
 
-    void ChangeCandyObjState(int index, bool value)
+    private void RefreshCandyCntTxt(int index)
+    {
+        Candy[index].transform.GetChild(0).GetComponent<TMP_Text>().text = candyCounts[index].ToString();
+    }
+
+    private void ChangeCandyObjState(int index, bool value)
     {
         Candy[index].SetActive(value);
     }
 
-    IEnumerator MakeCandyBasketEffct()
+    private IEnumerator MakeCandyBasketEffct()
     {
         if (!CheckCurrentCandyState())
         {
-            for (int i=0; i < Candy.Length; i++)
+            for (int i = 0; i < Candy.Length; i++)
             {
                 ChangeCandyObjState(i, !currentCandyState);
-                
-                ChangeCandyCntTxt(i, ReturnCandyType(i));
+                RefreshCandyCntTxt(i);
                 yield return new WaitForSeconds(0.15f);
             }
         }
         else
         {
-            for (int i = Candy.Length-1; i >= 0; i--)
+            for (int i = Candy.Length - 1; i >= 0; i--)
             {
                 ChangeCandyObjState(i, !currentCandyState);
-                ChangeCandyCntTxt(i, ReturnCandyType(i));
+                RefreshCandyCntTxt(i);
                 yield return new WaitForSeconds(0.15f);
             }
         }
-            
-        
+
         ChangeCheckCurrentCandyState(!currentCandyState);
     }
 
-    void ChangeCheckCurrentCandyState(bool value)
+    private void ChangeCheckCurrentCandyState(bool value)
     {
         currentCandyState = value;
     }
 
-    bool CheckCurrentCandyState()
+    private bool CheckCurrentCandyState()
     {
-        return currentCandyState ? true : false;
-    }
-
-    string ReturnCandyType(int randCandyType)
-    {
-        switch (randCandyType)
-        {
-            case 0:
-                return "hard";
-            case 1:
-                return "lollipop";
-            case 2:
-                return "muffin";
-            default:
-                Debug.LogWarning(randCandyType);
-                return "";
-        }
+        return currentCandyState;
     }
 
     public void SetPlayerUICanvasState(bool value)
     {
-        PlayerUI_Canvas.gameObject.SetActive(value);
+        if (PlayerUI_Canvas != null)
+        {
+            PlayerUI_Canvas.enabled = value;
+            GraphicRaycaster raycaster = PlayerUI_Canvas.GetComponent<GraphicRaycaster>();
+            if (raycaster != null)
+                raycaster.enabled = value;
+        }
     }
 
+    private void HandleGameStarted()
+    {
+        SetPlayerUICanvasState(true);
+    }
+
+    private void HandlePuzzleStarted()
+    {
+        SetPlayerUICanvasState(false);
+    }
+
+    private void HandlePuzzleEnded()
+    {
+        SetPlayerUICanvasState(true);
+    }
+
+    private void HandleGameOverStarted()
+    {
+        SetPlayerUICanvasState(false);
+    }
 }

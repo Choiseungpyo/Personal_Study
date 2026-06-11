@@ -6,36 +6,22 @@ using UnityEngine.UI;
 
 public class NPCUIManager : MonoBehaviour
 {
-    public Sprite[] CandySprites = new Sprite[3]; 
-    public Image CandyImg;
-    public TMP_Text CandyCntTxt;
+    [SerializeField] private Sprite[] CandySprites = new Sprite[3]; 
+    [SerializeField] private Image CandyImg;
+    [SerializeField] private TMP_Text CandyCntTxt;
 
-    void ChangeCandImg(string type)
+    private void ChangeCandImg(CandyType type)
     {
-        switch (type)
-        {
-            case "hard":
-                CandyImg.sprite = CandySprites[0];
-                break;
-            case "lollipop":
-                CandyImg.sprite = CandySprites[1];
-                break;
-            case "muffin":
-                CandyImg.sprite = CandySprites[2];
-                break;
-            default:
-                Debug.LogWarning(type);
-                break;
-        }
+        CandyImg.sprite = CandySprites[type.ToIndex()];
     }
 
-    void ChangeCandyCntTxt(int cnt)
+    private void ChangeCandyCntTxt(int cnt)
     {
         CandyCntTxt.text = "X " + cnt.ToString();
     }
 
 
-    public void SetCandyData(string type, int cnt)
+    public void SetCandyData(CandyType type, int cnt)
     {
         ChangeCandImg(type);
         ChangeCandyCntTxt(cnt);

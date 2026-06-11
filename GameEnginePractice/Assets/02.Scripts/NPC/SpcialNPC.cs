@@ -1,70 +1,117 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+癤퓎sing UnityEngine;
 
 public class SpecialNPC : MonoBehaviour
 {
-    NPCState state;
+    private SpecialNPCState idleState = new SpecialNPCIdleState();
+    private SpecialNPCState talkState = new SpecialNPCTalkState();
+    private SpecialNPCState endState = new SpecialNPCEndState();
+    private SpecialNPCState currentState;
 
-    // 컴포넌트 관련
-    Animator ani;
+    private Transform playerTransform;
+    private Animator ani;
+    private PuzzleUIManager puzzleUIManager;
+    private NPCManager npcManager;
+    private Player player;
+    private bool talkAnimationEnded = false;
+    private bool puzzleStarted = false;
 
-    //스크립트 관련
-    GameObject playerObj;
-    PuzzleUIManager puzzleUIManager;
-    NPCManager npcManager;
+    public SpecialNPCState IdleState => idleState;
+    public SpecialNPCState TalkState => talkState;
+    public SpecialNPCState EndState => endState;
 
     private void Awake()
     {
-        playerObj = GameObject.FindGameObjectWithTag("Player");
-        puzzleUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PuzzleUIManager>();
-        npcManager = GameObject.Find("NPCManager").GetComponent<NPCManager>();
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        playerTransform = playerObj.transform;
+        player = playerObj.GetComponent<Player>();
+        puzzleUIManager = PuzzleUIManager.Instance;
+        npcManager = NPCManager.Instance;
         ani = GetComponent<Animator>();
-        ChangeState(NPCState.IDLE);
+        ChangeState(idleState);
+    }
+
+    public void ResetSpecialNPCForSpawn()
+    {
+        ani.ResetTrigger("talk");
+        ani.ResetTrigger("end");
+        ani.Play("Idle", 0, 0f);
+        talkAnimationEnded = false;
+        puzzleStarted = false;
+        ChangeState(idleState);
     }
 
     private void Update()
     {
-        SetDir();
+        currentState?.Update(this);
     }
-    /// <summary>
-    /// 애니메이션 관련 설정을 한다. 
-    /// </summary>
-    void SetAni()
+
+    public void ChangeState(SpecialNPCState nextState)
     {
-        switch (state)
+        currentState = nextState;
+        currentState.Enter(this);
+    }
+
+    public void ChangeState(NPCStateType stateType)
+    {
+        switch (stateType)
         {
-            case NPCState.IDLE:
+            case NPCStateType.Idle:
+                ChangeState(idleState);
                 break;
-            case NPCState.TALK:
-                ani.SetTrigger("talk");
+            case NPCStateType.Talk:
+                ChangeState(talkState);
                 break;
-            case NPCState.END:
-                // 플레이어에게 캔디 주기
-                npcManager.ChangeSpecialNPCISSpawnState(false);
-
-                transform.parent.GetComponent<NPCManager>().MakeTalkEffect(transform.position + new Vector3(0, 1.5f, 0), puzzleUIManager.ReturnGameResult());
-                Destroy(gameObject);
+            case NPCStateType.End:
+                ChangeState(endState);
                 break;
-
         }
     }
 
-    public void ChangeState(NPCState value)
+    public void PlayTalkAnimation()
     {
-        state = value;
-        SetAni();
+        talkAnimationEnded = false;
+        puzzleStarted = false;
+        ani.SetTrigger("talk");
+    }
+
+    public void NotifyTalkAnimationEnded()
+    {
+        talkAnimationEnded = true;
+    }
+
+    public bool CanStartPuzzleAfterTalk()
+    {
+        if (puzzleStarted)
+            return false;
+
+        if (!talkAnimationEnded)
+            return false;
+
+        return player == null || player.IsAnimationFinished("Talk");
     }
 
     public void StartPuzzle()
     {
+        if (puzzleStarted)
+            return;
+
+        puzzleStarted = true;
         puzzleUIManager.ActivatePuzzleUI();
-        ChangeState(NPCState.IDLE);
+        if (player != null)
+            player.ChangeDidGetCandyState(false);
+
+        ChangeState(idleState);
     }
 
-    void SetDir()
+    public void FinishPuzzleAndRemove()
     {
-        transform.LookAt(playerObj.transform);
+        npcManager.ChangeSpecialNPCISSpawnState(false);
+        npcManager.MakeTalkEffect(transform.position + new Vector3(0, 1.5f, 0), puzzleUIManager.ReturnGameResult());
+        npcManager.ReleaseSpecialNPC(gameObject);
+    }
+
+    public void LookAtPlayer()
+    {
+        transform.LookAt(playerTransform);
     }
 }

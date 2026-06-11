@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public class PuzzleUIManager : MonoBehaviour
+public class PuzzleUIManager : Singleton<PuzzleUIManager>, IEventListener
 {
     /* [0] : -160, 160      [1] : 0, 160        [2] : 160, 160
      * [3] : -160, 0        [x] : 0, 0          [4] : 160, 0
@@ -15,65 +15,101 @@ public class PuzzleUIManager : MonoBehaviour
      */
 
     // 퍼즐
-    public Canvas PuzzleUICanvas;
-    public GameObject EmptyPiece;
-    public GameObject[] PuzzlePieces = new GameObject[9];
-    public GameObject ClearObject;
+    [SerializeField] private Canvas PuzzleUICanvas;
+    [SerializeField] private GameObject EmptyPiece;
+    [SerializeField] private GameObject[] PuzzlePieces = new GameObject[9];
+    [SerializeField] private GameObject ClearObject;
 
     // 유령
-    public TMP_Text ClearTypeTxt; 
-    public GameObject Ghost;
-    public Sprite[] GhostSprite = new Sprite[2];
+    [SerializeField] private TMP_Text ClearTypeTxt; 
+    [SerializeField] private GameObject Ghost;
+    [SerializeField] private Sprite[] GhostSprite = new Sprite[2];
 
     // 박쥐
-    public GameObject[] Bats = new GameObject[2];
+    [SerializeField] private GameObject[] Bats = new GameObject[2];
     
     // 제한시간
-    public TMP_Text TimerTxt;
+    [SerializeField] private TMP_Text TimerTxt;
 
     // 캔디
-    public Image CandyToGiveImg;
-    public Sprite[] CandysSpirte = new Sprite[3];
-    public TMP_Text CandyCntTxt; 
+    [SerializeField] private Image CandyToGiveImg;
+    [SerializeField] private Sprite[] CandysSpirte = new Sprite[3];
+    [SerializeField] private TMP_Text CandyCntTxt; 
 
-    Vector3[] answerPos = new  Vector3[9];
+    private Vector3[] answerPos = new  Vector3[9];
 
     // 퍼즐
-    Transform clickedPuzzlePiece;
+    private Transform clickedPuzzlePiece;
 
-    bool moveClickedPieceCoroutineState = false;
-    int emptyPieceNum = 8;
+    private const float puzzleCellSize = 160f;
+    private const float puzzleMoveSpeed = 800f;
+    private const float puzzlePositionTolerance = 5f;
+
+    private bool moveClickedPieceCoroutineState = false;
+    private bool puzzlePieceButtonsBound = false;
+    private int emptyPieceNum = 8;
 
     // 게임 관리
-    bool gameIsEnded = false;
-    bool gameResult = false;
+    private bool gameIsEnded = false;
+    private bool gameResult = false;
 
     // 타이머
-    float timer = 30;
-    bool shuffleIsEnded = false;
+    private float timer = 30;
+    private bool shuffleIsEnded = false;
 
     // 캔디 
-    int candyCnt = 0;
-    string candyToGive = "";
+    private int candyCnt = 0;
+    private CandyType candyToGive = CandyType.Hard;
 
-    Candy candy;
-    Candy playerCandy;
-    PlayerUIManager playerUIManager;
-    Player player;
-    AudioSource audioSource;
-    private void Awake()
+    private Candy candy;
+    private Candy playerCandy;
+    private Player player;
+    private GameManager gameManager;
+    private AudioSource audioSource;
+    protected override void Awake()
     {
+        base.Awake();
+        if (!IsSingletonInstance())
+            return;
+
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         candy = GetComponent<Candy>();
         playerCandy = playerObj.GetComponent<Candy>();
-        playerUIManager = GetComponent<PlayerUIManager>();
         player = playerObj.GetComponent<Player>();
+        gameManager = GameManager.Instance;
         audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
     {
+        BindPuzzlePieceButtons();
         SetPuzzleUICanvasState(false);
+    }
+
+    private void OnEnable()
+    {
+        GameEventDispatcher.AddListener(GameEventType.GameStarted, this);
+        GameEventDispatcher.AddListener(GameEventType.GameOverStarted, this);
+    }
+
+    protected override void OnDestroy()
+    {
+        GameEventDispatcher.RemoveListener(GameEventType.GameStarted, this);
+        GameEventDispatcher.RemoveListener(GameEventType.GameOverStarted, this);
+        base.OnDestroy();
+    }
+
+    public void OnEvent(GameEventType eventType)
+    {
+        switch (eventType)
+        {
+            case GameEventType.GameStarted:
+                HandleGameStarted();
+                break;
+            case GameEventType.GameOverStarted:
+                StopPuzzleForGameOver();
+                break;
+        }
     }
 
     private void Update()
@@ -84,89 +120,151 @@ public class PuzzleUIManager : MonoBehaviour
     // x값이 160 차이나거나 y값이 160 차이 나는 경우 
     public void ClickPuzzlePiece()
     {
-        //Debug.Log("Click Puzzle Piece");
-        PlayAudio("PuzzleClick");
-        if (clickedPuzzlePiece != null)
-        {
-            Debug.Log(clickedPuzzlePiece);
+        TryMovePuzzlePiece(GetSelectedPuzzlePieceTransform());
+    }
+
+    public void ClickPuzzlePiece(int puzzlePieceIndex)
+    {
+        if (puzzlePieceIndex < 0 || puzzlePieceIndex >= PuzzlePieces.Length)
             return;
-        }
-           
-        clickedPuzzlePiece = EventSystem.current.currentSelectedGameObject.transform;
+
+        if (PuzzlePieces[puzzlePieceIndex] == null)
+            return;
+
+        TryMovePuzzlePiece(PuzzlePieces[puzzlePieceIndex].transform);
+    }
+
+    private void TryMovePuzzlePiece(Transform puzzlePiece)
+    {
+        if (!ReturnShuffleIsEnded())
+            return;
+
+        if (CheckIfGameIsEnded())
+            return;
+
+        if (moveClickedPieceCoroutineState || clickedPuzzlePiece != null)
+            return;
+
+        if (puzzlePiece == null)
+            return;
+
+        clickedPuzzlePiece = puzzlePiece;
+        PlayAudio("PuzzleClick");
 
         if (CheckPuzzleIfPieceIsAdjacent(clickedPuzzlePiece.localPosition, EmptyPiece.transform.localPosition))
             StartCoroutine(MoveClickedPiece());
         else
             clickedPuzzlePiece = null;
-            
+    }
+    private bool CheckPuzzleIfPieceIsAdjacent(Vector3 obj1, Vector3 obj2)
+    {
+        float xDistance = Mathf.Abs(obj1.x - obj2.x);
+        float yDistance = Mathf.Abs(obj1.y - obj2.y);
+
+        bool sameColumn = yDistance <= puzzlePositionTolerance;
+        bool sameRow = xDistance <= puzzlePositionTolerance;
+        bool oneCellApartX = Mathf.Abs(xDistance - puzzleCellSize) <= puzzlePositionTolerance;
+        bool oneCellApartY = Mathf.Abs(yDistance - puzzleCellSize) <= puzzlePositionTolerance;
+
+        return (sameColumn && oneCellApartX) || (sameRow && oneCellApartY);
     }
 
-    bool CheckPuzzleIfPieceIsAdjacent(Vector3 obj1, Vector3 obj2)
+    private void BindPuzzlePieceButtons()
     {
-        // 비어있는 퍼즐 조각과 선택한 퍼즐 조각이  이웃해 있을 경우 
-        if (obj1.x == obj2.x)
-        {
-            if (Mathf.Abs(obj1.y - obj2.y) == 160)
-                return true;
-            return false;
-        }
-        if(obj1.y == obj2.y)
-        {
-            if (Mathf.Abs(obj1.x - obj2.x) == 160)
-                return true;
-            return false;
-        }
- 
-        return false;
-    }
+        if (puzzlePieceButtonsBound)
+            return;
 
-    IEnumerator MoveClickedPiece()
-    {
-        Vector3 orinalClickedPuzzlePiecePos = clickedPuzzlePiece.localPosition;
-        while (Vector3.Distance(clickedPuzzlePiece.localPosition, EmptyPiece.transform.localPosition) > 0)
+        puzzlePieceButtonsBound = true;
+
+        for (int i = 0; i < PuzzlePieces.Length; i++)
         {
-            clickedPuzzlePiece.localPosition = Vector3.MoveTowards(clickedPuzzlePiece.localPosition, EmptyPiece.transform.localPosition, Time.deltaTime * 800);
+            if (i == emptyPieceNum || PuzzlePieces[i] == null)
+                continue;
+
+            Button button = PuzzlePieces[i].GetComponent<Button>();
+            if (button == null)
+                continue;
+
+            int puzzlePieceIndex = i;
+            button.onClick.AddListener(() => ClickPuzzlePiece(puzzlePieceIndex));
+        }
+    }
+    private Transform GetSelectedPuzzlePieceTransform()
+    {
+        if (EventSystem.current == null || EventSystem.current.currentSelectedGameObject == null)
+            return null;
+
+        Transform selectedTransform = EventSystem.current.currentSelectedGameObject.transform;
+        while (selectedTransform != null)
+        {
+            for (int i = 0; i < PuzzlePieces.Length; i++)
+            {
+                if (PuzzlePieces[i] != null && selectedTransform == PuzzlePieces[i].transform)
+                    return selectedTransform;
+            }
+
+            selectedTransform = selectedTransform.parent;
+        }
+
+        return null;
+    }
+    private IEnumerator MoveClickedPiece()
+    {
+        moveClickedPieceCoroutineState = true;
+        Vector3 originalClickedPuzzlePiecePos = clickedPuzzlePiece.localPosition;
+        Vector3 targetPos = EmptyPiece.transform.localPosition;
+
+        while (Vector3.Distance(clickedPuzzlePiece.localPosition, targetPos) > puzzlePositionTolerance)
+        {
+            clickedPuzzlePiece.localPosition = Vector3.MoveTowards(clickedPuzzlePiece.localPosition, targetPos, Time.deltaTime * puzzleMoveSpeed);
             yield return null;
         }
-        ChangeEmptyPiecePos(orinalClickedPuzzlePiecePos);
+
+        clickedPuzzlePiece.localPosition = targetPos;
+        ChangeEmptyPiecePos(originalClickedPuzzlePiecePos);
         clickedPuzzlePiece = null;
+        moveClickedPieceCoroutineState = false;
     }
-
-    IEnumerator MoveClickedFinalPiece()
+    private IEnumerator MoveClickedFinalPiece()
     {
-        Vector3 orinalClickedPuzzlePiecePos = PuzzlePieces[emptyPieceNum].transform.localPosition;
-        while (Vector3.Distance(PuzzlePieces[emptyPieceNum].transform.localPosition, EmptyPiece.transform.localPosition) > 0)
-        {
-            PuzzlePieces[emptyPieceNum].transform.localPosition = Vector3.MoveTowards(PuzzlePieces[emptyPieceNum].transform.localPosition, EmptyPiece.transform.localPosition, Time.deltaTime * 800);
-            yield return null;
+        Vector3 originalClickedPuzzlePiecePos = PuzzlePieces[emptyPieceNum].transform.localPosition;
+        Vector3 targetPos = EmptyPiece.transform.localPosition;
 
+        while (Vector3.Distance(PuzzlePieces[emptyPieceNum].transform.localPosition, targetPos) > puzzlePositionTolerance)
+        {
+            PuzzlePieces[emptyPieceNum].transform.localPosition = Vector3.MoveTowards(PuzzlePieces[emptyPieceNum].transform.localPosition, targetPos, Time.deltaTime * puzzleMoveSpeed);
+            yield return null;
         }
-        ChangeEmptyPiecePos(orinalClickedPuzzlePiecePos);
+
+        PuzzlePieces[emptyPieceNum].transform.localPosition = targetPos;
+        ChangeEmptyPiecePos(originalClickedPuzzlePiecePos);
         SetClearObject(true);
     }
 
 
-    IEnumerator MoveClickedPiece(int index)
+    private IEnumerator MoveClickedPiece(int index)
     {
         moveClickedPieceCoroutineState = true;
-        Vector3 orinalClickedPuzzlePiecePos = PuzzlePieces[index].transform.localPosition;
+        Vector3 originalClickedPuzzlePiecePos = PuzzlePieces[index].transform.localPosition;
+        Vector3 targetPos = EmptyPiece.transform.localPosition;
 
-        while (Vector3.Distance(PuzzlePieces[index].transform.localPosition, EmptyPiece.transform.localPosition) > 0)
+        while (Vector3.Distance(PuzzlePieces[index].transform.localPosition, targetPos) > puzzlePositionTolerance)
         {
-            PuzzlePieces[index].transform.localPosition = Vector3.MoveTowards(PuzzlePieces[index].transform.localPosition, EmptyPiece.transform.localPosition, Time.deltaTime * 800);
+            PuzzlePieces[index].transform.localPosition = Vector3.MoveTowards(PuzzlePieces[index].transform.localPosition, targetPos, Time.deltaTime * puzzleMoveSpeed);
             yield return null;
         }
 
-        ChangeEmptyPiecePos(orinalClickedPuzzlePiecePos);
+        PuzzlePieces[index].transform.localPosition = targetPos;
+        ChangeEmptyPiecePos(originalClickedPuzzlePiecePos);
         moveClickedPieceCoroutineState = false;
     }
 
-    void ChangeEmptyPiecePos(Vector3 pos)
+    private void ChangeEmptyPiecePos(Vector3 pos)
     {
         EmptyPiece.transform.localPosition = pos;
     }
 
-    void SetEmptyPiece()
+    private void SetEmptyPiece()
     {
         EmptyPiece.transform.localPosition = PuzzlePieces[8].transform.localPosition;
         EmptyPiece.GetComponent<Image>().raycastTarget = false;
@@ -175,17 +273,17 @@ public class PuzzleUIManager : MonoBehaviour
         SetFinalPiecePos(emptyPieceNum);
     }
 
-    void SetFinalPiecePos(int index)
+    private void SetFinalPiecePos(int index)
     {
         PuzzlePieces[index].transform.localPosition = new Vector3(470, 0);
     }
 
-    void SetFinalPieceState(bool value)
+    private void SetFinalPieceState(bool value)
     {
         PuzzlePieces[emptyPieceNum].SetActive(value);
     }
 
-    void InitAnswerPos()
+    private void InitAnswerPos()
     {
         for (int i = 0; i < answerPos.Length; i++)
         {
@@ -193,7 +291,7 @@ public class PuzzleUIManager : MonoBehaviour
         }
     }
 
-    bool CheckAnswerPos()
+    private bool CheckAnswerPos()
     {
         for(int i=0; i< answerPos.Length;i++)
         {
@@ -206,7 +304,7 @@ public class PuzzleUIManager : MonoBehaviour
         return true;
     }
 
-    IEnumerator ShufflePuzzlePiece()
+    private IEnumerator ShufflePuzzlePiece()
     {
         List<int> adjacentObjectIndexStorage = new List<int>();
         int i;
@@ -256,7 +354,7 @@ public class PuzzleUIManager : MonoBehaviour
         }
     }
 
-    IEnumerator MoveBat(int index)
+    private IEnumerator MoveBat(int index)
     {
         Vector3[] targetRot = new Vector3[2];
 
@@ -284,24 +382,24 @@ public class PuzzleUIManager : MonoBehaviour
 
     }
 
-    void InitBatPos()
+    private void InitBatPos()
     {
         //초기화
         Bats[0].transform.localEulerAngles = new Vector3(0, 0, 20);
         Bats[1].transform.localEulerAngles = new Vector3(0, 180, 20);
     }
 
-    void SetShuffleIsEnded(bool value)
+    private void SetShuffleIsEnded(bool value)
     {
         shuffleIsEnded = value;
     }
 
-    bool ReturnShuffleIsEnded()
+    private bool ReturnShuffleIsEnded()
     {
         return shuffleIsEnded;
     }
 
-    void SetTimerTxt()
+    private void SetTimerTxt()
     {
         if (!ReturnShuffleIsEnded())
             return;
@@ -321,12 +419,12 @@ public class PuzzleUIManager : MonoBehaviour
         CheckIfTimerIsOver();
     }
 
-    void InitTimerTxt()
+    private void InitTimerTxt()
     {
         TimerTxt.text = ((int)timer).ToString();
     }
 
-    void CheckIfTimerIsOver()
+    private void CheckIfTimerIsOver()
     {
         if (timer > 0)
             return;
@@ -337,12 +435,12 @@ public class PuzzleUIManager : MonoBehaviour
         SetFinalPieceState(false);
     }
 
-    void ResetTimer()
+    private void ResetTimer()
     {
         timer = 30;
     }
 
-    bool CheckIfGameIsEnded()
+    private bool CheckIfGameIsEnded()
     {
         if (gameIsEnded)
             return true;
@@ -350,12 +448,12 @@ public class PuzzleUIManager : MonoBehaviour
             return false;
     }
 
-    void SetGameIsEndedState(bool value)
+    private void SetGameIsEndedState(bool value)
     {
         gameIsEnded = value;
     }
 
-    void SetGameResult(bool value)
+    private void SetGameResult(bool value)
     {
         gameResult = value;
     }
@@ -369,59 +467,82 @@ public class PuzzleUIManager : MonoBehaviour
 
     public void SetPuzzleUICanvasState(bool value)
     {
-        PuzzleUICanvas.gameObject.SetActive(value);
+        if (PuzzleUICanvas == null)
+            return;
+
+        PuzzleUICanvas.enabled = value;
+        GraphicRaycaster raycaster = PuzzleUICanvas.GetComponent<GraphicRaycaster>();
+        if (raycaster != null)
+            raycaster.enabled = value;
     }
 
-    void GiveCandy(bool value)
+    private void GiveCandy(bool value)
     {
         if (!value)
+            return;
+
+        EnsureCandyReferences();
+
+        if (playerCandy == null)
             return;
 
         playerCandy.ChangeCandyCnt(candyToGive, candyCnt);
     }
 
-    void SetCandyToGive()
+    private void SetCandyToGive()
     {
-        candyToGive = candy.ReturnRandomCandy();
-        int candySpriteIndex = 0;
+        EnsureCandyReferences();
 
-        switch(candyToGive)
-        {
-            case "hard":
-                candySpriteIndex = 0;
-                break;
-            case "lollipop":
-                candySpriteIndex = 1;
-                break;
-            case "muffin":
-                candySpriteIndex = 2;
-                break;
-            default:
-                candySpriteIndex = 0;
-                Debug.LogWarning(candyToGive);
-                break;
-        }
-        SetCandyImg(candySpriteIndex);
+        Candy candySource = candy != null ? candy : playerCandy;
+        if (candySource != null)
+            candyToGive = candySource.ReturnRandomCandy();
+        else
+            candyToGive = Random.Range(0, 3).ToCandyType();
+
+        SetCandyImg(candyToGive.ToIndex());
     }
 
-    void SetCandyImg(int index)
+    private void SetCandyImg(int index)
     {
+        if (CandyToGiveImg == null)
+            return;
+
+        if (index < 0 || index >= CandysSpirte.Length)
+            return;
+
+        if (CandysSpirte[index] == null)
+            return;
+
         CandyToGiveImg.sprite = CandysSpirte[index];
     }
 
-    void SetCandyCntTxt()
+    private void EnsureCandyReferences()
     {
-        CandyCntTxt.text = candyCnt.ToString();
+        if (candy == null)
+            candy = GetComponent<Candy>();
+
+        if (playerCandy != null)
+            return;
+
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+            playerCandy = playerObj.GetComponent<Candy>();
     }
 
-    void SetCandyRandomCnt()
+    private void SetCandyCntTxt()
+    {
+        if (CandyCntTxt != null)
+            CandyCntTxt.text = candyCnt.ToString();
+    }
+
+    private void SetCandyRandomCnt()
     {
         int randNum = Random.Range(5, 10);
         candyCnt = randNum;
     }
 
 
-    void SetGhostSprite(bool result)
+    private void SetGhostSprite(bool result)
     {
         if (result)
             Ghost.GetComponent<Image>().sprite = GhostSprite[0];
@@ -429,7 +550,7 @@ public class PuzzleUIManager : MonoBehaviour
             Ghost.GetComponent<Image>().sprite = GhostSprite[1];
     }
     
-    void SetClearTypeTxt(bool result)
+    private void SetClearTypeTxt(bool result)
     {
         if (result)
             ClearTypeTxt.text = "!Success!";
@@ -437,7 +558,7 @@ public class PuzzleUIManager : MonoBehaviour
             ClearTypeTxt.text = "!Fail!";
     }
 
-    void SetClearObject(bool result)
+    private void SetClearObject(bool result)
     {
         SetClearObjecState(true);
         SetGhostSprite(result);
@@ -445,20 +566,27 @@ public class PuzzleUIManager : MonoBehaviour
         
         GiveCandy(result);
 
-        GameObject.Find("SpecialNPC").GetComponent<SpecialNPC>().ChangeState(NPCState.END);
+        GameObject.Find("SpecialNPC").GetComponent<SpecialNPC>().ChangeState(NPCStateType.End);
         player.ChangeDidGetCandyState(false);
 
         Invoke("ClosePuzzleUI", 2f);
     }
 
-    void SetClearObjecState(bool value)
+    private void SetClearObjecState(bool value)
     {
         ClearObject.SetActive(value);
     }
 
     public void ActivatePuzzleUI()
     {
-        playerUIManager.SetPlayerUICanvasState(false);
+        if (gameManager == null)
+            gameManager = GameManager.Instance;
+
+        if (gameManager != null)
+            gameManager.StartPuzzle();
+
+        clickedPuzzlePiece = null;
+        moveClickedPieceCoroutineState = false;
         SetPuzzleUICanvasState(true);
         // 실제 타이머 
 
@@ -492,21 +620,68 @@ public class PuzzleUIManager : MonoBehaviour
         SetClearObjecState(false);
     }
 
-    void ClosePuzzleUI()
+    private void ClosePuzzleUI()
     {
         StopAllCoroutines();
-        playerUIManager.SetPlayerUICanvasState(true);
+        SetPuzzleUICanvasState(false);
+
+        if (gameManager == null)
+            gameManager = GameManager.Instance;
+
+        if (gameManager != null && !gameManager.CheckGameState(GameState.GameOver))
+            gameManager.EndPuzzle();
+    }
+
+    public void ForceClosePuzzleUI()
+    {
+        CancelInvoke();
+        StopAllCoroutines();
+        SetGameIsEndedState(true);
+        SetClearObjecState(false);
         SetPuzzleUICanvasState(false);
     }
 
-    void PlayAudio(string name)
+    public void StopPuzzleForGameOver()
     {
-        audioSource.clip = AudioManager.instance.ReturnAudioClip(name);
+        CancelInvoke();
+        StopAllCoroutines();
+        SetGameIsEndedState(true);
+        SetClearObjecState(false);
+    }
+
+    private void HandleGameStarted()
+    {
+        CancelInvoke();
+        StopAllCoroutines();
+        SetGameIsEndedState(false);
+        SetClearObjecState(false);
+        SetPuzzleUICanvasState(false);
+    }
+    private void PlayAudio(string name)
+    {
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+            audioSource = GetComponentInParent<AudioSource>();
+
+        if (audioSource == null)
+            return;
+
+        if (AudioManager.Instance == null)
+            return;
+
+        AudioClip clip = AudioManager.Instance.ReturnAudioClip(name);
+        if (clip == null)
+            return;
+
+        audioSource.clip = clip;
         audioSource.Play();
     }
 
     public bool CheckIfCanvasIsActivated()
     {
-        return PuzzleUICanvas.gameObject.activeSelf;
+        return PuzzleUICanvas != null && PuzzleUICanvas.enabled;
     }
 }
+

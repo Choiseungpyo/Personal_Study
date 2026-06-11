@@ -1,364 +1,253 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-   enum State {
-        IDLE, WALK, RUN, HIT, TALK
-    }State state;
+    public event Action<float> OnRunGaugeChanged;
 
-    public AudioSource[] audioSource = new AudioSource[2];
+    [SerializeField] private AudioSource[] audioSource = new AudioSource[2];
 
-    float moveSpeed = 5f;
-    float turnSpeed = 500; // 100
+    private PlayerState idleState = new PlayerIdleState();
+    private PlayerState walkState = new PlayerWalkState();
+    private PlayerState runState = new PlayerRunState();
+    private PlayerState hitState = new PlayerHitState();
+    private PlayerState talkState = new PlayerTalkState();
+    private PlayerState currentState;
 
-    Vector3 movement;
+    private float walkSpeed = 5f;
+    private float runSpeed = 10f;
+    private float turnSpeed = 500f;
+    private float runGauge = 1f;
+    private float runGaugeSpeed = 0.5f;
+    private float h = 0f;
+    private float v = 0f;
+    private bool isRunPressed = false;
+    private bool didGetCandy = false;
+    private Vector3 movement;
+    private GameObject npc = null;
+    private Animator ani;
+    private Candy candy;
 
-    float h, v;
-    bool isClickLeftShift = false;
-
-    bool didGetCandy = false;
-
-    // NPC 관련
-    GameObject npc = null;
-
-    // 컴포넌트 관련
-    Animator ani;
-    
-
-    // 스크립트 관련
-    PlayerUIManager playerUIManager;
-    Candy candy;
+    public PlayerState IdleState => idleState;
+    public PlayerState WalkState => walkState;
+    public PlayerState RunState => runState;
+    public PlayerState HitState => hitState;
+    public PlayerState TalkState => talkState;
+    public float WalkSpeed => walkSpeed;
+    public float RunSpeed => runSpeed;
+    public bool HasMoveInput => !(h == 0 && v == 0);
+    public bool IsRunPressed => isRunPressed;
+    public bool IsGettingCandy => didGetCandy;
+    public bool HasContactNPC => npc != null;
+    public bool IsRunGaugeEmpty => runGauge <= 0f;
 
     private void Awake()
     {
-        playerUIManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<PlayerUIManager>();
         ani = GetComponent<Animator>();
         candy = GetComponent<Candy>();
-
-        ani.SetBool("idle", false);
-        ani.SetBool("walk", false);
-        ani.SetBool("run", false);
-
-        ChangeState(State.IDLE);
+        ResetAnimationBools();
+        ChangeState(idleState);
         ResetPos();
     }
 
     private void Update()
     {
-        Run();
-        ChangeHitAniToIdleAni();
-        TalkNPC();
-        ChangeIdleState();
+        currentState?.Update(this);
     }
 
     private void FixedUpdate()
     {
-        h = Input.GetAxisRaw("Horizontal");
-        v = Input.GetAxisRaw("Vertical");
-
-        Idle();
-        Move();
-        Turn();
-    }
-
-    void Idle()
-    {
-        if (state == State.HIT || state == State.TALK)
-            return;
-
-        if (!(h == 0 && v == 0))
-            return;
-
-        if (ReturnDidGetCandyState())
-            return;
-
-        ChangeState(State.IDLE);
-        SetAni();
-    }
-
-    void Move()
-    {
-        if (state == State.HIT || state == State.TALK)
-            return;
-
-        if (h == 0 && v == 0)
-            return;
-
-
-        if (ReturnDidGetCandyState())
-            return;
-
-        movement.Set(h, 0, v);
-        movement = movement.normalized * moveSpeed * Time.deltaTime;
-
-        transform.Translate(movement); // 월드좌표 대신 자기자신 기준으로 이동
-        SetMoveSpeed();
-        SetStateAboutMove();
-        SetAni();
-    }
-
-    void Turn()
-    {
-        if (state == State.HIT || state == State.TALK)
-            return;
-
-        if (ReturnDidGetCandyState())
-            return;
-
-
-        // 마우스로 회전
-        //Debug.Log(-Input.GetAxis("Mouse X"));
-        transform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * Time.deltaTime * turnSpeed, 0)); // 자기 자신기준 회전
-        //Debug.Log(Input.GetAxis("Mouse X"));
-
-        //if (h == 0)
-        //    return;
-        // 왼쪽, 오른쪽 눌러서 회전하는 방법
-        //movement.Set(h, 0, 0);
-        //transform.Rotate(new Vector3(0, movement.x * Time.deltaTime * turnSpeed, 0)); // 자기 자신기준 회전
-    }
-
-
-
-    void Run()
-    {
-        if (state == State.HIT || state == State.TALK)
-            return;
-
-
-        if (ReturnDidGetCandyState())
-            return;
-
-        if (playerUIManager.CheckIfRunGaugeHasRunOut())
-        {
-            ChangeIsClickLeftShift(false);
-            return;
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            PlayAudio("Run");
-            //Debug.Log("Left Shift 누름");
-            ChangeIsClickLeftShift(true);
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            StopAudio();
-            ChangeIsClickLeftShift(false);
-            //Debug.Log("Left Shift 손가락 뗌");
-        } 
-    }
-
-    /// <summary>
-    /// 애니메이션 관련 설정을 한다. 
-    /// </summary>
-    void SetAni()
-    {
-        switch(state)
-        {
-            case State.IDLE:
-                ani.SetBool("idle", true);
-                ani.SetBool("walk", false);
-                ani.SetBool("run", false);
-                break;
-            case State.WALK:
-                ani.SetBool("idle", false);
-                ani.SetBool("walk", true);
-                ani.SetBool("run", false);
-                break;
-            case State.RUN:
-                ani.SetBool("idle", false);
-                ani.SetBool("walk", false);
-                ani.SetBool("run", true);
-                break;
-            case State.HIT:
-                ani.SetBool("idle", false);
-                ani.SetBool("walk", false);
-                ani.SetBool("run", false);
-                ani.SetTrigger("hit");
-                break;
-            case State.TALK:
-                ani.SetBool("idle", false);
-                ani.SetBool("walk", false);
-                ani.SetBool("run", false);
-                ani.SetTrigger("talk");
-                break;
-        }
-    }
-
-    void ChangeState(State value)
-    {
-        state = value;
-    }
-
-    void SetStateAboutMove()
-    {
-        if (CheckIsClickLeftShift())
-            ChangeState(State.RUN);
-        else
-            ChangeState(State.WALK);
-    }
-
-    void ChangeIsClickLeftShift(bool value)
-    {
-        isClickLeftShift = value;
-    }
-
-    bool CheckIsClickLeftShift()
-    {
-        return isClickLeftShift ? true : false;
-    }
-
-    void ChangeMoveSpeed(float value)
-    {
-        moveSpeed = value;
-    }
-
-    void SetMoveSpeed()
-    {
-        if (CheckIsClickLeftShift()) // Left Shift 키를 눌렀을 경우
-            ChangeMoveSpeed(10.0f);
-        else
-            ChangeMoveSpeed(5.0f);
-    }
-
-    public bool CheckIfCurrentStateIsRun()
-    {
-        if (state == State.RUN)
-            return true;
-        return false;
+        currentState?.FixedUpdate(this);
     }
 
     private void OnCollisionEnter(Collision coll)
     {
         if (coll.collider.CompareTag("NPC"))
-        {
             npc = coll.gameObject;
 
-            // TALK 애니메이션 끝나고 IDLE 상태로 바꾸고 움직일 수 있게 만드는 코드 작성해야함. 
-        }
-        if (coll.collider.CompareTag("Enemy"))
-        {
-            GameObject obj = coll.collider.gameObject;
-            ChangeIsClickLeftShift(false);
-            PlayAudio("Hit");
-            GameObject.Find("EnemyManager").GetComponent<EnemyManager>().ChangeGetCandyCnt(coll.collider.name);
-            
-            // 적별 사탕 감소
-            if (obj.name.Equals("Zombie"))
-                candy.ChangeCandyCnt(obj.GetComponent<Enemy>().ReturnCandyNameToTake(), -2);
-            else if (obj.name.Equals("Pierrot"))
-                candy.ChangeCandyCnt(obj.GetComponent<Pierrot>().ReturnCandyNameToTake(), -5);
-            else if (obj.name.Equals("Chainsaw"))
-                candy.ChangeCandyCnt(obj.GetComponent<Chainsaw>().ReturnCandyNameToTake(), -7);   
-
-            ChangeState(State.HIT);
-            SetAni();
-            //StartCoroutine(ChangeHitAniToIdleAni());
-        }
+        currentState?.OnCollisionEnter(this, coll);
     }
 
     private void OnCollisionExit(Collision coll)
     {
         if (coll.collider.CompareTag("NPC"))
             npc = null;
+
+        currentState?.OnCollisionExit(this, coll);
     }
 
-
-    bool CheckIfHitAniIsTerminated()
+    private void OnDisable()
     {
-        if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Hit"))
-            return false;
-        //Debug.Log("Hit Ani 동작");
-        StopAudio();
-        if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
-            return false;
-        //Debug.Log("Hit Ani 종료");
-        return true;
+        for (int i = 0; i < audioSource.Length; i++)
+            audioSource[i].enabled = false;
     }
 
-    void ChangeHitAniToIdleAni()
+    public void ReadMoveInput()
     {
-        if (state != State.HIT)
-            return;
-
-        if (!CheckIfHitAniIsTerminated())
-            return;
-
-        ChangeState(State.IDLE);
-        SetAni();
+        h = Input.GetAxisRaw("Horizontal");
+        v = Input.GetAxisRaw("Vertical");
     }
 
-    bool CheckIfItIsContactWithNPC()
+    public void Move(float speed)
     {
-        return npc != null ? true : false;
+        movement.Set(h, 0, v);
+        movement = movement.normalized * speed * Time.deltaTime;
+        transform.Translate(movement);
     }
 
-    void TalkNPC()
+    public void Turn()
     {
-        if (!CheckIfItIsContactWithNPC())
-            return;
-        if(Input.GetKeyDown(KeyCode.Space) && !ReturnDidGetCandyState())
+        transform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * Time.deltaTime * turnSpeed, 0));
+    }
+
+    public void ChangeState(PlayerState nextState)
+    {
+        currentState = nextState;
+        currentState.Enter(this);
+    }
+
+    public void SetAnimation(PlayerStateType stateType)
+    {
+        ResetAnimationBools();
+
+        switch (stateType)
         {
-            ChangeDidGetCandyState(true);
-            // 플레이어 애니메이션 재생
-            ChangeIsClickLeftShift(false);
-            StopAudio();
-            ChangeState(State.TALK);
-            SetAni();
-            // NPC  애니메이션 재생
-            if(npc.name.Equals("SpecialNPC"))
-                npc.GetComponent<SpecialNPC>().ChangeState(NPCState.TALK);
-            else
-                npc.GetComponent<NPC>().ChangeState(NPCState.TALK);
+            case PlayerStateType.Idle:
+                ani.SetBool("idle", true);
+                break;
+            case PlayerStateType.Walk:
+                ani.SetBool("walk", true);
+                break;
+            case PlayerStateType.Run:
+                ani.SetBool("run", true);
+                break;
+            case PlayerStateType.Hit:
+                ani.SetTrigger("hit");
+                break;
+            case PlayerStateType.Talk:
+                ani.SetTrigger("talk");
+                break;
         }
     }
 
-    void ChangeIdleState()
-    {
-        if (state != State.TALK)
-            return;
-
-        if (ani.GetCurrentAnimatorStateInfo(0).IsName("Talk") && ani.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
-            ChangeState(State.IDLE);
-    }
-  
     public void ChangeDidGetCandyState(bool value)
     {
         didGetCandy = value;
     }
 
-    bool ReturnDidGetCandyState()
+    public bool IsRunKeyDown()
     {
-        return didGetCandy;
+        return Input.GetKeyDown(KeyCode.LeftShift);
     }
 
-    void ResetPos()
+    public bool IsRunKeyUp()
+    {
+        return Input.GetKeyUp(KeyCode.LeftShift);
+    }
+
+    public bool IsTalkKeyDown()
+    {
+        return Input.GetKeyDown(KeyCode.Space);
+    }
+
+    public void ChangeRunPressed(bool value)
+    {
+        isRunPressed = value;
+    }
+
+    public void ConsumeRunGauge()
+    {
+        ChangeRunGauge(-Time.deltaTime * runGaugeSpeed);
+    }
+
+    public void RecoverRunGauge()
+    {
+        ChangeRunGauge(Time.deltaTime * runGaugeSpeed);
+    }
+
+    public void NotifyRunGaugeChanged()
+    {
+        OnRunGaugeChanged?.Invoke(runGauge);
+    }
+
+    public bool IsAnimationFinished(string stateName)
+    {
+        AnimatorStateInfo stateInfo = ani.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.IsName(stateName) && stateInfo.normalizedTime >= 1f;
+    }
+
+    public void StartContactNPCTalk()
+    {
+        if (npc.name.Equals("SpecialNPC"))
+            npc.GetComponent<SpecialNPC>().ChangeState(NPCStateType.Talk);
+        else
+            npc.GetComponent<NPC>().ChangeState(NPCStateType.Talk);
+    }
+
+    public void ApplyEnemyHit(EnemyBase enemy)
+    {
+        ChangeRunPressed(false);
+        PlayHitAudio();
+
+        if (enemy.TryReturnCandyToTake(out CandyType candyTypeToTake))
+        {
+            EnemyManager.Instance.ChangeGetCandyCnt(enemy.name);
+            candy.ChangeCandyCnt(candyTypeToTake, -ReturnCandyTakeCount(enemy.EnemyType));
+        }
+
+        ChangeState(hitState);
+    }
+
+    public void PlayRunAudio()
+    {
+        audioSource[0].Play();
+    }
+
+    public void StopRunAudio()
+    {
+        audioSource[0].Stop();
+    }
+
+    private void ChangeRunGauge(float delta)
+    {
+        float beforeGauge = runGauge;
+        runGauge = Mathf.Clamp01(runGauge + delta);
+
+        if (!Mathf.Approximately(beforeGauge, runGauge))
+            NotifyRunGaugeChanged();
+    }
+
+    private void ResetAnimationBools()
+    {
+        ani.SetBool("idle", false);
+        ani.SetBool("walk", false);
+        ani.SetBool("run", false);
+    }
+
+    private int ReturnCandyTakeCount(EnemyType enemyType)
+    {
+        switch (enemyType)
+        {
+            case EnemyType.Zombie:
+                return 2;
+            case EnemyType.Pierrot:
+                return 5;
+            case EnemyType.Chainsaw:
+                return 7;
+            default:
+                Debug.LogWarning(enemyType);
+                return 0;
+        }
+    }
+
+    private void ResetPos()
     {
         transform.position = new Vector3(-18, 0, -12);
         transform.rotation = Quaternion.Euler(Vector3.zero);
     }
 
-    void PlayAudio(string name)
+    private void PlayHitAudio()
     {
-        if(name.Equals("Run"))
-            audioSource[0].Play();
-        else
-            audioSource[1].Play();
-    }
-
-    void StopAudio()
-    {
-        audioSource[0].Stop();
-    }
-
-    private void OnDisable()
-    {
-        for(int i=0; i<audioSource.Length; i++)
-            audioSource[i].enabled = false;
+        audioSource[1].Play();
     }
 }

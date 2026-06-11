@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3638d8a4be5441de994d5e8dfb221ada, type: 3}
+  m_Name: ChainsawAppearanceEffectData
+  m_EditorClassIdentifier: 
+  Type: 3
+  Prefab: {fileID: 4570808837881220803, guid: 751c4637cef1f3c43b2a8073541d2319, type: 3}
+  DefaultDuration: 1
+  DefaultCapacity: 3
+  MaxSize: 20
